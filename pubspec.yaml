@@ -1,0 +1,20 @@
+name: tch_appliable_core
+description: Flutter core package used by Tomas Chyly & appliable.eu. Contains common functionality to get started faster & consistently.
+version: 0.0.1
+homepage: https://tomas-chyly.com/en/project/web-browser-detect-flutter/
+repository: https://github.com/tomaschyly/tch_appliable_core
+issue_tracker: https://github.com/tomaschyly/tch_appliable_core/issues
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.17.0 <2.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
