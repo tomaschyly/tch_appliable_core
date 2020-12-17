@@ -1,0 +1,21 @@
+name: example
+description: An example project for demonstraction of basic usage of tch_appliable_core.
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.12.0-0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.1
+
+  tch_appliable_core:
+    path: ../
+
+flutter:
+  uses-material-design: true
