@@ -2,4 +2,14 @@
 
 Flutter core package used by [Tomas Chyly](https://tomas-chyly.com/en/) & [appliable.eu](https://appliable.eu/). Contains common functionality to get started faster & consistently.
 
+## App Create
+
+*Coming soon...*
+
+## Router (Navigator 1.0)
+
+*Coming soon...*
+
+## Translator
+
 *Coming soon...*
