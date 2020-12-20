@@ -37,8 +37,8 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> {
 
   static late CoreAppState _instance;
 
-  @protected
-  ResponsiveScreen responsiveScreen = ResponsiveScreen.UnDetermined;
+  ResponsiveScreen _responsiveScreen = ResponsiveScreen.UnDetermined;
+  final Map<String, List<String>> _messages = Map();
 
   /// State initialization
   @override
@@ -78,7 +78,9 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> {
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
         supportedLocales: theTranslatorOptions?.supportedLocales ?? List.empty(),
       ),
-      snapshot: widget.snapshot..responsiveScreen = responsiveScreen,
+      snapshot: widget.snapshot
+        ..responsiveScreen = _responsiveScreen
+        ..messages = _messages,
     );
   }
 
@@ -102,11 +104,20 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> {
       responsiveScreen = ResponsiveScreen.SmallPhone;
     }
 
-    if (this.responsiveScreen != responsiveScreen) {
-      this.responsiveScreen = responsiveScreen;
+    if (this._responsiveScreen != responsiveScreen) {
+      this._responsiveScreen = responsiveScreen;
 
       setStateNotDisposed(() {});
     }
+  }
+
+  /// Add message to be shown on certain screen
+  void addScreenMessage(String screenName, String message) {
+    if (_messages[screenName] == null) {
+      _messages[screenName] = List<String>.empty(growable: true);
+    }
+
+    _messages[screenName]!.add(message);
   }
 }
 
@@ -191,7 +202,20 @@ class AppDataState extends InheritedWidget {
 
 abstract class AbstractAppDataStateSnapshot {
   late ResponsiveScreen responsiveScreen;
+  late Map<String, List<String>> messages;
 
   /// AbstractAppDataStateSnapshot initialization
   AbstractAppDataStateSnapshot();
+
+  /// Get message for screen if available
+  String? getMessage(String? screenName) {
+    if (screenName == null) return null;
+
+    final theMessage = messages[screenName];
+    if (theMessage != null && theMessage.isNotEmpty) {
+      return theMessage.removeAt(0);
+    }
+
+    return null;
+  }
 }

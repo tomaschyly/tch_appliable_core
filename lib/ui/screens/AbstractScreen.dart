@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tch_appliable_core/core/RouterV1.dart';
 import 'package:tch_appliable_core/ui/widgets/AbstractStatefulWidget.dart';
+import 'package:tch_appliable_core/ui/widgets/ScreenMessengerWidget.dart';
 
 class AbstractScreenStateOptions {
   String screenName;
@@ -23,6 +24,9 @@ abstract class AbstractScreen extends AbstractStatefulWidget {}
 abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractStatefulWidgetState<T> with RouteAware {
   @protected
   AbstractScreenStateOptions get options;
+
+  final GlobalKey<ScreenMessengerWidgetState> _messengerKey = GlobalKey();
+
   /// Manually dispose of resources
   @override
   void dispose() {
@@ -54,12 +58,17 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
       appBar: createAppBar(context),
       body: Builder(
         builder: (BuildContext context) {
-          return options.safeArea
-              ? SafeArea(
-                  top: false,
-                  child: buildContent(context),
-                )
-              : buildContent(context);
+          return ScreenMessengerWidget(
+            key: _messengerKey,
+            options: options,
+            displayMessage: screenMessage,
+            child: options.safeArea
+                ? SafeArea(
+                    top: false,
+                    child: buildContent(context),
+                  )
+                : buildContent(context),
+          );
         },
       ),
       bottomNavigationBar: createBottomBar(context),
@@ -79,6 +88,19 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
   @protected
   Drawer? createDrawer(BuildContext context);
 
+  /// If available show message for this screen
+  @protected
+  void screenMessage(BuildContext context, String message) {
+    Future.delayed(kThemeAnimationDuration, () {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          message,
+          textAlign: TextAlign.center,
+        ),
+      ));
+    });
+  }
+
   /// This screen is now the top Route after it has been pushed
   @override
   void didPush() {
@@ -93,11 +115,18 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
     super.didPopNext();
 
     onStartResume();
+    onResume();
   }
 
   /// This screen is now the top Route
   @protected
   void onStartResume() {}
+
+  /// This screen is now the top Route
+  @protected
+  void onResume() {
+    _messengerKey.currentState?.onResume();
+  }
 }
 
 class AppBarOption {

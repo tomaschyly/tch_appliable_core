@@ -17,6 +17,7 @@ class App extends StatelessWidget {
           ),
         ),
       ),
+      initializationMinDurationInMilliseconds: 1200,
       initialScreenRoute: HomeScreen.ROUTE,
       onGenerateRoute: AppRouter.onGenerateRoute,
       snapshot: AppDataStateSnapshot(),
