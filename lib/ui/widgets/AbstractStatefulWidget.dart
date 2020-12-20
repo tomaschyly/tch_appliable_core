@@ -6,7 +6,10 @@ enum WidgetState {
   Disposed,
 }
 
-abstract class AbstractStatefulWidget extends StatefulWidget {}
+abstract class AbstractStatefulWidget extends StatefulWidget {
+  /// AbstractStatefulWidget initialization
+  AbstractStatefulWidget({Key? key}) : super(key: key);
+}
 
 abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> extends State<T> {
   WidgetState get widgetState => _widgetState;

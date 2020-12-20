@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tch_appliable_core/core/RouterV1.dart';
 import 'package:tch_appliable_core/ui/widgets/AbstractStatefulWidget.dart';
 
 class AbstractScreenStateOptions {
@@ -22,6 +23,24 @@ abstract class AbstractScreen extends AbstractStatefulWidget {}
 abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractStatefulWidgetState<T> with RouteAware {
   @protected
   AbstractScreenStateOptions get options;
+  /// Manually dispose of resources
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+
+    super.dispose();
+  }
+
+  /// Run initializations of screen on first build only
+  @override
+  firstBuildOnly(BuildContext context) {
+    super.firstBuildOnly(context);
+
+    final modalRoute = ModalRoute.of(context);
+    if (modalRoute != null) {
+      routeObserver.subscribe(this, modalRoute as PageRoute);
+    }
+  }
 
   /// Create view layout from widgets
   @override
