@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:tch_appliable_core/core/Preferences.dart';
 import 'package:tch_appliable_core/core/RouterV1.dart';
 import 'package:tch_appliable_core/core/Translator.dart';
 import 'package:tch_appliable_core/ui/widgets/AbstractResponsiveWidget.dart';
@@ -14,6 +15,7 @@ class CoreApp extends AbstractStatefulWidget {
   final AbstractAppDataStateSnapshot snapshot;
   final List<NavigatorObserver>? navigatorObservers;
   final TranslatorOptions? translatorOptions;
+  final PreferencesOptions? preferencesOptions;
 
   /// CoreApp initialization
   CoreApp({
@@ -25,6 +27,7 @@ class CoreApp extends AbstractStatefulWidget {
     required this.snapshot,
     this.navigatorObservers,
     this.translatorOptions,
+    this.preferencesOptions,
   });
 
   /// Create state for widget
@@ -128,6 +131,7 @@ class _InitializationScreen extends StatelessWidget {
   final int initializationMinDurationInMilliseconds;
   final String initialScreenRoute;
   final TranslatorOptions? translatorOptions;
+  final PreferencesOptions? preferencesOptions;
 
   /// InitializationScreen initialization
   _InitializationScreen({
@@ -135,6 +139,7 @@ class _InitializationScreen extends StatelessWidget {
     required this.initializationMinDurationInMilliseconds,
     required this.initialScreenRoute,
     this.translatorOptions,
+    this.preferencesOptions,
   });
 
   /// Create view layout from widgets
@@ -158,14 +163,19 @@ class _InitializationScreen extends StatelessWidget {
     if (!wasInitialized) {
       final start = DateTime.now();
 
+      final thePreferencesOptions = preferencesOptions;
+      if (thePreferencesOptions != null) {
+        final preferences = Preferences(options: thePreferencesOptions);
+
+        await preferences.init();
+      }
+
       final theTranslatorOptions = translatorOptions;
       if (theTranslatorOptions != null) {
         final translator = Translator(options: theTranslatorOptions);
 
         await translator.init(context);
       }
-
-      //TODO various integral & app specific initializations
 
       final diff = DateTime.now().difference(start);
 

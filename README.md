@@ -8,8 +8,9 @@ Flutter core package used by [Tomas Chyly](https://tomas-chyly.com/en/) & [appli
 2. [App Create](#app-create)
 3. [Router (Navigator 1.0)](#router-navigator-10)
 4. [Translator](#translator)
-5. [Screens & Responsivity](#screens--responsivity)
-6. [Roadmap](#roadmap)
+5. [Preferences](#preferences)
+6. [Screens & Responsivity](#screens--responsivity)
+7. [Roadmap](#roadmap)
 
 ## Installation
 
@@ -24,6 +25,10 @@ Flutter core package used by [Tomas Chyly](https://tomas-chyly.com/en/) & [appli
 *Coming soon...*
 
 ## Translator
+
+*Coming soon...*
+
+## Preferences
 
 *Coming soon...*
 

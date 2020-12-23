@@ -33,7 +33,9 @@ class Translator {
   /// Translator initialization
   Translator({
     required TranslatorOptions options,
-  }) : _options = options;
+  }) : _options = options {
+    _instance = this;
+  }
 
   /// Initialize correct Language and translations for it
   Future init(BuildContext context) async {

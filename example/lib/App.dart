@@ -25,6 +25,7 @@ class App extends StatelessWidget {
         languages: ['en', 'sk'],
         supportedLocales: [const Locale('en'), const Locale('sk')],
       ),
+      preferencesOptions: PreferencesOptions(),
     );
   }
 }

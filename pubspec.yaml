@@ -17,6 +17,7 @@ dependencies:
 
   intl: ^0.17.0-nullsafety.2
   html_unescape: ^1.0.2
+  shared_preferences: ^0.5.12+4
 
 dev_dependencies:
   flutter_test:
