@@ -19,13 +19,13 @@ double? prefsDouble(String key) => Preferences.instance?.getDouble(key);
 String? prefsString(String key) => Preferences.instance?.getString(key);
 
 /// Shorthand to save int value to prefs
-Future<bool>? prefsSetInt(String key, int value) => Preferences.instance?.setInt(key, value);
+Future<bool> prefsSetInt(String key, int value) => Preferences.instance?.setInt(key, value) ?? Future.value(false);
 
 /// Shorthand to save double value to prefs
-Future<bool>? prefsSetDouble(String key, double value) => Preferences.instance?.setDouble(key, value);
+Future<bool> prefsSetDouble(String key, double value) => Preferences.instance?.setDouble(key, value) ?? Future.value(false);
 
 /// Shorthand to save string value to prefs
-Future<bool>? prefsSetString(String key, String value) => Preferences.instance?.setString(key, value);
+Future<bool> prefsSetString(String key, String value) => Preferences.instance?.setString(key, value) ?? Future.value(false);
 
 class PreferencesOptions {
   final Map<String, int>? intPrefs;
