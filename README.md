@@ -10,7 +10,8 @@ Flutter core package used by [Tomas Chyly](https://tomas-chyly.com/en/) & [appli
 4. [Translator](#translator)
 5. [Preferences](#preferences)
 6. [Screens & Responsivity](#screens--responsivity)
-7. [Roadmap](#roadmap)
+7. [Media](#media)
+8. [Roadmap](#roadmap)
 
 ## Installation
 
@@ -33,6 +34,10 @@ Flutter core package used by [Tomas Chyly](https://tomas-chyly.com/en/) & [appli
 *Coming soon...*
 
 ## Screens & Responsivity
+
+*Coming soon...*
+
+## Media
 
 *Coming soon...*
 
