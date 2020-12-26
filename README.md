@@ -145,6 +145,12 @@ Then to see your new language immediately you can invalidate CoreApp.
 CoreAppState.instance.invalidateApp();
 ``` 
 
+To use the Translator for string translations, you just write text with short `tt` function.
+
+```dart
+tt('home.screen.title');
+```
+
 ## Preferences
 
 *Coming soon...*
