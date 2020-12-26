@@ -122,6 +122,11 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> {
 
     _messages[screenName]!.add(message);
   }
+
+  /// ReBuild whole app
+  void invalidateApp() {
+    setStateNotDisposed(() {});
+  }
 }
 
 class _InitializationScreen extends StatelessWidget {

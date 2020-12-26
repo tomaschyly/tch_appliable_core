@@ -112,7 +112,38 @@ To transfer parameters between screens, use `RoutingArguments`.
 
 ## Translator
 
-*Coming soon...*
+Translator is an optional feature of this package. You activate it by providing `TranslatorOptions` to the CoreApp.
+
+```dart
+...
+@override
+Widget build(BuildContext context) {
+  return CoreApp(
+    ...
+    translatorOptions: TranslatorOptions(
+      languages: ['en', 'sk'],
+      supportedLocales: [const Locale('en'), const Locale('sk')],
+    ),
+    ...
+  );
+}
+...
+```
+
+Then you need to add json transaction files into your assets with path `assets/translations/<code>.json` e.g. `assets/translations/en.json`.
+
+The Translator uses your OS language automatically & if it is part of supportedLocales.
+You can also change language during runtime.
+
+```dart
+Translator.instance?.changeLanguage('sk');
+```
+
+Then to see your new language immediately you can invalidate CoreApp.
+
+```dart
+CoreAppState.instance.invalidateApp();
+``` 
 
 ## Preferences
 
