@@ -13,8 +13,9 @@ If some instructions are not clear enough, then analyse usage inside the example
 4. [Translator](#translator)
 5. [Preferences](#preferences)
 6. [Screens, Widgets & Responsivity](#screens-widgets--responsivity)
-7. [Media](#media)
-8. [Roadmap](#roadmap)
+7. [MainDataProvider & DataWidgets](#maindataprovider--datawidgets)
+8. [Media](#media)
+9. [Roadmap](#roadmap)
 
 ## Installation
 
@@ -182,6 +183,10 @@ The reason for using CoreApp abstract classes are some useful methods that you s
 E.g. you should not use `setState` but instead always use `setStateNotDisposed`.
 
 Use `firstBuildOnly` for initialization on first build with BuildContext available.
+
+## MainDataProvider & DataWidgets
+
+*Coming soon...*
 
 ## Media
 

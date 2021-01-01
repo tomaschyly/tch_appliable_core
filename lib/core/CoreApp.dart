@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:tch_appliable_core/core/Preferences.dart';
 import 'package:tch_appliable_core/core/RouterV1.dart';
 import 'package:tch_appliable_core/core/Translator.dart';
+import 'package:tch_appliable_core/providers/MainDataProvider.dart';
 import 'package:tch_appliable_core/ui/widgets/AbstractResponsiveWidget.dart';
 import 'package:tch_appliable_core/ui/widgets/AbstractStatefulWidget.dart';
 
@@ -16,6 +17,7 @@ class CoreApp extends AbstractStatefulWidget {
   final List<NavigatorObserver>? navigatorObservers;
   final TranslatorOptions? translatorOptions;
   final PreferencesOptions? preferencesOptions;
+  final MainDataProviderOptions? mainDataProviderOptions;
 
   /// CoreApp initialization
   CoreApp({
@@ -28,6 +30,7 @@ class CoreApp extends AbstractStatefulWidget {
     this.navigatorObservers,
     this.translatorOptions,
     this.preferencesOptions,
+    this.mainDataProviderOptions,
   });
 
   /// Create state for widget
@@ -65,6 +68,8 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> {
           initializationMinDurationInMilliseconds: widget.initializationMinDurationInMilliseconds,
           initialScreenRoute: widget.initialScreenRoute,
           translatorOptions: widget.translatorOptions,
+          preferencesOptions: widget.preferencesOptions,
+          mainDataProviderOptions: widget.mainDataProviderOptions,
         ),
         onGenerateRoute: widget.onGenerateRoute,
         navigatorObservers: [
@@ -137,6 +142,7 @@ class _InitializationScreen extends StatelessWidget {
   final String initialScreenRoute;
   final TranslatorOptions? translatorOptions;
   final PreferencesOptions? preferencesOptions;
+  final MainDataProviderOptions? mainDataProviderOptions;
 
   /// InitializationScreen initialization
   _InitializationScreen({
@@ -145,6 +151,7 @@ class _InitializationScreen extends StatelessWidget {
     required this.initialScreenRoute,
     this.translatorOptions,
     this.preferencesOptions,
+    this.mainDataProviderOptions,
   });
 
   /// Create view layout from widgets
@@ -180,6 +187,11 @@ class _InitializationScreen extends StatelessWidget {
         final translator = Translator(options: theTranslatorOptions);
 
         await translator.init(context);
+      }
+
+      final theMainDataProviderOptions = mainDataProviderOptions;
+      if (theMainDataProviderOptions != null) {
+        MainDataProvider(options: theMainDataProviderOptions);
       }
 
       final diff = DateTime.now().difference(start);
