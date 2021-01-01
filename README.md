@@ -12,7 +12,7 @@ If some instructions are not clear enough, then analyse usage inside the example
 3. [Router (Navigator 1.0)](#router-navigator-10)
 4. [Translator](#translator)
 5. [Preferences](#preferences)
-6. [Screens & Responsivity](#screens--responsivity)
+6. [Screens, Widgets & Responsivity](#screens-widgets--responsivity)
 7. [Media](#media)
 8. [Roadmap](#roadmap)
 
@@ -155,9 +155,33 @@ tt('home.screen.title');
 
 *Coming soon...*
 
-## Screens & Responsivity
+## Screens, Widgets & Responsivity
 
-*Coming soon...*
+All your `stateful` screens/widgets have to extend CoreApp abstract classes instead of Flutter.
+See the example for resposive app implementation.
+
+### Screens
+
+First you should decide if you want to support resposivity or not. Then it is a good idea to create your app's main `AbstractAppScreen` & `AbstractAppScreenState` where you will be then able to setup defaults for your app.
+
+It is better to support resposivity, for this your app's AbstractAppScreen extends `AbstractResposiveScreen` & AbstractAppScreenState extends `AbstractResposiveScreenState`.
+CoreApp's responsity is divided into several screen sizes inspired by Bootstrap used on the web.
+
+For non resposive screens/apps you extend `AbstractScreen` & `AbstractScreenState`.
+
+### Widgets
+
+Just like screens, widgets can be resposive too extending `AbstractResponsiveWidget` & `AbstractResponsiveWidgetState`.
+
+Or non resposive extending `AbstractStatefulWidget` & `AbstractStatefulWidgetState`.
+
+### Useful methods
+
+The reason for using CoreApp abstract classes are some useful methods that you should use.
+
+E.g. you should not use `setState` but instead always use `setStateNotDisposed`.
+
+Use `firstBuildOnly` for initialization on first build with BuildContext available.
 
 ## Media
 
