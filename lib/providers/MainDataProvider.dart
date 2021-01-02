@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
-enum MainDataProviderState {
-  UnAvailable,
-  Ready,
-  Connecting,
-}
-
 enum MainDataProviderSource {
   None,
   HTTPClient,
@@ -28,8 +22,6 @@ class MainDataProvider {
   static MainDataProvider? get instance => _instance;
 
   static MainDataProvider? _instance;
-
-  ValueNotifier<MainDataProviderState> state = ValueNotifier(MainDataProviderState.UnAvailable);
 
   List<AbstractSource> get initializedSources => _initializedSources.toList(growable: false);
 
@@ -54,7 +46,15 @@ class MainDataProvider {
   }
 }
 
+enum MainDataProviderSourceState {
+  UnAvailable,
+  Ready,
+  Connecting,
+}
+
 abstract class AbstractSource {
+  ValueNotifier<MainDataProviderSourceState> state = ValueNotifier(MainDataProviderSourceState.UnAvailable);
+
   //TODO
 }
 
