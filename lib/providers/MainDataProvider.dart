@@ -3,16 +3,19 @@ import 'package:sqflite/sqflite.dart';
 
 enum MainDataProviderSource {
   None,
+  MockUp,
   HTTPClient,
   SQLite,
 }
 
 class MainDataProviderOptions {
+  MockUpOptions? mockUpOptions;
   HTTPClientOptions? httpClientOptions;
   SQLiteOptions? sqLiteOptions;
 
   /// MainDataProviderOptions initialization
   MainDataProviderOptions({
+    this.mockUpOptions,
     this.httpClientOptions,
     this.sqLiteOptions,
   });
@@ -33,6 +36,11 @@ class MainDataProvider {
     required MainDataProviderOptions options,
   }) : _options = options {
     _instance = this;
+
+    final theMockUpOptions = options.mockUpOptions;
+    if (theMockUpOptions != null) {
+      _initializedSources.add(MockUpSource(options: theMockUpOptions));
+    }
 
     final theHttpClientOptions = options.httpClientOptions;
     if (theHttpClientOptions != null) {
@@ -55,7 +63,18 @@ enum MainDataProviderSourceState {
 abstract class AbstractSource {
   ValueNotifier<MainDataProviderSourceState> state = ValueNotifier(MainDataProviderSourceState.UnAvailable);
 
-  //TODO
+//TODO
+}
+
+class MockUpOptions {}
+
+class MockUpSource extends AbstractSource {
+  final MockUpOptions _options;
+
+  /// MockUpSource initialization
+  MockUpSource({
+    required MockUpOptions options,
+  }) : _options = options;
 }
 
 class HTTPClientOptions {
