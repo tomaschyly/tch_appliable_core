@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:tch_appliable_core/providers/mainDataProvider/DataRequest.dart';
+import 'package:tch_appliable_core/providers/mainDataProvider/DataTask.dart';
+import 'package:tch_appliable_core/providers/mainDataProvider/MainDataSource.dart';
 
 enum MainDataProviderSource {
   None,
@@ -63,7 +66,56 @@ enum MainDataProviderSourceState {
 abstract class AbstractSource {
   ValueNotifier<MainDataProviderSourceState> state = ValueNotifier(MainDataProviderSourceState.UnAvailable);
 
-//TODO
+  final List<MainDataSource> _dataSources = <MainDataSource>[];
+  final List<String> _identifiers = <String>[];
+  final Map<String, DataRequest> _identifierRequests = Map();
+
+  /// Register the DataSource for data
+  registerDataSource(MainDataSource dataSource);
+
+  /// Register DataSource DataRequests for identifiers and example DataRequests mapping
+  @protected
+  registerDataRequests(MainDataSource dataSource) {
+    dataSource.identifiers.forEach((identifier) {
+      if (!_identifiers.contains(identifier)) {
+        _identifiers.add(identifier);
+
+        _identifierRequests[identifier] = dataSource.requestForIdentifier(identifier)!;
+      }
+    });
+  }
+
+  /// UnRegister the DataSource from receiving data
+  unRegisterDataSource(MainDataSource dataSource);
+
+  /// UnRegister DataSource DataRequests for identifiers if no other DataSource has equal
+  @protected
+  unRegisterDataRequests(MainDataSource dataSource) {
+    dataSource.identifiers.forEach((identifier) {
+      for (MainDataSource otherDataSource in _dataSources) {
+        if (otherDataSource != dataSource) {
+          for (String otherDataSourceMethod in otherDataSource.identifiers) {
+            if (otherDataSourceMethod == identifier) {
+              return;
+            }
+          }
+        }
+      }
+
+      _identifiers.remove(identifier);
+
+      _identifierRequests.remove(identifier);
+    });
+  }
+
+  /// Check if DataRequest has next page
+  bool dataRequestHasNextPage(DataRequest dataRequest);
+
+  /// Request to load next page of DataRequest
+  dataRequestLoadNextPage(DataRequest dataRequest);
+
+  /// Execute one time DataTask against any source
+  Future<Map<String, dynamic>> executeDataTask(DataTask dataTask);
 }
 
 class MockUpOptions {}
@@ -74,7 +126,39 @@ class MockUpSource extends AbstractSource {
   /// MockUpSource initialization
   MockUpSource({
     required MockUpOptions options,
-  }) : _options = options;
+  }) : _options = options {
+    state = ValueNotifier(MainDataProviderSourceState.Ready);
+  }
+
+  /// Register the DataSource for data
+  @override
+  registerDataSource(MainDataSource dataSource) {
+    throw Exception('MockUpSource is not implemented');
+  }
+
+  /// UnRegister the DataSource from receiving data
+  @override
+  unRegisterDataSource(MainDataSource dataSource) {
+    throw Exception('MockUpSource is not implemented');
+  }
+
+  /// Check if DataRequest has next page
+  @override
+  bool dataRequestHasNextPage(DataRequest dataRequest) {
+    throw Exception('MockUpSource is not implemented');
+  }
+
+  /// Request to load next page of DataRequest
+  @override
+  dataRequestLoadNextPage(DataRequest dataRequest) {
+    throw Exception('MockUpSource is not implemented');
+  }
+
+  /// Execute one time DataTask against any source
+  @override
+  Future<Map<String, dynamic>> executeDataTask(DataTask dataTask) {
+    throw Exception('MockUpSource is not implemented');
+  }
 }
 
 class HTTPClientOptions {
@@ -93,6 +177,36 @@ class HTTPSource extends AbstractSource {
   HTTPSource({
     required HTTPClientOptions options,
   }) : _options = options;
+
+  /// Register the DataSource for data
+  @override
+  registerDataSource(MainDataSource dataSource) {
+    throw Exception('HTTPSource is not implemented');
+  }
+
+  /// UnRegister the DataSource from receiving data
+  @override
+  unRegisterDataSource(MainDataSource dataSource) {
+    throw Exception('HTTPSource is not implemented');
+  }
+
+  /// Check if DataRequest has next page
+  @override
+  bool dataRequestHasNextPage(DataRequest dataRequest) {
+    throw Exception('HTTPSource is not implemented');
+  }
+
+  /// Request to load next page of DataRequest
+  @override
+  dataRequestLoadNextPage(DataRequest dataRequest) {
+    throw Exception('HTTPSource is not implemented');
+  }
+
+  /// Execute one time DataTask against any source
+  @override
+  Future<Map<String, dynamic>> executeDataTask(DataTask dataTask) {
+    throw Exception('HTTPSource is not implemented');
+  }
 }
 
 class SQLiteOptions {
@@ -115,4 +229,34 @@ class SQLiteSource extends AbstractSource {
   SQLiteSource({
     required SQLiteOptions options,
   }) : _options = options;
+
+  /// Register the DataSource for data
+  @override
+  registerDataSource(MainDataSource dataSource) {
+    throw Exception('SQLiteSource is not implemented');
+  }
+
+  /// UnRegister the DataSource from receiving data
+  @override
+  unRegisterDataSource(MainDataSource dataSource) {
+    throw Exception('SQLiteSource is not implemented');
+  }
+
+  /// Check if DataRequest has next page
+  @override
+  bool dataRequestHasNextPage(DataRequest dataRequest) {
+    throw Exception('SQLiteSource is not implemented');
+  }
+
+  /// Request to load next page of DataRequest
+  @override
+  dataRequestLoadNextPage(DataRequest dataRequest) {
+    throw Exception('SQLiteSource is not implemented');
+  }
+
+  /// Execute one time DataTask against any source
+  @override
+  Future<Map<String, dynamic>> executeDataTask(DataTask dataTask) {
+    throw Exception('SQLiteSource is not implemented');
+  }
 }
