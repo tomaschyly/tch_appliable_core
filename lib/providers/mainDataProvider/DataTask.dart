@@ -1,3 +1,5 @@
+import 'package:tch_appliable_core/model/DataModel.dart';
+
 abstract class DataTaskOptions {}
 
 enum HTTPType {
@@ -25,6 +27,6 @@ class DataTask {
   /// DataTask initialization
   DataTask({
     required this.options,
-    Map<String, dynamic>? data,
-  }) : this.data = data ?? Map();
+    DataModel? data,
+  }) : this.data = data?.toJson() ?? Map();
 }

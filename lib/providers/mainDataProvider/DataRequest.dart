@@ -1,6 +1,7 @@
+import 'package:tch_appliable_core/model/DataModel.dart';
 import 'package:tch_appliable_core/providers/MainDataProvider.dart';
 
-class DataRequest {
+class DataRequest<T extends DataModel> {
   String get identifier {
     String identifier = method;
 
@@ -18,12 +19,14 @@ class DataRequest {
   final MainDataProviderSource source;
   final String method;
   final Map<String, dynamic> parameters;
-  Map<String, dynamic>? result;
+  final T Function(Map<String, dynamic> json) processResult;
+  T? result;
 
   /// DataRequest initialization
   DataRequest({
     required this.source,
     required this.method,
     Map<String, dynamic>? parameters,
+    required this.processResult,
   }) : this.parameters = parameters ?? Map();
 }
