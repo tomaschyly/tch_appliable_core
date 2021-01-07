@@ -44,7 +44,7 @@ class MainDataSource {
 
     dataRequests.forEach((dataRequest) {
       if (dataRequest.identifier == identifier) {
-        dataRequest.result = result;
+        dataRequest.result = dataRequest.processResult(result);
       }
     });
 
