@@ -54,10 +54,11 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
       child: SingleChildScrollView(
         child: Container(
           width: double.infinity,
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-              Text('Wip: Home body'),
+              Text('Wip: This app will contain various examples to show usage of the CoreApp'),
             ],
           ),
         ),

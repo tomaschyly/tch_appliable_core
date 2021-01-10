@@ -1,3 +1,4 @@
+import 'package:example/ui/widgets/IconButtonWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
@@ -17,7 +18,43 @@ abstract class AbstractAppScreen extends AbstractResposiveScreen {}
 abstract class AbstractAppScreenState<T extends AbstractAppScreen> extends AbstractResposiveScreenState<T> {
   /// Create default AppBar
   @override
-  AppBar? createAppBar(BuildContext context) => null;
+  AppBar? createAppBar(BuildContext context) {
+    return AppBar(
+      title: Text(
+        options.title,
+      ),
+      centerTitle: false,
+      leading: options.drawerOptions?.isNotEmpty == true
+          ? Builder(
+              builder: (BuildContext context) {
+                return IconButtonWidget(
+                  icon: Icon(
+                    Icons.menu,
+                    color: Colors.black,
+                  ),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                );
+              },
+            )
+          : (Navigator.of(context).canPop() == true
+              ? Builder(
+                  builder: (BuildContext context) {
+                    return IconButtonWidget(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    );
+                  },
+                )
+              : null),
+    );
+  }
 
   /// Create default BottomNavigationBar
   @protected
