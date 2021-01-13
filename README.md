@@ -170,6 +170,8 @@ CoreApp's responsity is divided into several screen sizes inspired by Bootstrap 
 
 For non resposive screens/apps you extend `AbstractScreen` & `AbstractScreenState`.
 
+CoreApp screens currently support creation of `AppBar`, `Drawer` and `BottomBar`. Check the example for details.
+
 ### Widgets
 
 Just like screens, widgets can be resposive too extending `AbstractResponsiveWidget` & `AbstractResponsiveWidgetState`.
