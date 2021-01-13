@@ -10,3 +10,9 @@ export 'package:tch_appliable_core/ui/screens/AbstractResposiveScreen.dart';
 
 export 'package:tch_appliable_core/ui/widgets/AbstractStatefulWidget.dart';
 export 'package:tch_appliable_core/ui/widgets/AbstractResponsiveWidget.dart';
+
+export 'package:tch_appliable_core/providers/MainDataProvider.dart';
+export 'package:tch_appliable_core/providers/mainDataProvider/DataRequest.dart';
+export 'package:tch_appliable_core/providers/mainDataProvider/DataTask.dart';
+export 'package:tch_appliable_core/model/DataModel.dart';
+export 'package:sqflite/sqflite.dart';
