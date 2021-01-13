@@ -1,4 +1,5 @@
 import 'package:example/ui/screens/HomeScreen.dart';
+import 'package:example/ui/screens/mdpSQLite/MDPSQLiteScreen.dart';
 import 'package:example/ui/widgets/IconButtonWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
@@ -33,6 +34,19 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
         },
         title: Text(
           tt('home.screen.title'),
+        ),
+      ),
+      DrawerOption(
+        onSelect: (BuildContext context) {
+          pushNamedNewStack(context, MDPSQLiteScreen.ROUTE, arguments: <String, String>{'router-fade-animation': '1'});
+        },
+        isSelected: (BuildContext context) {
+          final RoutingArguments? arguments = RoutingArguments.of(context);
+
+          return arguments?.route == MDPSQLiteScreen.ROUTE;
+        },
+        title: Text(
+          tt('mdpsqlite.screen.title'),
         ),
       ),
     ];
@@ -79,6 +93,23 @@ abstract class AbstractAppScreenState<T extends AbstractAppScreen> extends Abstr
                   },
                 )
               : null),
+      actions: options.appBarOptions
+          ?.map((AppBarOption option) => Builder(
+                builder: (BuildContext context) {
+                  final theIcon = option.icon;
+                  final theComplexIcon = option.complexIcon;
+
+                  return IconButtonWidget(
+                    icon: (theComplexIcon != null ? theComplexIcon : theIcon) ?? Container(),
+                    onPressed: () {
+                      option.onTap(context);
+                    },
+                    iconWidth: option.complexIcon != null ? 48 : 24,
+                    iconHeight: option.complexIcon != null ? 48 : 24,
+                  );
+                },
+              ))
+          .toList(),
     );
   }
 

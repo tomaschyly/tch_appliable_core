@@ -1,4 +1,6 @@
 import 'package:example/ui/screens/HomeScreen.dart';
+import 'package:example/ui/screens/mdpSQLite/MDPSQLiteRecordScreen.dart';
+import 'package:example/ui/screens/mdpSQLite/MDPSQLiteScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
@@ -10,6 +12,10 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (arguments.route) {
       case HomeScreen.ROUTE:
         return createRoute((BuildContext context) => HomeScreen(), settings);
+      case MDPSQLiteScreen.ROUTE:
+        return createRoute((BuildContext context) => MDPSQLiteScreen(), settings);
+      case MDPSQLiteRecordScreen.ROUTE:
+        return createRoute((BuildContext context) => MDPSQLiteRecordScreen(), settings);
       default:
         throw Exception('Implement OnGenerateRoute in app');
     }

@@ -1,3 +1,5 @@
 {
-  "home.screen.title": "Home"
+  "home.screen.title": "Home",
+  "mdpsqlite.screen.title": "MDP SQLite",
+  "mdpsqliterecord.screen.title": "MDP SQLite Record"
 }

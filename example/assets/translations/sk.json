@@ -1,3 +1,5 @@
 {
-  "home.screen.title": "Domov"
+  "home.screen.title": "Domov",
+  "mdpsqlite.screen.title": "MDP SQLite",
+  "mdpsqliterecord.screen.title": "MDP SQLite Záznam"
 }
