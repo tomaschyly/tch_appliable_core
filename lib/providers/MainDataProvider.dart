@@ -210,7 +210,7 @@ class HTTPSource extends AbstractSource {
 }
 
 class SQLiteOptions {
-  final String databasePath;
+  final Future<String> Function() databasePath;
   final int version;
   final OnDatabaseCreateFn onCreate;
 
@@ -239,7 +239,7 @@ class SQLiteSource extends AbstractSource {
 
     if (database == null) {
       database = await openDatabase(
-        _options.databasePath,
+        await _options.databasePath(),
         version: _options.version,
         onCreate: _options.onCreate,
       );

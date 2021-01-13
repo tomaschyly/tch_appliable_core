@@ -17,6 +17,8 @@ dependencies:
   tch_appliable_core:
     path: ../
 
+  path: ^1.8.0-nullsafety.3
+
 flutter:
   uses-material-design: true
 

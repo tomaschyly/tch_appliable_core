@@ -1,6 +1,8 @@
 import 'package:example/core/Router.dart' as AppRouter;
+import 'package:example/model/SQLiteRecord.dart';
 import 'package:example/ui/screens/HomeScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class App extends StatelessWidget {
@@ -26,7 +28,19 @@ class App extends StatelessWidget {
         supportedLocales: [const Locale('en'), const Locale('sk')],
       ),
       preferencesOptions: PreferencesOptions(),
+      mainDataProviderOptions: MainDataProviderOptions(
+        sqLiteOptions: SQLiteOptions(
+          databasePath: () async => join((await getDatabasesPath())!, 'default.db'),
+          version: 1,
+          onCreate: _dbInit,
+        ),
+      ),
     );
+  }
+
+  /// Initialize db tables
+  Future _dbInit(Database database, int version) async {
+    await SQLiteRecord.createTable(database);
   }
 }
 
