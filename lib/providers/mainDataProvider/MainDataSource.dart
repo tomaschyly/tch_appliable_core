@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tch_appliable_core/providers/MainDataProvider.dart';
 import 'package:tch_appliable_core/providers/mainDataProvider/DataRequest.dart';
 import 'package:tch_appliable_core/utils/List.dart';
 
@@ -14,6 +15,9 @@ class MainDataSource {
 
   /// Get list of identifiers by DataRequests
   List<String> get identifiers => _dataRequests.map((dataRequest) => dataRequest.identifier).toList();
+
+  /// Get list of sources by DataRequests
+  List<MainDataProviderSource> get sources => _dataRequests.map((dataReqeust) => dataReqeust.source).toList();
 
   /// Find DataRequest of this DataSource for method
   DataRequest? requestForMethod(String method) {

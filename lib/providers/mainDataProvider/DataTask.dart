@@ -2,6 +2,8 @@ import 'package:tch_appliable_core/model/DataModel.dart';
 
 abstract class DataTaskOptions {}
 
+class MockUpTaskOptions extends DataTaskOptions {}
+
 enum HTTPType {
   Get,
   Post,
@@ -23,10 +25,12 @@ class SQLiteTaskOptions extends DataTaskOptions {}
 class DataTask {
   final DataTaskOptions options;
   final Map<String, dynamic> data;
+  final List<String>? reFetchMethods;
 
   /// DataTask initialization
   DataTask({
     required this.options,
     DataModel? data,
+    this.reFetchMethods,
   }) : this.data = data?.toJson() ?? Map();
 }
