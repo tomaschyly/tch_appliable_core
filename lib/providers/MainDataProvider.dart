@@ -73,7 +73,7 @@ class MainDataProvider {
         theSource = _initializedSources.firstWhereOrNull((element) => element is SQLiteSource);
         break;
       default:
-        throw Exception('Cannot get not implemneted source $source');
+        throw Exception('Cannot get not implemented source $source');
     }
 
     return theSource;
@@ -142,11 +142,11 @@ class MainDataProvider {
     } else if (dataTask.options is SQLiteTaskOptions) {
       theSource = _initializedSources.firstWhereOrNull((element) => element is SQLiteSource);
     } else {
-      throw Exception('Cannot get not implemneted source for options ${dataTask.options}');
+      throw Exception('Cannot get not implemented source for options ${dataTask.options}');
     }
 
     if (theSource == null) {
-      throw Exception('Cannot execute DataTask for not implemneted source for options ${dataTask.options}');
+      throw Exception('Cannot execute DataTask for not initialized source for options ${dataTask.options}');
     }
 
     return theSource.executeDataTask<T>(dataTask);
