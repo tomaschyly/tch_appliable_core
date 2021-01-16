@@ -53,4 +53,10 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
       setState(fn);
     }
   }
+
+  /// Invalidate screen for rebuild
+  @protected
+  void invalidate() {
+    setStateNotDisposed(() {});
+  }
 }
