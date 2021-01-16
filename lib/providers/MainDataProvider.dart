@@ -160,6 +160,7 @@ enum MainDataProviderSourceState {
 }
 
 abstract class AbstractSource {
+  MainDataProviderSource get isSource;
   ValueNotifier<MainDataProviderSourceState> state = ValueNotifier(MainDataProviderSourceState.UnAvailable);
 
   final List<MainDataSource> _dataSources = <MainDataSource>[];
@@ -172,15 +173,19 @@ abstract class AbstractSource {
   /// Register DataSource DataRequests for identifiers and example DataRequests mapping
   @protected
   registerDataRequests(MainDataSource dataSource) {
-    // dataSource.identifiers.forEach((identifier) {
-    //   if (!_identifiers.contains(identifier)) {
-    //     _identifiers.add(identifier);
+    dataSource.identifiers.forEach((String identifier) {
+      if (_identifiers.contains(identifier)) {
+        final DataRequest dataRequest = dataSource.requestForIdentifier(identifier)!;
 
-    //     _identifierRequests[identifier] = dataSource.requestForIdentifier(identifier)!;
-    //   }
-    // });
+        if (dataRequest.source != isSource) {
+          return;
+        }
 
-    //TODO need to keep only requests for this source
+        _identifiers.add(identifier);
+
+        _identifierRequests[identifier] = dataRequest;
+      }
+    });
   }
 
   /// UnRegister the DataSource from receiving data
@@ -189,23 +194,27 @@ abstract class AbstractSource {
   /// UnRegister DataSource DataRequests for identifiers if no other DataSource has equal
   @protected
   unRegisterDataRequests(MainDataSource dataSource) {
-    // dataSource.identifiers.forEach((identifier) {
-    //   for (MainDataSource otherDataSource in _dataSources) {
-    //     if (otherDataSource != dataSource) {
-    //       for (String otherDataSourceMethod in otherDataSource.identifiers) {
-    //         if (otherDataSourceMethod == identifier) {
-    //           return;
-    //         }
-    //       }
-    //     }
-    //   }
+    dataSource.identifiers.forEach((String identifier) {
+      final DataRequest dataRequest = dataSource.requestForIdentifier(identifier)!;
 
-    //   _identifiers.remove(identifier);
+      if (dataRequest.source != isSource) {
+        return;
+      }
 
-    //   _identifierRequests.remove(identifier);
-    // });
+      for (MainDataSource otherDataSource in _dataSources) {
+        if (otherDataSource != dataSource) {
+          for (String otherDataSourceMethod in otherDataSource.identifiers) {
+            if (otherDataSourceMethod == identifier) {
+              return;
+            }
+          }
+        }
+      }
 
-    //TODO need to handle only requests for this source
+      _identifiers.remove(identifier);
+
+      _identifierRequests.remove(identifier);
+    });
   }
 
   /// Check if DataRequest has next page
@@ -221,6 +230,9 @@ abstract class AbstractSource {
 class MockUpOptions {}
 
 class MockUpSource extends AbstractSource {
+  @override
+  MainDataProviderSource get isSource => MainDataProviderSource.MockUp;
+
   final MockUpOptions _options;
 
   /// MockUpSource initialization
@@ -271,12 +283,17 @@ class HTTPClientOptions {
 }
 
 class HTTPSource extends AbstractSource {
+  @override
+  MainDataProviderSource get isSource => MainDataProviderSource.HTTPClient;
+
   final HTTPClientOptions _options;
 
   /// HTTPSource initialization
   HTTPSource({
     required HTTPClientOptions options,
-  }) : _options = options;
+  }) : _options = options {
+    state = ValueNotifier(MainDataProviderSourceState.Ready);
+  }
 
   /// Register the DataSource for data
   @override
@@ -323,6 +340,9 @@ class SQLiteOptions {
 }
 
 class SQLiteSource extends AbstractSource {
+  @override
+  MainDataProviderSource get isSource => MainDataProviderSource.SQLite;
+
   final SQLiteOptions _options;
   Database? _database;
 
