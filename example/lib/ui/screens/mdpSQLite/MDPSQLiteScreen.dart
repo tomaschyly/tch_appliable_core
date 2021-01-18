@@ -1,3 +1,5 @@
+import 'package:example/model/SQLiteRecord.dart';
+import 'package:example/model/dataRequests/GetSQLiteRecordsDataRequest.dart';
 import 'package:example/ui/screens/AbstractAppScreen.dart';
 import 'package:example/ui/screens/mdpSQLite/MDPSQLiteRecordScreen.dart';
 import 'package:flutter/material.dart';
@@ -60,18 +62,36 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
-    return Scrollbar(
-      child: SingleChildScrollView(
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          child: Column(
+    return ListDataWidget<GetSQLiteRecordsDataRequest, SQLiteRecord>(
+      dataRequest: GetSQLiteRecordsDataRequest(
+        <String, dynamic>{},
+      ),
+      processResult: (GetSQLiteRecordsDataRequest dataRequest) {
+        return dataRequest.result?.records;
+      },
+      buildItem: (BuildContext context, int position, SQLiteRecord item) {
+        return Container(
+          height: 48,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
             mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('Wip: MainDataProvider SQLlite example DataWidget'),
+              Text(item.name),
             ],
           ),
-        ),
+        );
+      },
+      buildLoadingItemWithGlobalKey: (BuildContext context, GlobalKey globalKey) {
+        return LoadingItemWidget(
+          containerKey: globalKey,
+          text: Text(tt('list.item.loading')),
+        );
+      },
+      emptyState: Container(
+        width: 576,
+        padding: const EdgeInsets.all(16),
+        child: Text(tt('list.empty')),
       ),
     );
   }

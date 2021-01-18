@@ -16,3 +16,6 @@ export 'package:tch_appliable_core/providers/mainDataProvider/DataRequest.dart';
 export 'package:tch_appliable_core/providers/mainDataProvider/DataTask.dart';
 export 'package:tch_appliable_core/model/DataModel.dart';
 export 'package:sqflite/sqflite.dart';
+
+export 'package:tch_appliable_core/ui/widgets/AbstractDataWidget.dart';
+export 'package:tch_appliable_core/ui/widgets/ListDataWidget.dart';

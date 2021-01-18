@@ -1,5 +1,7 @@
 {
   "home.screen.title": "Domov",
+  "list.empty": "Žiadne položky",
+  "list.item.loading": "Načítam...",
   "mdpsqlite.screen.title": "MDP SQLite",
   "mdpsqliterecord.screen.title": "MDP SQLite Záznam"
 }

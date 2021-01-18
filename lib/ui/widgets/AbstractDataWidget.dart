@@ -58,7 +58,7 @@ abstract class AbstractDataWidgetState<T extends AbstractDataWidget> extends Abs
     if (_dataRequests.isNotEmpty) {
       final bool isFirst = _dataSource == null;
 
-      // _dataSource = MainDataProvider.instance!.registerDataRequests(_dataRequests); //TODO
+      _dataSource = MainDataProvider.instance!.registerDataRequests(_dataRequests);
 
       if (isFirst) {
         WidgetsBinding.instance!.addPostFrameCallback((timeStamp) => setStateNotDisposed(() {}));
@@ -70,7 +70,7 @@ abstract class AbstractDataWidgetState<T extends AbstractDataWidget> extends Abs
   void _unRegisterDataRequests() {
     final dataSource = _dataSource;
     if (dataSource != null) {
-      // MainDataProvider.instance!.unRegisterDataRequests(dataSource); //TODO
+      MainDataProvider.instance!.unRegisterDataRequests(dataSource);
       _dataSource = null;
     }
   }

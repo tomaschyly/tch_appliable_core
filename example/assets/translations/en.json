@@ -1,5 +1,7 @@
 {
   "home.screen.title": "Home",
+  "list.empty": "There are no items here",
+  "list.item.loading": "Loading...",
   "mdpsqlite.screen.title": "MDP SQLite",
   "mdpsqliterecord.screen.title": "MDP SQLite Record"
 }

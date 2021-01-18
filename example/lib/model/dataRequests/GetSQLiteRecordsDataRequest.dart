@@ -1,13 +1,13 @@
-import 'package:example/model/SQLiteRecord.dart';
+import 'package:example/model/dataRequests/SQLiteRecords.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
-class GetSQLiteRecordsDataRequest extends DataRequest<SQLiteRecord> {
+class GetSQLiteRecordsDataRequest extends DataRequest<SQLiteRecords> {
   /// GetSQLiteRecordsDataRequest initialization
   GetSQLiteRecordsDataRequest(Map<String, dynamic> parameters)
       : super(
           source: MainDataProviderSource.SQLite,
-          method: SQLiteRecord.TABLE,
+          method: SQLiteRecords.TABLE,
           parameters: parameters,
-          processResult: (json) => SQLiteRecord.fromJson(json),
+          processResult: (json) => SQLiteRecords.fromJson(json),
         );
 }
