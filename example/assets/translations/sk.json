@@ -3,5 +3,8 @@
   "list.empty": "Žiadne položky",
   "list.item.loading": "Načítam...",
   "mdpsqlite.screen.title": "MDP SQLite",
+  "mdpsqliterecord.screen.description": "Popis",
+  "mdpsqliterecord.screen.name": "Názov",
+  "mdpsqliterecord.screen.name.error": "Názov je povinný",
   "mdpsqliterecord.screen.title": "MDP SQLite Záznam"
 }

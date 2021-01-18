@@ -3,5 +3,8 @@
   "list.empty": "There are no items here",
   "list.item.loading": "Loading...",
   "mdpsqlite.screen.title": "MDP SQLite",
+  "mdpsqliterecord.screen.description": "Description",
+  "mdpsqliterecord.screen.name": "Name",
+  "mdpsqliterecord.screen.name.error": "Name is required",
   "mdpsqliterecord.screen.title": "MDP SQLite Record"
 }
