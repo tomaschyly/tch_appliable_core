@@ -151,6 +151,29 @@ class MainDataProvider {
 
     return theSource.executeDataTask<T>(dataTask);
   }
+
+  /// Update the of MainDataSource based on state of sources used by it
+  void _updateMainDataSourceState(MainDataSource mainDataSource) {
+    final List<MainDataProviderSourceState> states = [];
+
+    mainDataSource.sources.forEach((MainDataProviderSource source) {
+      AbstractSource? theSource = _initialitedSource(source);
+
+      if (theSource == null) {
+        states.add(MainDataProviderSourceState.UnAvailable);
+      } else {
+        states.add(theSource.state.value);
+      }
+    });
+
+    if (states.contains(MainDataProviderSourceState.UnAvailable)) {
+      mainDataSource.state.value = MainDataProviderSourceState.UnAvailable;
+    } else if (states.contains(MainDataProviderSourceState.Connecting)) {
+      mainDataSource.state.value = MainDataProviderSourceState.Connecting;
+    } else {
+      mainDataSource.state.value = MainDataProviderSourceState.Ready;
+    }
+  }
 }
 
 enum MainDataProviderSourceState {
@@ -451,6 +474,8 @@ class SQLiteSource extends AbstractSource {
     _dataSources.add(dataSource);
 
     registerDataRequests(dataSource);
+
+    MainDataProvider.instance!._updateMainDataSourceState(dataSource);
 
     reFetchData(identifiers: dataSource.identifiers);
   }

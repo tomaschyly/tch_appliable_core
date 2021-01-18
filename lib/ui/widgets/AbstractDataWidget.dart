@@ -91,22 +91,46 @@ abstract class AbstractDataWidgetState<T extends AbstractDataWidget> extends Abs
       firstBuildOnly(context);
     }
 
-    //TODO ValueListenableBuilder but needs to listen to all registered sources state
+    if (_dataSource == null) {
+      return Builder(
+        builder: (BuildContext context) => buildContentUnAvailable(context),
+      );
+    }
 
-    return Builder(
-      builder: (BuildContext context) => buildContent(context),
+    return ValueListenableBuilder(
+      valueListenable: _dataSource!.state,
+      builder: (BuildContext context, MainDataProviderSourceState state, Widget? child) {
+        switch (state) {
+          case MainDataProviderSourceState.UnAvailable:
+            return buildContentUnAvailable(context);
+          case MainDataProviderSourceState.Ready:
+            return buildContent(context);
+          case MainDataProviderSourceState.Connecting:
+            return buildContentConnecting(context);
+        }
+      },
     );
   }
 
   /// Create screen content from widgets when at least one Request Source is unAvailable
   @protected
   Widget buildContentUnAvailable(BuildContext context) {
-    return Text('WIP: provider unavailable state'); //TODO default screen which can be then overridden in app
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Center(
+        child: Text('MainDataSource or provider source unAvailable'),
+      ),
+    );
   }
 
   /// Create screen content from widgets when at least one Request Source is Connecting
   @protected
   Widget buildContentConnecting(BuildContext context) {
-    return Text('WIP: provider connecting state'); //TODO default screen which can be then overridden in app
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Center(
+        child: Text('Provider source is connecting'),
+      ),
+    );
   }
 }

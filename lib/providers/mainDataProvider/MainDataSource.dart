@@ -4,6 +4,7 @@ import 'package:tch_appliable_core/providers/mainDataProvider/DataRequest.dart';
 import 'package:tch_appliable_core/utils/List.dart';
 
 class MainDataSource {
+  ValueNotifier<MainDataProviderSourceState> state = ValueNotifier(MainDataProviderSourceState.UnAvailable);
   ValueNotifier<List<DataRequest>> results;
 
   final List<DataRequest> _dataRequests;
