@@ -554,7 +554,14 @@ class SQLiteSource extends AbstractSource {
         dataTask.result = dataTask.processResult(<String, dynamic>{'id': id});
         break;
       case SQLiteType.Delete:
-        //TODO
+        final Map<String, dynamic> data = dataTask.data.toJson();
+
+        final int deleted = await delete(
+          dataTask.method,
+          data[options.idKey],
+        );
+
+        dataTask.result = dataTask.processResult(<String, dynamic>{'deleted': deleted});
         break;
     }
 
