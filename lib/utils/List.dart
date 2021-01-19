@@ -9,7 +9,7 @@ extension ListExtension<E> on List<E> {
   }
 
   /// Returns the last element that satisfies the given predicate or null
-  E? lastWhereOrNull(bool test(E element), {E orElse()?}) {
+  E? lastWhereOrNull(bool test(E element)) {
     try {
       late E result;
       bool foundMatching = false;
@@ -20,7 +20,6 @@ extension ListExtension<E> on List<E> {
         }
       }
       if (foundMatching) return result;
-      if (orElse != null) return orElse();
       throw new StateError("No element");
     } catch (e) {
       return null;

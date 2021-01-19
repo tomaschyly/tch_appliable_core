@@ -132,7 +132,7 @@ class MainDataProvider {
   }
 
   /// Async execute one time DataTask using initialized source
-  Future<T> executeDataTask<T extends DataModel>(DataTask dataTask) {
+  Future<T> executeDataTask<T extends DataTask>(T dataTask) {
     AbstractSource? theSource;
 
     if (dataTask.options is MockUpTaskOptions) {
@@ -247,7 +247,7 @@ abstract class AbstractSource {
   dataRequestLoadNextPage(DataRequest dataRequest);
 
   /// Execute one time DataTask against the source
-  Future<T> executeDataTask<T extends DataModel>(DataTask dataTask);
+  Future<T> executeDataTask<T extends DataTask>(T dataTask);
 }
 
 class MockUpOptions {}
@@ -291,7 +291,7 @@ class MockUpSource extends AbstractSource {
 
   /// Execute one time DataTask against the source
   @override
-  Future<T> executeDataTask<T extends DataModel>(DataTask dataTask) {
+  Future<T> executeDataTask<T extends DataTask>(T dataTask) {
     throw Exception('MockUpSource is not implemented');
   }
 }
@@ -344,7 +344,7 @@ class HTTPSource extends AbstractSource {
 
   /// Execute one time DataTask against the source
   @override
-  Future<T> executeDataTask<T extends DataModel>(DataTask dataTask) {
+  Future<T> executeDataTask<T extends DataTask>(T dataTask) {
     throw Exception('HTTPSource is not implemented');
   }
 }
@@ -538,7 +538,30 @@ class SQLiteSource extends AbstractSource {
 
   /// Execute one time DataTask against the source
   @override
-  Future<T> executeDataTask<T extends DataModel>(DataTask dataTask) {
-    throw Exception('SQLiteSource is not implemented');
+  Future<T> executeDataTask<T extends DataTask>(T dataTask) async {
+    final options = dataTask.options as SQLiteTaskOptions;
+
+    switch (options.type) {
+      case SQLiteType.Save:
+        final Map<String, dynamic> data = dataTask.data.toJson();
+
+        final int id = await save(
+          dataTask.method,
+          data,
+          id: data[options.idKey],
+        );
+
+        dataTask.result = dataTask.processResult(<String, dynamic>{'id': id});
+        break;
+      case SQLiteType.Delete:
+        //TODO
+        break;
+    }
+
+    if (dataTask.reFetchMethods != null) {
+      await reFetchData(methods: dataTask.reFetchMethods);
+    }
+
+    return dataTask;
   }
 }

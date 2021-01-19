@@ -1,3 +1,4 @@
+import 'package:http/http.dart';
 import 'package:tch_appliable_core/model/DataModel.dart';
 
 abstract class DataTaskOptions {}
@@ -20,17 +21,36 @@ class HTTPTaskOptions extends DataTaskOptions {
   });
 }
 
-class SQLiteTaskOptions extends DataTaskOptions {}
+enum SQLiteType {
+  Save,
+  Delete,
+}
 
-class DataTask {
+class SQLiteTaskOptions extends DataTaskOptions {
+  final SQLiteType type;
+  final String idKey;
+
+  /// SQLiteTaskOptions initialization
+  SQLiteTaskOptions({
+    required this.type,
+    this.idKey = 'id',
+  });
+}
+
+class DataTask<T extends DataModel, R extends DataModel> {
+  final String method;
   final DataTaskOptions options;
-  final Map<String, dynamic> data;
+  final DataModel data;
+  final R Function(Map<String, dynamic> json) processResult;
+  R? result;
   final List<String>? reFetchMethods;
 
   /// DataTask initialization
   DataTask({
+    required this.method,
     required this.options,
-    DataModel? data,
+    required this.data,
+    required this.processResult,
     this.reFetchMethods,
-  }) : this.data = data?.toJson() ?? Map();
+  });
 }
