@@ -1,5 +1,6 @@
 import 'package:example/model/SQLiteRecord.dart';
 import 'package:example/model/dataRequests/GetSQLiteRecordsDataRequest.dart';
+import 'package:example/model/dataTasks/DeleteSQLiteRecordDataTask.dart';
 import 'package:example/ui/screens/AbstractAppScreen.dart';
 import 'package:example/ui/screens/mdpSQLite/MDPSQLiteRecordScreen.dart';
 import 'package:flutter/material.dart';
@@ -70,15 +71,23 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
         return dataRequest.result?.records;
       },
       buildItem: (BuildContext context, int position, SQLiteRecord item) {
-        return Container(
-          height: 48,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(item.name),
-            ],
+        return Material(
+          color: Colors.transparent,
+          child: InkWell(
+            child: Container(
+              height: 48,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(item.name),
+                ],
+              ),
+            ),
+            onLongPress: () {
+              _deleteRecord(item);
+            },
           ),
         );
       },
@@ -92,6 +101,15 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
         width: 576,
         padding: const EdgeInsets.all(16),
         child: Text(tt('list.empty')),
+      ),
+    );
+  }
+
+  /// Delete selected Record from DB
+  Future<void> _deleteRecord(SQLiteRecord record) {
+    return MainDataProvider.instance!.executeDataTask<DeleteSQLiteRecordDataTask>(
+      DeleteSQLiteRecordDataTask(
+        data: record,
       ),
     );
   }
