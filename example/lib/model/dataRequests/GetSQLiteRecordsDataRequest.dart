@@ -1,4 +1,4 @@
-import 'package:example/model/dataRequests/SQLiteRecords.dart';
+import 'package:example/model/SQLiteRecords.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class GetSQLiteRecordsDataRequest extends DataRequest<SQLiteRecords> {

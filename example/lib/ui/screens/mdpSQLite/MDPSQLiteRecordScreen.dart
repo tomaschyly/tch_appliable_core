@@ -1,3 +1,6 @@
+import 'package:example/model/SQLiteRecord.dart';
+import 'package:example/model/SQLiteResult.dart';
+import 'package:example/model/dataTasks/SaveSQLiteRecordDataTask.dart';
 import 'package:example/ui/screens/AbstractAppScreen.dart';
 import 'package:example/ui/widgets/TextFormFieldWidget.dart';
 import 'package:flutter/material.dart';
@@ -126,7 +129,23 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
     FocusScope.of(context).unfocus();
 
     if (_formKey.currentState?.validate() == true) {
-      //TODO
+      final now = DateTime.now();
+
+      final SQLiteRecord record = SQLiteRecord.fromJson(<String, dynamic>{
+        SQLiteRecord.COL_NAME: _nameController.text,
+        SQLiteRecord.COL_DESCRIPTION: _descriptionController.text,
+        SQLiteRecord.COL_CREATED: now.millisecondsSinceEpoch,
+      });
+
+      final SaveSQLiteRecordDataTask result = await MainDataProvider.instance!.executeDataTask<SaveSQLiteRecordDataTask>(
+        SaveSQLiteRecordDataTask(
+          data: record,
+        ),
+      );
+
+      if (result.result?.id != null) {
+        popNotDisposed(context, mounted);
+      }
     }
   }
 }
