@@ -1,4 +1,4 @@
-## [0.1.0] - 20.1.2021
+## [0.1.0-dev.1] - 20.1.2021
 
 * Initial release
 * Working CoreApp with Widgets & Screens
