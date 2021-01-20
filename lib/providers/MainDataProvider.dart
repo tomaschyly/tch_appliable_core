@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:tch_appliable_core/model/DataModel.dart';
 import 'package:tch_appliable_core/providers/mainDataProvider/DataRequest.dart';
@@ -344,8 +347,56 @@ class HTTPSource extends AbstractSource {
 
   /// Execute one time DataTask against the source
   @override
-  Future<T> executeDataTask<T extends DataTask>(T dataTask) {
-    throw Exception('HTTPSource is not implemented');
+  Future<T> executeDataTask<T extends DataTask>(T dataTask) async {
+    final options = dataTask.options as HTTPTaskOptions;
+
+    final String hostUrl = _options.hostUrl;
+    final Map<String, dynamic> data = dataTask.data.toJson();
+
+    switch (options.type) {
+      case HTTPType.Get:
+        final List<String> values = [];
+        data.forEach((key, value) {
+          values.add('$key=$value');
+        });
+
+        final String url = '$hostUrl?${values.join('&')}';
+
+        final Response response = await get(
+          url,
+          headers: options.headers,
+        );
+
+        if (options.processBody != null) {
+          final result = options.processBody!(response.body);
+
+          dataTask.result = dataTask.processResult(result);
+        } else {
+          dataTask.result = dataTask.processResult(jsonDecode(response.body));
+        }
+        break;
+      case HTTPType.Post:
+        final Response response = await post(
+          hostUrl,
+          headers: options.headers,
+          body: data,
+        );
+
+        if (options.processBody != null) {
+          final result = options.processBody!(response.body);
+
+          dataTask.result = dataTask.processResult(result);
+        } else {
+          dataTask.result = dataTask.processResult(jsonDecode(response.body));
+        }
+        break;
+    }
+
+    if (dataTask.reFetchMethods != null) {
+      // await reFetchData(methods: dataTask.reFetchMethods); //TODO
+    }
+
+    return dataTask;
   }
 }
 
@@ -541,10 +592,10 @@ class SQLiteSource extends AbstractSource {
   Future<T> executeDataTask<T extends DataTask>(T dataTask) async {
     final options = dataTask.options as SQLiteTaskOptions;
 
+    final Map<String, dynamic> data = dataTask.data.toJson();
+
     switch (options.type) {
       case SQLiteType.Save:
-        final Map<String, dynamic> data = dataTask.data.toJson();
-
         final int id = await save(
           dataTask.method,
           data,
@@ -554,8 +605,6 @@ class SQLiteSource extends AbstractSource {
         dataTask.result = dataTask.processResult(<String, dynamic>{'id': id});
         break;
       case SQLiteType.Delete:
-        final Map<String, dynamic> data = dataTask.data.toJson();
-
         final int deleted = await delete(
           dataTask.method,
           data[options.idKey],
