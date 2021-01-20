@@ -1,3 +1,8 @@
-## [0.0.1] - TODO: Add release date.
+## [0.1.0] - 20.1.2021
 
-* TODO: Describe initial release.
+* Initial release
+* Working CoreApp with Widgets & Screens
+* Router
+* Translator
+* Preferences
+* MainDataProvider partially working (SQLite done, HTTPClient partial, others todo)
