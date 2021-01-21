@@ -1,3 +1,7 @@
+## [0.1.0-dev.2] - 21.1.2021
+
+* More CoreApp initialization options
+
 ## [0.1.0-dev.1] - 20.1.2021
 
 * Initial release

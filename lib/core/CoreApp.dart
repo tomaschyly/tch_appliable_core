@@ -11,10 +11,13 @@ class CoreApp extends AbstractStatefulWidget {
   final String title;
   final Widget initializationUi;
   final int initializationMinDurationInMilliseconds;
+  final Future<void> Function(BuildContext context)? onAppInitStart;
+  final Future<void> Function(BuildContext context)? onAppInitEnd;
   final String initialScreenRoute;
   final RouteFactory onGenerateRoute;
   final AbstractAppDataStateSnapshot snapshot;
   final List<NavigatorObserver>? navigatorObservers;
+  final ThemeData? theme;
   final TranslatorOptions? translatorOptions;
   final PreferencesOptions? preferencesOptions;
   final MainDataProviderOptions? mainDataProviderOptions;
@@ -24,10 +27,13 @@ class CoreApp extends AbstractStatefulWidget {
     required this.title,
     required this.initializationUi,
     this.initializationMinDurationInMilliseconds = 0,
+    this.onAppInitStart,
+    this.onAppInitEnd,
     required this.initialScreenRoute,
     required this.onGenerateRoute,
     required this.snapshot,
     this.navigatorObservers,
+    this.theme,
     this.translatorOptions,
     this.preferencesOptions,
     this.mainDataProviderOptions,
@@ -66,6 +72,8 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> {
         home: _InitializationScreen(
           initializationUi: widget.initializationUi,
           initializationMinDurationInMilliseconds: widget.initializationMinDurationInMilliseconds,
+          onAppInitStart: widget.onAppInitStart,
+          onAppInitEnd: widget.onAppInitEnd,
           initialScreenRoute: widget.initialScreenRoute,
           translatorOptions: widget.translatorOptions,
           preferencesOptions: widget.preferencesOptions,
@@ -76,6 +84,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> {
           routeObserver,
           if (theNavigatorObservers != null) ...theNavigatorObservers,
         ],
+        theme: widget.theme,
         builder: (BuildContext context, Widget? child) {
           WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
             determineScreen(context);
@@ -139,6 +148,8 @@ class _InitializationScreen extends StatelessWidget {
 
   final Widget initializationUi;
   final int initializationMinDurationInMilliseconds;
+  final Future<void> Function(BuildContext context)? onAppInitStart;
+  final Future<void> Function(BuildContext context)? onAppInitEnd;
   final String initialScreenRoute;
   final TranslatorOptions? translatorOptions;
   final PreferencesOptions? preferencesOptions;
@@ -148,6 +159,8 @@ class _InitializationScreen extends StatelessWidget {
   _InitializationScreen({
     required this.initializationUi,
     required this.initializationMinDurationInMilliseconds,
+    this.onAppInitStart,
+    this.onAppInitEnd,
     required this.initialScreenRoute,
     this.translatorOptions,
     this.preferencesOptions,
@@ -175,6 +188,10 @@ class _InitializationScreen extends StatelessWidget {
     if (!wasInitialized) {
       final start = DateTime.now();
 
+      if (onAppInitStart != null) {
+        await onAppInitStart!(context);
+      }
+
       final thePreferencesOptions = preferencesOptions;
       if (thePreferencesOptions != null) {
         final preferences = Preferences(options: thePreferencesOptions);
@@ -192,6 +209,10 @@ class _InitializationScreen extends StatelessWidget {
       final theMainDataProviderOptions = mainDataProviderOptions;
       if (theMainDataProviderOptions != null) {
         MainDataProvider(options: theMainDataProviderOptions);
+      }
+
+      if (onAppInitEnd != null) {
+        await onAppInitEnd!(context);
       }
 
       final diff = DateTime.now().difference(start);
