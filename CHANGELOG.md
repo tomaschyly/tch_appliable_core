@@ -1,3 +1,7 @@
+## [0.1.0-dev.3] - 21.1.2021
+
+* DataRequest processResult allow nullable result
+
 ## [0.1.0-dev.2] - 21.1.2021
 
 * More CoreApp initialization options

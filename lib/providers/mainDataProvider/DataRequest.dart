@@ -19,7 +19,7 @@ class DataRequest<T extends DataModel> {
   final MainDataProviderSource source;
   final String method;
   final Map<String, dynamic> parameters;
-  final T Function(Map<String, dynamic> json) processResult;
+  final T? Function(Map<String, dynamic> json) processResult;
   T? result;
 
   /// DataRequest initialization
