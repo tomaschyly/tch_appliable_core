@@ -1,7 +1,6 @@
 import 'package:example/ui/screens/AbstractAppScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
-import 'package:tch_appliable_core/ui/widgets/AbstractStatefulWidget.dart';
 
 class HomeScreen extends AbstractAppScreen {
   static const String ROUTE = "/home";

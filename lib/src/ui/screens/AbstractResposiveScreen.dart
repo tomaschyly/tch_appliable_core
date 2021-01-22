@@ -1,23 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:tch_appliable_core/core/CoreApp.dart';
-import 'package:tch_appliable_core/ui/widgets/AbstractStatefulWidget.dart';
+import 'package:tch_appliable_core/src/core/CoreApp.dart';
+import 'package:tch_appliable_core/src/ui/screens/AbstractScreen.dart';
+import 'package:tch_appliable_core/src/ui/widgets/AbstractResponsiveWidget.dart';
 
-enum ResponsiveScreen {
-  UnDetermined,
-  SmallPhone,
-  LargePhone,
-  Tablet,
-  SmallDesktop,
-  LargeDesktop,
-  ExtraLargeDesktop,
-}
+abstract class AbstractResposiveScreen extends AbstractScreen {}
 
-abstract class AbstractResponsiveWidget extends AbstractStatefulWidget {
-  /// AbstractResponsiveWidget initialization
-  AbstractResponsiveWidget({Key? key}) : super(key: key);
-}
-
-abstract class AbstractResponsiveWidgetState<T extends AbstractResponsiveWidget> extends AbstractStatefulWidgetState<T> {
+abstract class AbstractResposiveScreenState<T extends AbstractResposiveScreen> extends AbstractScreenState<T> {
   /// Create view layout from widgets for phone screens (< 576px)
   @protected
   Widget smallPhoneScreen(BuildContext context);

@@ -1,5 +1,5 @@
-import 'package:tch_appliable_core/model/DataModel.dart';
-import 'package:tch_appliable_core/providers/MainDataProvider.dart';
+import 'package:tch_appliable_core/src/model/DataModel.dart';
+import 'package:tch_appliable_core/src/providers/MainDataProvider.dart';
 
 class DataRequest<T extends DataModel> {
   String get identifier {

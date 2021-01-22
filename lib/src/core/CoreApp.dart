@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:tch_appliable_core/core/Preferences.dart';
-import 'package:tch_appliable_core/core/RouterV1.dart';
-import 'package:tch_appliable_core/core/Translator.dart';
-import 'package:tch_appliable_core/providers/MainDataProvider.dart';
-import 'package:tch_appliable_core/ui/widgets/AbstractResponsiveWidget.dart';
-import 'package:tch_appliable_core/ui/widgets/AbstractStatefulWidget.dart';
+import 'package:tch_appliable_core/src/core/Preferences.dart';
+import 'package:tch_appliable_core/src/core/RouterV1.dart';
+import 'package:tch_appliable_core/src/core/Translator.dart';
+import 'package:tch_appliable_core/src/providers/MainDataProvider.dart';
+import 'package:tch_appliable_core/src/ui/widgets/AbstractResponsiveWidget.dart';
+import 'package:tch_appliable_core/src/ui/widgets/AbstractStatefulWidget.dart';
 
 class CoreApp extends AbstractStatefulWidget {
   final String title;

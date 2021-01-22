@@ -1,5 +1,4 @@
-import 'package:http/http.dart';
-import 'package:tch_appliable_core/model/DataModel.dart';
+import 'package:tch_appliable_core/src/model/DataModel.dart';
 
 abstract class DataTaskOptions {}
 

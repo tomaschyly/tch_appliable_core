@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:tch_appliable_core/core/router/FadeAnimationPageRoute.dart';
-import 'package:tch_appliable_core/core/router/NoAnimationPageRoute.dart';
+import 'package:tch_appliable_core/src/core/router/FadeAnimationPageRoute.dart';
+import 'package:tch_appliable_core/src/core/router/NoAnimationPageRoute.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
@@ -85,11 +85,11 @@ Future<T?> pushNamed<T extends Object>(BuildContext context, String routeName, {
 
 /// Push named route to stack & clear all others
 Future<T?> pushNamedNewStack<T extends Object>(
-    BuildContext context,
-    String routeName, {
-      Map<String, String>? arguments,
-      RoutePredicate? predicate,
-    }) {
+  BuildContext context,
+  String routeName, {
+  Map<String, String>? arguments,
+  RoutePredicate? predicate,
+}) {
   if (arguments != null) {
     routeName = Uri(path: routeName, queryParameters: arguments).toString();
   }

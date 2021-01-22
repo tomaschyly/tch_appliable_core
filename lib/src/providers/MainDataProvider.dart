@@ -3,10 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:tch_appliable_core/model/DataModel.dart';
-import 'package:tch_appliable_core/providers/mainDataProvider/DataRequest.dart';
-import 'package:tch_appliable_core/providers/mainDataProvider/DataTask.dart';
-import 'package:tch_appliable_core/providers/mainDataProvider/MainDataSource.dart';
+import 'package:tch_appliable_core/src/providers/mainDataProvider/DataRequest.dart';
+import 'package:tch_appliable_core/src/providers/mainDataProvider/DataTask.dart';
+import 'package:tch_appliable_core/src/providers/mainDataProvider/MainDataSource.dart';
 import 'package:tch_appliable_core/utils/List.dart';
 
 enum MainDataProviderSource {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tch_appliable_core/providers/MainDataProvider.dart';
-import 'package:tch_appliable_core/providers/mainDataProvider/DataRequest.dart';
+import 'package:tch_appliable_core/src/providers/MainDataProvider.dart';
+import 'package:tch_appliable_core/src/providers/mainDataProvider/DataRequest.dart';
 import 'package:tch_appliable_core/utils/List.dart';
 
 class MainDataSource {

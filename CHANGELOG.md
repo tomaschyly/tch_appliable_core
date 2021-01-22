@@ -1,3 +1,7 @@
+## [0.1.0-dev.4] - 22.1.2021
+
+* Reorganize code into private/public for better autoImport experience
+
 ## [0.1.0-dev.3] - 21.1.2021
 
 * DataRequest processResult allow nullable result

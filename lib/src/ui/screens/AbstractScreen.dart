@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tch_appliable_core/core/RouterV1.dart';
-import 'package:tch_appliable_core/ui/widgets/AbstractStatefulWidget.dart';
-import 'package:tch_appliable_core/ui/widgets/ScreenMessengerWidget.dart';
+import 'package:tch_appliable_core/src/core/RouterV1.dart';
+import 'package:tch_appliable_core/src/ui/widgets/AbstractStatefulWidget.dart';
+import 'package:tch_appliable_core/src/ui/widgets/ScreenMessengerWidget.dart';
 
 class AbstractScreenStateOptions {
   String screenName;
