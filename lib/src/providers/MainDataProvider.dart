@@ -594,6 +594,18 @@ class SQLiteSource extends AbstractSource {
     final Map<String, dynamic> data = dataTask.data.toJson();
 
     switch (options.type) {
+      case SQLiteType.Query:
+        final List<Map<String, dynamic>> results = await query(
+          dataTask.method,
+          data,
+          rawQuery: options.rawQuery,
+          rawArguments: options.rawArguments,
+        );
+
+        dataTask.result = dataTask.processResult(<String, dynamic>{
+          'list': results,
+        });
+        break;
       case SQLiteType.Save:
         final int id = await save(
           dataTask.method,

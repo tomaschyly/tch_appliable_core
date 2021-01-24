@@ -1,3 +1,7 @@
+## [0.1.0-dev.5] - 24.1.2021
+
+* SQLiteSource execute DataTask supports one time queries
+
 ## [0.1.0-dev.4] - 22.1.2021
 
 * Reorganize code into private/public for better autoImport experience

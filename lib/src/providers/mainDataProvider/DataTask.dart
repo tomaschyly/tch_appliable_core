@@ -23,6 +23,7 @@ class HTTPTaskOptions extends DataTaskOptions {
 }
 
 enum SQLiteType {
+  Query,
   Save,
   Delete,
 }
@@ -30,11 +31,15 @@ enum SQLiteType {
 class SQLiteTaskOptions extends DataTaskOptions {
   final SQLiteType type;
   final String idKey;
+  final String? rawQuery;
+  final List<dynamic>? rawArguments;
 
   /// SQLiteTaskOptions initialization
   SQLiteTaskOptions({
     required this.type,
     this.idKey = 'id',
+    this.rawQuery,
+    this.rawArguments,
   });
 }
 
