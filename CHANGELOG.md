@@ -1,3 +1,7 @@
+## [0.1.0-dev.6] - 24.1.2021
+
+* DataTask processResult allow nullable result
+
 ## [0.1.0-dev.5] - 24.1.2021
 
 * SQLiteSource execute DataTask supports one time queries

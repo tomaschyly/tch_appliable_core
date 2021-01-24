@@ -47,7 +47,7 @@ class DataTask<T extends DataModel, R extends DataModel> {
   final String method;
   final DataTaskOptions options;
   final DataModel data;
-  final R Function(Map<String, dynamic> json) processResult;
+  final R? Function(Map<String, dynamic> json) processResult;
   R? result;
   final List<String>? reFetchMethods;
 
