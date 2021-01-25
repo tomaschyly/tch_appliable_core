@@ -1,3 +1,7 @@
+## [0.1.0-dev.7] - 25.1.2021
+
+* ReFetch data for any initialized source from app
+
 ## [0.1.0-dev.6] - 24.1.2021
 
 * DataTask processResult allow nullable result

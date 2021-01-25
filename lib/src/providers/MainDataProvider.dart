@@ -154,6 +154,17 @@ class MainDataProvider {
     return theSource.executeDataTask<T>(dataTask);
   }
 
+  /// ReFetch data for DataRequest of initialized source based on methods or identifiers
+  Future<void> reFetchData(MainDataProviderSource source, {List<String>? methods, List<String>? identifiers}) {
+    AbstractSource? theSource = _initialitedSource(source);
+
+    if (theSource == null) {
+      throw Exception('Cannot reFetchData for not initialized source $source');
+    }
+
+    return theSource.reFetchData(methods: methods, identifiers: identifiers);
+  }
+
   /// Update the of MainDataSource based on state of sources used by it
   void _updateMainDataSourceState(MainDataSource mainDataSource) {
     final List<MainDataProviderSourceState> states = [];
@@ -250,6 +261,9 @@ abstract class AbstractSource {
 
   /// Execute one time DataTask against the source
   Future<T> executeDataTask<T extends DataTask>(T dataTask);
+
+  /// ReFetch data for DataRequest based on methods or identifiers
+  Future<void> reFetchData({List<String>? methods, List<String>? identifiers});
 }
 
 class MockUpOptions {}
@@ -294,6 +308,12 @@ class MockUpSource extends AbstractSource {
   /// Execute one time DataTask against the source
   @override
   Future<T> executeDataTask<T extends DataTask>(T dataTask) {
+    throw Exception('MockUpSource is not implemented');
+  }
+
+  /// ReFetch data for DataRequest based on methods or identifiers
+  @override
+  Future<void> reFetchData({List<String>? methods, List<String>? identifiers}) {
     throw Exception('MockUpSource is not implemented');
   }
 }
@@ -396,6 +416,12 @@ class HTTPSource extends AbstractSource {
     }
 
     return dataTask;
+  }
+
+  /// ReFetch data for DataRequest based on methods or identifiers
+  @override
+  Future<void> reFetchData({List<String>? methods, List<String>? identifiers}) {
+    throw Exception('HTTPSource is not implemented');
   }
 }
 
@@ -538,42 +564,6 @@ class SQLiteSource extends AbstractSource {
     _dataSources.remove(dataSource);
   }
 
-  /// ReFetch data for DataRequest based on methods or identifiers
-  Future<void> reFetchData({List<String>? methods, List<String>? identifiers}) async {
-    if (methods == null && identifiers == null) {
-      throw Exception('Provide either methods or identifiers');
-    }
-
-    if (methods != null) {
-      final List<String> identifiers = List.empty(growable: true);
-
-      for (String method in methods) {
-        for (MainDataSource dataSource in _dataSources) {
-          final DataRequest? dataRequest = dataSource.requestForMethod(method);
-
-          if (dataRequest != null && !identifiers.contains(dataRequest.identifier)) {
-            identifiers.add(dataRequest.identifier);
-          }
-        }
-      }
-
-      await reFetchData(identifiers: identifiers);
-    }
-
-    if (identifiers != null) {
-      for (String identifier in identifiers) {
-        for (MainDataSource dataSource in _dataSources) {
-          final DataRequest? dataRequest = dataSource.requestForIdentifier(identifier);
-
-          if (dataRequest != null) {
-            await _queryDataUpdate(dataRequest);
-            break;
-          }
-        }
-      }
-    }
-  }
-
   /// Check if DataRequest has next page
   @override
   bool dataRequestHasNextPage(DataRequest dataRequest) {
@@ -630,5 +620,42 @@ class SQLiteSource extends AbstractSource {
     }
 
     return dataTask;
+  }
+
+  /// ReFetch data for DataRequest based on methods or identifiers
+  @override
+  Future<void> reFetchData({List<String>? methods, List<String>? identifiers}) async {
+    if (methods == null && identifiers == null) {
+      throw Exception('Provide either methods or identifiers');
+    }
+
+    if (methods != null) {
+      final List<String> identifiers = List.empty(growable: true);
+
+      for (String method in methods) {
+        for (MainDataSource dataSource in _dataSources) {
+          final DataRequest? dataRequest = dataSource.requestForMethod(method);
+
+          if (dataRequest != null && !identifiers.contains(dataRequest.identifier)) {
+            identifiers.add(dataRequest.identifier);
+          }
+        }
+      }
+
+      await reFetchData(identifiers: identifiers);
+    }
+
+    if (identifiers != null) {
+      for (String identifier in identifiers) {
+        for (MainDataSource dataSource in _dataSources) {
+          final DataRequest? dataRequest = dataSource.requestForIdentifier(identifier);
+
+          if (dataRequest != null) {
+            await _queryDataUpdate(dataRequest);
+            break;
+          }
+        }
+      }
+    }
   }
 }
