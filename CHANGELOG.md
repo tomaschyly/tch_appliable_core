@@ -1,3 +1,7 @@
+## [0.1.0-dev.8] - 27.1.2021
+
+* SQLiteSource allow DataTasks with raw queries
+
 ## [0.1.0-dev.7] - 25.1.2021
 
 * ReFetch data for any initialized source from app

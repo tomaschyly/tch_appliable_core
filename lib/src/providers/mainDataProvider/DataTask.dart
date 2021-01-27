@@ -23,6 +23,7 @@ class HTTPTaskOptions extends DataTaskOptions {
 }
 
 enum SQLiteType {
+  Raw,
   Query,
   Save,
   Delete,
