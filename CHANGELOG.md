@@ -1,3 +1,7 @@
+## [0.1.0-dev.9] - 29.1.2021
+
+* Add useful text utils
+
 ## [0.1.0-dev.8] - 27.1.2021
 
 * SQLiteSource allow DataTasks with raw queries
