@@ -67,7 +67,7 @@ class Translator {
   }
 
   /// Translate string to current Language
-  String translate(String text) => _currentTranslations[text] != null ? _htmlUnescape.convert(_currentTranslations[text]) : text;
+  String translate(String text) => _currentTranslations[text] != null ? _htmlUnescape.convert(_currentTranslations[text]!) : text;
 
   /// Change current to new Language if supported in options
   void changeLanguage(String language) {

@@ -13,7 +13,7 @@ Future<Directory> getImagesDirectoryPath() async {
     return theImagesDirectory;
   }
 
-  final Directory directory = await getApplicationSupportDirectory();
+  final Directory directory = (await getApplicationSupportDirectory())!; //TODO should validate
 
   final Directory imagesDirectory = Directory(join(directory.path, 'images'));
 

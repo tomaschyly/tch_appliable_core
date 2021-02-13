@@ -1,3 +1,7 @@
+## [0.1.0-dev.10] - 13.2.2021
+
+* Update dependencies which were possible to update without conflicts
+
 ## [0.1.0-dev.9] - 29.1.2021
 
 * Add useful text utils
