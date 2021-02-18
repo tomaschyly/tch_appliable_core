@@ -71,6 +71,8 @@ abstract class AbstractDataWidgetState<T extends AbstractDataWidget> extends Abs
     final dataSource = _dataSource;
     if (dataSource != null) {
       MainDataProvider.instance!.unRegisterDataRequests(dataSource);
+
+      dataSource.dispose();
       _dataSource = null;
     }
   }

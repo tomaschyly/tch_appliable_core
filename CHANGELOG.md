@@ -1,3 +1,7 @@
+## [0.1.0-dev.11] - 18.2.2021
+
+* Dispose of ValueNotifiers used by MainDataSources
+
 ## [0.1.0-dev.10] - 13.2.2021
 
 * Update dependencies which were possible to update without conflicts

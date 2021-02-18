@@ -14,6 +14,12 @@ class MainDataSource {
       : assert(_dataRequests.isNotEmpty),
         results = ValueNotifier(_dataRequests);
 
+  /// Manually dispose of resources
+  void dispose() {
+    state.dispose();
+    results.dispose();
+  }
+
   /// Get list of identifiers by DataRequests
   List<String> get identifiers => _dataRequests.map((dataRequest) => dataRequest.identifier).toList();
 
