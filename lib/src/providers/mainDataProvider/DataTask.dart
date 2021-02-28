@@ -11,12 +11,14 @@ enum HTTPType {
 
 class HTTPTaskOptions extends DataTaskOptions {
   final HTTPType type;
+  final String? url;
   final Map<String, String>? headers;
   final Map<String, dynamic> Function(String body)? processBody;
 
   /// HTTPTaskOptions initialization
   HTTPTaskOptions({
     required this.type,
+    this.url,
     this.headers,
     this.processBody,
   });

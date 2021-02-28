@@ -369,7 +369,7 @@ class HTTPSource extends AbstractSource {
   Future<T> executeDataTask<T extends DataTask>(T dataTask) async {
     final options = dataTask.options as HTTPTaskOptions;
 
-    final String hostUrl = _options.hostUrl;
+    final String hostUrl = options.url ?? _options.hostUrl;
     final Map<String, dynamic> data = dataTask.data.toJson();
 
     switch (options.type) {

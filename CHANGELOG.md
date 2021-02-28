@@ -1,3 +1,7 @@
+## [0.1.0-dev.12] - 28.2.2021
+
+* DataTask for HTTPSource give option to override used url
+
 ## [0.1.0-dev.11] - 18.2.2021
 
 * Dispose of ValueNotifiers used by MainDataSources
