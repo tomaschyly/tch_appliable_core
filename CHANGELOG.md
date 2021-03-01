@@ -1,3 +1,7 @@
+## [0.1.0-dev.14] - 1.3.2021
+
+* HTTPSource do not crash app on no network error
+
 ## [0.1.0-dev.13] - 1.3.2021
 
 * Translator get initial language fun

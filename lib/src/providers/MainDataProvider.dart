@@ -381,32 +381,44 @@ class HTTPSource extends AbstractSource {
 
         final String url = '$hostUrl?${values.join('&')}';
 
-        final Response response = await get(
-          url,
-          headers: options.headers,
-        );
+        try {
+          final Response response = await get(
+            url,
+            headers: options.headers,
+          );
 
-        if (options.processBody != null) {
-          final result = options.processBody!(response.body);
+          if (options.processBody != null) {
+            final result = options.processBody!(response.body);
 
-          dataTask.result = dataTask.processResult(result);
-        } else {
-          dataTask.result = dataTask.processResult(jsonDecode(response.body));
+            dataTask.result = dataTask.processResult(result);
+          } else {
+            dataTask.result = dataTask.processResult(jsonDecode(response.body));
+          }
+        } catch (e) {
+          debugPrint('HTTPSource.executeDataTask error: $e');
+
+          dataTask.result = null;
         }
         break;
       case HTTPType.Post:
-        final Response response = await post(
-          hostUrl,
-          headers: options.headers,
-          body: data,
-        );
+        try {
+          final Response response = await post(
+            hostUrl,
+            headers: options.headers,
+            body: data,
+          );
 
-        if (options.processBody != null) {
-          final result = options.processBody!(response.body);
+          if (options.processBody != null) {
+            final result = options.processBody!(response.body);
 
-          dataTask.result = dataTask.processResult(result);
-        } else {
-          dataTask.result = dataTask.processResult(jsonDecode(response.body));
+            dataTask.result = dataTask.processResult(result);
+          } else {
+            dataTask.result = dataTask.processResult(jsonDecode(response.body));
+          }
+        } catch (e) {
+          debugPrint('HTTPSource.executeDataTask error: $e');
+
+          dataTask.result = null;
         }
         break;
     }
