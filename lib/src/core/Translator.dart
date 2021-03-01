@@ -8,12 +8,14 @@ import 'package:intl/intl.dart';
 class TranslatorOptions {
   final List<String> languages;
   final List<Locale> supportedLocales;
+  final Future<String?> Function(BuildContext context)? getInitialLanguage;
 
   /// TranslatorOptions initialization
   TranslatorOptions({
     required this.languages,
     required this.supportedLocales,
-  })   : assert(languages.isNotEmpty),
+    this.getInitialLanguage,
+  })  : assert(languages.isNotEmpty),
         assert(languages.length == supportedLocales.length);
 }
 
@@ -24,6 +26,8 @@ class Translator {
   static Translator? get instance => _instance;
 
   static Translator? _instance;
+
+  String get currentLanguage => _currentLanguage;
 
   final HtmlUnescape _htmlUnescape = HtmlUnescape();
   final TranslatorOptions _options;
@@ -39,6 +43,19 @@ class Translator {
 
   /// Initialize correct Language and translations for it
   Future init(BuildContext context) async {
+    final theGetInitialLanguage = _options.getInitialLanguage;
+    if (theGetInitialLanguage != null) {
+      final String? initialLanguage = await theGetInitialLanguage(context);
+
+      if (initialLanguage != null) {
+        _currentLanguage = langSupported(initialLanguage);
+
+        await initTranslations(context);
+
+        return;
+      }
+    }
+
     final Locale? locale = Localizations.localeOf(context);
 
     _currentLanguage = langSupported(locale?.languageCode ?? '');

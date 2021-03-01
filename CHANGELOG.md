@@ -1,3 +1,7 @@
+## [0.1.0-dev.13] - 1.3.2021
+
+* Translator get initial language fun
+
 ## [0.1.0-dev.12] - 28.2.2021
 
 * DataTask for HTTPSource give option to override used url
