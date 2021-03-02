@@ -1,3 +1,7 @@
+## [0.1.0-dev.15] - 2.3.2021
+
+* SQLiteSource add onUpgrade & onDowngrade to the options
+
 ## [0.1.0-dev.14] - 1.3.2021
 
 * HTTPSource do not crash app on no network error

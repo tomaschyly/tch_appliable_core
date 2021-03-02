@@ -441,12 +441,16 @@ class SQLiteOptions {
   final Future<String> Function() databasePath;
   final int version;
   final OnDatabaseCreateFn onCreate;
+  final OnDatabaseVersionChangeFn? onUpgrade;
+  final OnDatabaseVersionChangeFn? onDowngrade;
 
   /// SQLiteOptions initialization
   SQLiteOptions({
     required this.databasePath,
     required this.version,
     required this.onCreate,
+    this.onUpgrade,
+    this.onDowngrade,
   });
 }
 
@@ -473,6 +477,8 @@ class SQLiteSource extends AbstractSource {
         await _options.databasePath(),
         version: _options.version,
         onCreate: _options.onCreate,
+        onUpgrade: _options.onUpgrade,
+        onDowngrade: _options.onDowngrade,
       );
 
       _database = database;
