@@ -383,7 +383,7 @@ class HTTPSource extends AbstractSource {
 
         try {
           final Response response = await get(
-            url,
+            Uri.parse(url),
             headers: options.headers,
           );
 
@@ -403,7 +403,7 @@ class HTTPSource extends AbstractSource {
       case HTTPType.Post:
         try {
           final Response response = await post(
-            hostUrl,
+            Uri.parse(hostUrl),
             headers: options.headers,
             body: data,
           );

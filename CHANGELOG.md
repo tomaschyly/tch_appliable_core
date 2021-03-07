@@ -1,3 +1,7 @@
+## [0.2.0-dev.1] - 7.3.2021
+
+* Sound null-safety achieved
+
 ## [0.1.0-dev.15] - 2.3.2021
 
 * SQLiteSource add onUpgrade & onDowngrade to the options
