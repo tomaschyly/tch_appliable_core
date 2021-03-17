@@ -1,3 +1,7 @@
+## [0.2.1] - 17.3.2021
+
+* Change AppBar, BottomBar & Drawer to be more loosely defined
+
 ## [0.2.0] - 16.3.2021
 
 * Handle situation with RouterV1 when wrong type cast

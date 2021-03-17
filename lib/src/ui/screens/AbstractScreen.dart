@@ -78,15 +78,15 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
 
   /// Create default AppBar
   @protected
-  AppBar? createAppBar(BuildContext context);
+  PreferredSizeWidget? createAppBar(BuildContext context);
 
   /// Create default BottomNavigationBar
   @protected
-  BottomNavigationBar? createBottomBar(BuildContext context);
+  Widget? createBottomBar(BuildContext context);
 
   /// Create default Drawer
   @protected
-  Drawer? createDrawer(BuildContext context);
+  Widget? createDrawer(BuildContext context);
 
   /// If available show message for this screen
   @protected
