@@ -29,11 +29,11 @@ Route<dynamic> createRoute(WidgetBuilder builder, RouteSettings settings) {
     final arguments = settings.name?.routingArguments;
 
     if (arguments?['router-no-animation'] != null) {
-      return NoAnimationPageRoute(builder: builder, settings: settings);
+      return NoAnimationPageRoute<Object>(builder: builder, settings: settings);
     } else if (arguments?['router-fade-animation'] != null) {
-      return FadeAnimationPageRoute(builder: builder, settings: settings);
+      return FadeAnimationPageRoute<Object>(builder: builder, settings: settings);
     } else {
-      return MaterialPageRoute(builder: builder, settings: settings);
+      return MaterialPageRoute<Object>(builder: builder, settings: settings);
     }
   }
 }

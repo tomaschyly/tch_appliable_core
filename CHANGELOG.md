@@ -1,3 +1,7 @@
+## [0.2.0] - 16.3.2021
+
+* Handle situation with RouterV1 when wrong type cast
+
 ## [0.2.0-dev.1] - 7.3.2021
 
 * Sound null-safety achieved
