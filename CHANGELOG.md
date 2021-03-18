@@ -1,3 +1,7 @@
+## [0.2.2+1] - 18.3.2021
+
+* Add options for floating action button
+
 ## [0.2.2] - 18.3.2021
 
 * Add support for floating action button of screens
