@@ -1,3 +1,7 @@
+## [0.2.2] - 18.3.2021
+
+* Add support for floating action button of screens
+
 ## [0.2.1] - 17.3.2021
 
 * Change AppBar, BottomBar & Drawer to be more loosely defined

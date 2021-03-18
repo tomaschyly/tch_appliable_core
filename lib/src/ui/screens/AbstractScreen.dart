@@ -73,6 +73,7 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
       ),
       bottomNavigationBar: createBottomBar(context),
       drawer: createDrawer(context),
+      floatingActionButton: createFloatingActionButton(context),
     );
   }
 
@@ -87,6 +88,10 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
   /// Create default Drawer
   @protected
   Widget? createDrawer(BuildContext context);
+
+  /// Create floating action button for screen
+  @protected
+  Widget? createFloatingActionButton(BuildContext context) => null;
 
   /// If available show message for this screen
   @protected
