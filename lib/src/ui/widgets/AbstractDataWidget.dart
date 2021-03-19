@@ -72,7 +72,6 @@ abstract class AbstractDataWidgetState<T extends AbstractDataWidget> extends Abs
     if (dataSource != null) {
       MainDataProvider.instance!.unRegisterDataRequests(dataSource);
 
-      dataSource.dispose();
       _dataSource = null;
     }
   }
@@ -93,14 +92,16 @@ abstract class AbstractDataWidgetState<T extends AbstractDataWidget> extends Abs
       firstBuildOnly(context);
     }
 
-    if (_dataSource == null) {
+    final theDataSource = _dataSource;
+
+    if (theDataSource == null || theDataSource.disposed) {
       return Builder(
         builder: (BuildContext context) => buildContentUnAvailable(context),
       );
     }
 
     return ValueListenableBuilder(
-      valueListenable: _dataSource!.state,
+      valueListenable: theDataSource.state,
       builder: (BuildContext context, MainDataProviderSourceState state, Widget? child) {
         switch (state) {
           case MainDataProviderSourceState.UnAvailable:

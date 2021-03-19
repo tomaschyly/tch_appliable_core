@@ -4,9 +4,11 @@ import 'package:tch_appliable_core/src/providers/mainDataProvider/DataRequest.da
 import 'package:tch_appliable_core/utils/List.dart';
 
 class MainDataSource {
+  bool get disposed => _disposed;
   ValueNotifier<MainDataProviderSourceState> state = ValueNotifier(MainDataProviderSourceState.UnAvailable);
   ValueNotifier<List<DataRequest>> results;
 
+  bool _disposed = false;
   final List<DataRequest> _dataRequests;
 
   /// MainDataSource initialization
@@ -16,8 +18,15 @@ class MainDataSource {
 
   /// Manually dispose of resources
   void dispose() {
-    state.dispose();
-    results.dispose();
+    if (_disposed) {
+      return;
+    }
+    _disposed = true;
+
+    /// Unless someone else adds an listener, they do not need to be disposed
+    /// We use them on for ValueListenableBuilder & they remove their listeners
+    // state.dispose();
+    // results.dispose();
   }
 
   /// Get list of identifiers by DataRequests

@@ -1,3 +1,7 @@
+## [0.2.3] - 19.3.2021
+
+* Previous dispose of ValueNotifiers of MainDataSource caused issues, different resolution implemented
+
 ## [0.2.2+1] - 18.3.2021
 
 * Add options for floating action button

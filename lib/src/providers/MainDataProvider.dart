@@ -580,6 +580,8 @@ class SQLiteSource extends AbstractSource {
     unRegisterDataRequests(dataSource);
 
     _dataSources.remove(dataSource);
+
+    dataSource.dispose();
   }
 
   /// Check if DataRequest has next page
