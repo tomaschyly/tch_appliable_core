@@ -1,3 +1,10 @@
+## [0.3.0] - 13.5.2021
+
+* Warning: changed the way ScreenState options are overriden/initialized
+* ScreenState options build preProcessor
+* Drawer permanently visible support
+* bugfixes
+
 ## [0.2.3] - 19.3.2021
 
 * Previous dispose of ValueNotifiers of MainDataSource caused issues, different resolution implemented
