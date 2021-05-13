@@ -6,7 +6,7 @@ import 'package:tch_appliable_core/src/core/router/NoAnimationPageRoute.dart';
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 /// Generate Route with Screen for RoutingArguments from Route name
-Route<dynamic> onGenerateRoute(RouteSettings settings) {
+Route<Object> onGenerateRoute(RouteSettings settings) {
   final arguments = settings.name?.routingArguments;
 
   if (arguments != null) {
@@ -22,7 +22,7 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
 }
 
 /// Create Route depending on platform for different effects
-Route<dynamic> createRoute(WidgetBuilder builder, RouteSettings settings) {
+Route<Object> createRoute(WidgetBuilder builder, RouteSettings settings) {
   if (kIsWeb) {
     return NoAnimationPageRoute(builder: builder, settings: settings);
   } else {
