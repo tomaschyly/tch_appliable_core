@@ -12,10 +12,10 @@ class HomeScreen extends AbstractAppScreen {
 
 class _HomeScreenState extends AbstractAppScreenState<HomeScreen> {
   @override
-  AppScreenStateOptions get options => AppScreenStateOptions.drawer(
-        screenName: HomeScreen.ROUTE,
-        title: tt('home.screen.title'),
-      );
+  AbstractScreenStateOptions options = AppScreenStateOptions.drawer(
+    screenName: HomeScreen.ROUTE,
+    title: tt('home.screen.title'),
+  );
 
   @override
   Widget extraLargeDesktopScreen(BuildContext context) => _BodyWidget();

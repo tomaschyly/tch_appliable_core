@@ -1,5 +1,4 @@
 import 'package:example/model/SQLiteRecord.dart';
-import 'package:example/model/SQLiteResult.dart';
 import 'package:example/model/dataTasks/SaveSQLiteRecordDataTask.dart';
 import 'package:example/ui/screens/AbstractAppScreen.dart';
 import 'package:example/ui/widgets/TextFormFieldWidget.dart';
@@ -16,22 +15,30 @@ class MDPSQLiteRecordScreen extends AbstractAppScreen {
 
 class _MDPSQLiteRecordScreenState extends AbstractAppScreenState<MDPSQLiteRecordScreen> {
   @override
-  AppScreenStateOptions get options => AppScreenStateOptions.basic(
-        screenName: MDPSQLiteRecordScreen.ROUTE,
-        title: tt('mdpsqliterecord.screen.title'),
-      )..appBarOptions = <AppBarOption>[
-          AppBarOption(
-            icon: Icon(
-              Icons.check,
-              color: Colors.black,
-            ),
-            onTap: (BuildContext context) {
-              _bodyKey.currentState?._save(context);
-            },
-          ),
-        ];
+  AbstractScreenStateOptions options = AppScreenStateOptions.basic(
+    screenName: MDPSQLiteRecordScreen.ROUTE,
+    title: tt('mdpsqliterecord.screen.title'),
+  );
 
   final GlobalKey<_BodyWidgetState> _bodyKey = GlobalKey();
+
+  /// State initialization
+  @override
+  void initState() {
+    super.initState();
+
+    options.appBarOptions = <AppBarOption>[
+      AppBarOption(
+        icon: Icon(
+          Icons.check,
+          color: Colors.black,
+        ),
+        onTap: (BuildContext context) {
+          _bodyKey.currentState?._save(context);
+        },
+      ),
+    ];
+  }
 
   @override
   Widget extraLargeDesktopScreen(BuildContext context) => _BodyWidget(key: _bodyKey);

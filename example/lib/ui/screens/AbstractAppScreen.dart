@@ -12,7 +12,9 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
   }) : super.basic(
           screenName: screenName,
           title: title,
-        );
+        ) {
+    optionsBuildPreProcessor = optionsBuildPreProcess;
+  }
 
   /// AppScreenStateOptions initialization for state with Drawer
   AppScreenStateOptions.drawer({
@@ -22,6 +24,8 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
           screenName: screenName,
           title: title,
         ) {
+    optionsBuildPreProcessor = optionsBuildPreProcess;
+
     drawerOptions = <DrawerOption>[
       DrawerOption(
         onSelect: (BuildContext context) {
@@ -51,6 +55,20 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
       ),
     ];
   }
+
+  /// Callback used to preProcess options at the start of each build
+  /// May be used to change options based on some conditions
+  void optionsBuildPreProcess(BuildContext context) {
+    final AbstractAppDataStateSnapshot snapshot = AppDataState.of(context)!;
+
+    final permanentlyVisibleDrawerScreens = [
+      ResponsiveScreen.ExtraLargeDesktop,
+      ResponsiveScreen.LargeDesktop,
+      ResponsiveScreen.SmallDesktop,
+    ];
+    print('TCH_d ${snapshot.responsiveScreen} ${permanentlyVisibleDrawerScreens.contains(snapshot.responsiveScreen)}'); //TODO remove
+    drawerIsPermanentlyVisible = permanentlyVisibleDrawerScreens.contains(snapshot.responsiveScreen);
+  }
 }
 
 abstract class AbstractAppScreen extends AbstractResposiveScreen {}
@@ -64,7 +82,7 @@ abstract class AbstractAppScreenState<T extends AbstractAppScreen> extends Abstr
         options.title,
       ),
       centerTitle: false,
-      leading: options.drawerOptions?.isNotEmpty == true
+      leading: options.drawerOptions?.isNotEmpty == true && !options.drawerIsPermanentlyVisible
           ? Builder(
               builder: (BuildContext context) {
                 return IconButtonWidget(
@@ -119,58 +137,67 @@ abstract class AbstractAppScreenState<T extends AbstractAppScreen> extends Abstr
 
   /// Create default Drawer
   @protected
-  Drawer? createDrawer(BuildContext context) {
+  Widget? createDrawer(BuildContext context) {
     final theDrawerOptions = options.drawerOptions;
 
     if (theDrawerOptions != null && theDrawerOptions.isNotEmpty) {
       final theme = Theme.of(context);
 
-      return Drawer(
-        child: Container(
-          color: theme.primaryColorDark,
-          child: ListView(padding: EdgeInsets.zero, children: [
-            Container(height: MediaQuery.of(context).padding.top),
-            ...theDrawerOptions
-                .map(
-                  (DrawerOption option) => Material(
-                    color: option.isSelected(context) ? theme.primaryColor : theme.primaryColorDark,
-                    child: InkWell(
-                      child: Container(
-                        height: 48,
-                        padding: option.icon != null ? const EdgeInsets.only(right: 16) : const EdgeInsets.symmetric(horizontal: 16),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            if (option.icon != null)
-                              Container(
-                                width: 48,
-                                height: 48,
-                                child: Center(
-                                  child: Container(
-                                    width: 24,
-                                    height: 24,
-                                    child: option.icon,
-                                  ),
+      final drawerList = Container(
+        width: options.drawerIsPermanentlyVisible ? 304 : null,
+        color: theme.primaryColorDark,
+        child: ListView(padding: EdgeInsets.zero, children: [
+          Container(height: MediaQuery.of(context).padding.top),
+          ...theDrawerOptions
+              .map(
+                (DrawerOption option) => Material(
+                  color: option.isSelected(context) ? theme.primaryColor : theme.primaryColorDark,
+                  child: InkWell(
+                    child: Container(
+                      height: 48,
+                      padding: option.icon != null ? const EdgeInsets.only(right: 16) : const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          if (option.icon != null)
+                            Container(
+                              width: 48,
+                              height: 48,
+                              child: Center(
+                                child: Container(
+                                  width: 24,
+                                  height: 24,
+                                  child: option.icon,
                                 ),
                               ),
-                            option.title,
-                          ],
-                        ),
+                            ),
+                          option.title,
+                        ],
                       ),
-                      onTap: !option.isSelected(context)
-                          ? () {
-                              Navigator.pop(context);
-
-                              option.onSelect(context);
-                            }
-                          : null,
                     ),
+                    onTap: !option.isSelected(context)
+                        ? () {
+                            if (!options.drawerIsPermanentlyVisible) {
+                              Navigator.pop(context);
+                            }
+
+                            option.onSelect(context);
+                          }
+                        : null,
                   ),
-                )
-                .toList(),
-          ]),
-        ),
+                ),
+              )
+              .toList(),
+        ]),
       );
+
+      if (options.drawerIsPermanentlyVisible) {
+        return drawerList;
+      } else {
+        return Drawer(
+          child: drawerList,
+        );
+      }
     }
   }
 }

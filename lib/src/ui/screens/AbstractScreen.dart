@@ -7,15 +7,21 @@ class AbstractScreenStateOptions {
   String screenName;
   String title;
   bool safeArea;
+
+  /// Callback used to preProcess options at the start of each build
+  /// May be used to change options based on some conditions
+  void Function(BuildContext context)? optionsBuildPreProcessor;
   List<AppBarOption>? appBarOptions;
   List<BottomBarOption>? bottomBarOptions;
   List<DrawerOption>? drawerOptions;
+  bool drawerIsPermanentlyVisible;
 
   /// AbstractScreenStateOptions initialization for default state
   AbstractScreenStateOptions.basic({
     required this.screenName,
     required this.title,
     this.safeArea = true,
+    this.drawerIsPermanentlyVisible = false,
   });
 }
 
@@ -23,7 +29,7 @@ abstract class AbstractScreen extends AbstractStatefulWidget {}
 
 abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractStatefulWidgetState<T> with RouteAware {
   @protected
-  AbstractScreenStateOptions get options;
+  late AbstractScreenStateOptions options;
 
   final GlobalKey<ScreenMessengerWidgetState> _messengerKey = GlobalKey();
 
@@ -49,8 +55,38 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
+    final theOptionsBuildPreProcessor = options.optionsBuildPreProcessor;
+    if (theOptionsBuildPreProcessor != null) {
+      theOptionsBuildPreProcessor(context);
+    }
+
     if (widgetState == WidgetState.NotInitialized) {
       firstBuildOnly(context);
+    }
+
+    Widget theContent = buildContent(context);
+    if (options.safeArea) {
+      theContent = SafeArea(
+        top: false,
+        child: theContent,
+      );
+    }
+
+    final Widget? theDrawer = createDrawer(context);
+    if (options.drawerIsPermanentlyVisible && theDrawer != null) {
+      theContent = Container(
+        width: double.infinity,
+        height: double.infinity,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            theDrawer,
+            Expanded(child: theContent),
+          ],
+        ),
+      );
     }
 
     return Scaffold(
@@ -62,17 +98,12 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
             key: _messengerKey,
             options: options,
             displayMessage: screenMessage,
-            child: options.safeArea
-                ? SafeArea(
-                    top: false,
-                    child: buildContent(context),
-                  )
-                : buildContent(context),
+            child: theContent,
           );
         },
       ),
       bottomNavigationBar: createBottomBar(context),
-      drawer: createDrawer(context),
+      drawer: !options.drawerIsPermanentlyVisible ? theDrawer : null,
       floatingActionButton: createFloatingActionButton(context),
       floatingActionButtonAnimator: setFloatingActionButtonAnimator(context),
       floatingActionButtonLocation: setFloatingActionButtonLocation(context),
