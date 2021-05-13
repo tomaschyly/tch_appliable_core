@@ -93,7 +93,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> {
           return child ?? Container();
         },
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        supportedLocales: theTranslatorOptions?.supportedLocales ?? List.empty(),
+        supportedLocales: theTranslatorOptions?.supportedLocales ?? const <Locale>[Locale('en', 'US')],
       ),
       snapshot: widget.snapshot
         ..responsiveScreen = _responsiveScreen
