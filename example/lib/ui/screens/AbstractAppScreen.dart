@@ -66,7 +66,7 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
       ResponsiveScreen.LargeDesktop,
       ResponsiveScreen.SmallDesktop,
     ];
-    print('TCH_d ${snapshot.responsiveScreen} ${permanentlyVisibleDrawerScreens.contains(snapshot.responsiveScreen)}'); //TODO remove
+
     drawerIsPermanentlyVisible = permanentlyVisibleDrawerScreens.contains(snapshot.responsiveScreen);
   }
 }
