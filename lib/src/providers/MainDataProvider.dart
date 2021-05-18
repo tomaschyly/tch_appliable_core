@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sembast/sembast.dart' as Sembast;
+import 'package:sembast/sembast_io.dart';
+import 'package:sqflite/sqflite.dart' as SQLite;
 import 'package:tch_appliable_core/src/providers/mainDataProvider/DataRequest.dart';
 import 'package:tch_appliable_core/src/providers/mainDataProvider/DataTask.dart';
 import 'package:tch_appliable_core/src/providers/mainDataProvider/MainDataSource.dart';
@@ -13,6 +15,7 @@ enum MainDataProviderSource {
   MockUp,
   HTTPClient,
   SQLite,
+  Sembast,
 }
 
 class MainDataProviderOptions {
@@ -440,9 +443,9 @@ class HTTPSource extends AbstractSource {
 class SQLiteOptions {
   final Future<String> Function() databasePath;
   final int version;
-  final OnDatabaseCreateFn onCreate;
-  final OnDatabaseVersionChangeFn? onUpgrade;
-  final OnDatabaseVersionChangeFn? onDowngrade;
+  final SQLite.OnDatabaseCreateFn onCreate;
+  final SQLite.OnDatabaseVersionChangeFn? onUpgrade;
+  final SQLite.OnDatabaseVersionChangeFn? onDowngrade;
 
   /// SQLiteOptions initialization
   SQLiteOptions({
@@ -459,7 +462,7 @@ class SQLiteSource extends AbstractSource {
   MainDataProviderSource get isSource => MainDataProviderSource.SQLite;
 
   final SQLiteOptions _options;
-  Database? _database;
+  SQLite.Database? _database;
 
   /// SQLiteSource initialization
   SQLiteSource({
@@ -469,11 +472,11 @@ class SQLiteSource extends AbstractSource {
   }
 
   /// Create Database connection and init tables structure
-  Future<Database> _open() async {
-    Database? database = _database;
+  Future<SQLite.Database> _open() async {
+    SQLite.Database? database = _database;
 
     if (database == null) {
-      database = await openDatabase(
+      database = await SQLite.openDatabase(
         await _options.databasePath(),
         version: _options.version,
         onCreate: _options.onCreate,
@@ -653,7 +656,7 @@ class SQLiteSource extends AbstractSource {
     }
 
     if (methods != null) {
-      final List<String> identifiers = List.empty(growable: true);
+      final List<String> identifiers = <String>[];
 
       for (String method in methods) {
         for (MainDataSource dataSource in _dataSources) {
@@ -675,6 +678,122 @@ class SQLiteSource extends AbstractSource {
 
           if (dataRequest != null) {
             await _queryDataUpdate(dataRequest);
+            break;
+          }
+        }
+      }
+    }
+  }
+}
+
+class SembastOptions {
+  final Future<String> Function() databasePath;
+
+  /// SembastOptions initialization
+  SembastOptions({
+    required this.databasePath,
+  });
+}
+
+class SembastSource extends AbstractSource {
+  @override
+  MainDataProviderSource get isSource => MainDataProviderSource.Sembast;
+
+  final SembastOptions _options;
+  Sembast.Database? _database;
+
+  /// SembastSource initialization
+  SembastSource({
+    required SembastOptions options,
+  }) : _options = options {
+    state = ValueNotifier(MainDataProviderSourceState.Ready);
+  }
+
+  /// Create Database connection
+  Future<Sembast.Database> _open() async {
+    Sembast.Database? database = _database;
+
+    if (database == null) {
+      Sembast.DatabaseFactory dbFactory = databaseFactoryIo;
+
+      database = await dbFactory.openDatabase(await _options.databasePath());
+
+      _database = database;
+    }
+
+    return database;
+  }
+
+  /// Register the DataSource for data
+  @override
+  registerDataSource(MainDataSource dataSource) {
+    _dataSources.add(dataSource);
+
+    registerDataRequests(dataSource);
+
+    MainDataProvider.instance!._updateMainDataSourceState(dataSource);
+
+    reFetchData(identifiers: dataSource.identifiers);
+  }
+
+  /// UnRegister the DataSource from receiving data
+  @override
+  unRegisterDataSource(MainDataSource dataSource) {
+    unRegisterDataRequests(dataSource);
+
+    _dataSources.remove(dataSource);
+
+    dataSource.dispose();
+  }
+
+  /// Check if DataRequest has next page
+  @override
+  bool dataRequestHasNextPage(DataRequest dataRequest) {
+    throw Exception('SembastSource is not implemented');
+  }
+
+  /// Request to load next page of DataRequest
+  @override
+  dataRequestLoadNextPage(DataRequest dataRequest) {
+    throw Exception('SembastSource is not implemented');
+  }
+
+  /// Execute one time DataTask against the source
+  @override
+  Future<T> executeDataTask<T extends DataTask>(T dataTask) async {
+    throw Exception('SembastSource is not implemented');
+  }
+
+  /// ReFetch data for DataRequest based on methods or identifiers
+  @override
+  Future<void> reFetchData({List<String>? methods, List<String>? identifiers}) async {
+    if (methods == null && identifiers == null) {
+      throw Exception('Provide either methods or identifiers');
+    }
+
+    if (methods != null) {
+      final List<String> identifiers = <String>[];
+
+      for (String method in methods) {
+        for (MainDataSource dataSource in _dataSources) {
+          final DataRequest? dataRequest = dataSource.requestForMethod(method);
+
+          if (dataRequest != null && !identifiers.contains(dataRequest.identifier)) {
+            identifiers.add(dataRequest.identifier);
+          }
+        }
+      }
+
+      await reFetchData(identifiers: identifiers);
+    }
+
+    if (identifiers != null) {
+      for (String identifier in identifiers) {
+        for (MainDataSource dataSource in _dataSources) {
+          final DataRequest? dataRequest = dataSource.requestForIdentifier(identifier);
+
+          if (dataRequest != null) {
+            // await _queryDataUpdate(dataRequest); //TODO
             break;
           }
         }

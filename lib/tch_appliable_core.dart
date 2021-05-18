@@ -15,7 +15,6 @@ export 'src/providers/mainDataProvider/DataRequest.dart';
 export 'src/providers/mainDataProvider/DataTask.dart';
 export 'src/providers/mainDataProvider/MainDataSource.dart';
 export 'package:http/http.dart';
-export 'package:sqflite/sqflite.dart';
 
 export 'package:flutter/material.dart';
 export 'src/ui/screens/AbstractScreen.dart';
