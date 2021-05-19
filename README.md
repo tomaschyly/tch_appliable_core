@@ -137,7 +137,7 @@ The Translator uses your OS language automatically & if it is part of supportedL
 You can also change language during runtime.
 
 ```dart
-Translator.instance?.changeLanguage('sk');
+Translator.instance!.changeLanguage('sk');
 ```
 
 Then to see your new language immediately you can invalidate CoreApp.

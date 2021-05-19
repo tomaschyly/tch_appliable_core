@@ -81,7 +81,7 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(item.name),
+                  Flexible(child: Text(item.name)),
                 ],
               ),
             ),

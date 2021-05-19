@@ -1,3 +1,5 @@
+import 'package:example/model/HttpRecord.dart';
+import 'package:example/model/dataRequests/GetHttpRecordsDataRequest.dart';
 import 'package:example/ui/screens/AbstractAppScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
@@ -49,6 +51,37 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
-    return Container();
+    return ListDataWidget(
+      dataRequest: GetHttpRecordsDataRequest(
+        <String, dynamic>{},
+      ),
+      processResult: (GetHttpRecordsDataRequest dataRequest) {
+        return dataRequest.result?.records;
+      },
+      buildItem: (BuildContext context, int position, HttpRecord item) {
+        return Container(
+          height: 48,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Flexible(child: Text(item.title)),
+            ],
+          ),
+        );
+      },
+      buildLoadingItemWithGlobalKey: (BuildContext context, GlobalKey globalKey) {
+        return LoadingItemWidget(
+          containerKey: globalKey,
+          text: Text(tt('list.item.loading')),
+        );
+      },
+      emptyState: Container(
+        width: 576,
+        padding: const EdgeInsets.all(16),
+        child: Text(tt('list.empty')),
+      ),
+    );
   }
 }

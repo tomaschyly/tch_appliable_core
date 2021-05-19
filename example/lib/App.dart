@@ -35,6 +35,9 @@ class App extends StatelessWidget {
           version: 1,
           onCreate: _dbInit,
         ),
+        httpClientOptions: HTTPClientOptions(
+          hostUrl: 'https://jsonplaceholder.typicode.com',
+        ),
       ),
     );
   }

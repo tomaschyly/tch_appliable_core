@@ -323,10 +323,12 @@ class MockUpSource extends AbstractSource {
 
 class HTTPClientOptions {
   final String hostUrl;
+  final Map<String, String>? headers;
 
   /// HTTPClientOptions initialization
   HTTPClientOptions({
     required this.hostUrl,
+    this.headers,
   }) : assert(hostUrl.isNotEmpty);
 }
 
@@ -343,16 +345,62 @@ class HTTPSource extends AbstractSource {
     state = ValueNotifier(MainDataProviderSourceState.Ready);
   }
 
+  /// Query data from remote API
+  Future<String?> query(DataRequest dataRequest) async {
+    final List<String> values = [];
+    dataRequest.parameters.forEach((key, value) {
+      values.add('$key=$value');
+    });
+
+    final String url = '${_options.hostUrl}${dataRequest.method}?${values.join('&')}';
+
+    try {
+      final Response response = await get(
+        Uri.parse(url),
+        headers: _options.headers,
+      );
+
+      return response.body;
+    } catch (e) {
+      debugPrint('HTTPSource.query error: $e');
+    }
+
+    return null;
+  }
+
+  /// Query data from remote API and update DataSources
+  Future<void> _queryDataUpdate(DataRequest dataRequest) async {
+    final String? response = await query(dataRequest);
+
+    _dataSources.forEach((MainDataSource dataSource) {
+      if (dataSource.identifiers.contains(dataRequest.identifier)) {
+        dataSource.setResult(dataRequest.identifier, <String, dynamic>{
+          'response': response,
+        });
+      }
+    });
+  }
+
   /// Register the DataSource for data
   @override
   registerDataSource(MainDataSource dataSource) {
-    throw Exception('HTTPSource is not implemented');
+    _dataSources.add(dataSource);
+
+    registerDataRequests(dataSource);
+
+    MainDataProvider.instance!._updateMainDataSourceState(dataSource);
+
+    reFetchData(identifiers: dataSource.identifiers);
   }
 
   /// UnRegister the DataSource from receiving data
   @override
   unRegisterDataSource(MainDataSource dataSource) {
-    throw Exception('HTTPSource is not implemented');
+    unRegisterDataRequests(dataSource);
+
+    _dataSources.remove(dataSource);
+
+    dataSource.dispose();
   }
 
   /// Check if DataRequest has next page
@@ -427,7 +475,7 @@ class HTTPSource extends AbstractSource {
     }
 
     if (dataTask.reFetchMethods != null) {
-      // await reFetchData(methods: dataTask.reFetchMethods); //TODO
+      await reFetchData(methods: dataTask.reFetchMethods);
     }
 
     return dataTask;
@@ -435,8 +483,39 @@ class HTTPSource extends AbstractSource {
 
   /// ReFetch data for DataRequest based on methods or identifiers
   @override
-  Future<void> reFetchData({List<String>? methods, List<String>? identifiers}) {
-    throw Exception('HTTPSource is not implemented');
+  Future<void> reFetchData({List<String>? methods, List<String>? identifiers}) async {
+    if (methods == null && identifiers == null) {
+      throw Exception('Provide either methods or identifiers');
+    }
+
+    if (methods != null) {
+      final List<String> identifiers = <String>[];
+
+      for (String method in methods) {
+        for (MainDataSource dataSource in _dataSources) {
+          final DataRequest? dataRequest = dataSource.requestForMethod(method);
+
+          if (dataRequest != null && !identifiers.contains(dataRequest.identifier)) {
+            identifiers.add(dataRequest.identifier);
+          }
+        }
+      }
+
+      await reFetchData(identifiers: identifiers);
+    }
+
+    if (identifiers != null) {
+      for (String identifier in identifiers) {
+        for (MainDataSource dataSource in _dataSources) {
+          final DataRequest? dataRequest = dataSource.requestForIdentifier(identifier);
+
+          if (dataRequest != null) {
+            await _queryDataUpdate(dataRequest);
+            break;
+          }
+        }
+      }
+    }
   }
 }
 
