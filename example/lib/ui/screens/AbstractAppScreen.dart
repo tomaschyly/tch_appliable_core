@@ -1,6 +1,7 @@
 import 'package:example/ui/screens/HomeScreen.dart';
 import 'package:example/ui/screens/mdpHttp/MDPHttpScreen.dart';
 import 'package:example/ui/screens/mdpSQLite/MDPSQLiteScreen.dart';
+import 'package:example/ui/screens/mdpSembast/MDPSembastScreen.dart';
 import 'package:example/ui/widgets/IconButtonWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
@@ -65,6 +66,19 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
         },
         title: Text(
           tt('mdphttp.screen.title'),
+        ),
+      ),
+      DrawerOption(
+        onSelect: (BuildContext context) {
+          pushNamedNewStack(context, MDPSembastScreen.ROUTE, arguments: <String, String>{'router-fade-animation': '1'});
+        },
+        isSelected: (BuildContext context) {
+          final RoutingArguments? arguments = RoutingArguments.of(context);
+
+          return arguments?.route == MDPSembastScreen.ROUTE;
+        },
+        title: Text(
+          tt('mdpsembast.screen.title'),
         ),
       ),
     ];

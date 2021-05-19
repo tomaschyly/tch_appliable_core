@@ -2,6 +2,8 @@ import 'package:example/ui/screens/HomeScreen.dart';
 import 'package:example/ui/screens/mdpHttp/MDPHttpScreen.dart';
 import 'package:example/ui/screens/mdpSQLite/MDPSQLiteRecordScreen.dart';
 import 'package:example/ui/screens/mdpSQLite/MDPSQLiteScreen.dart';
+import 'package:example/ui/screens/mdpSembast/MDPSembastRecordScreen.dart';
+import 'package:example/ui/screens/mdpSembast/MDPSembastScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
@@ -19,6 +21,10 @@ Route<Object> onGenerateRoute(RouteSettings settings) {
         return createRoute((BuildContext context) => MDPSQLiteRecordScreen(), settings);
       case MDPHttpScreen.ROUTE:
         return createRoute((BuildContext context) => MDPHttpScreen(), settings);
+      case MDPSembastScreen.ROUTE:
+        return createRoute((BuildContext context) => MDPSembastScreen(), settings);
+      case MDPSembastRecordScreen.ROUTE:
+        return createRoute((BuildContext context) => MDPSembastRecordScreen(), settings);
       default:
         throw Exception('Implement OnGenerateRoute in app');
     }

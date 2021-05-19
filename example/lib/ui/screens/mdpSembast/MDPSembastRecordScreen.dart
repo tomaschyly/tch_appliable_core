@@ -1,23 +1,21 @@
-import 'package:example/model/SQLiteRecord.dart';
-import 'package:example/model/dataTasks/SaveSQLiteRecordDataTask.dart';
 import 'package:example/ui/screens/AbstractAppScreen.dart';
 import 'package:example/ui/widgets/TextFormFieldWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
-class MDPSQLiteRecordScreen extends AbstractAppScreen {
-  static const String ROUTE = "/mdpsqlite/record";
+class MDPSembastRecordScreen extends AbstractAppScreen {
+  static const String ROUTE = "/mdpsembast/record";
 
   /// Create state for widget
   @override
-  State<StatefulWidget> createState() => _MDPSQLiteRecordScreenState();
+  State<StatefulWidget> createState() => _MDPSembastRecordScreenState();
 }
 
-class _MDPSQLiteRecordScreenState extends AbstractAppScreenState<MDPSQLiteRecordScreen> {
+class _MDPSembastRecordScreenState extends AbstractAppScreenState<MDPSembastRecordScreen> {
   @override
   AbstractScreenStateOptions options = AppScreenStateOptions.basic(
-    screenName: MDPSQLiteRecordScreen.ROUTE,
-    title: tt('mdpsqliterecord.screen.title'),
+    screenName: MDPSembastRecordScreen.ROUTE,
+    title: tt('mdpsembastrecord.screen.title'),
   );
 
   final GlobalKey<_BodyWidgetState> _bodyKey = GlobalKey();
@@ -104,7 +102,7 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
                   autofocus: true,
                   focusNode: _nameFocus,
                   textCapitalization: TextCapitalization.words,
-                  label: tt('mdpsqliterecord.screen.name'),
+                  label: tt('mdpsembastrecord.screen.name'),
                   textInputAction: TextInputAction.next,
                   onFieldSubmitted: (String text) {
                     _nameFocus.unfocus();
@@ -112,7 +110,7 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
                     _descriptionFocus.requestFocus();
                   },
                   validator: (String? text) {
-                    return text?.isEmpty == true ? tt('mdpsqliterecord.screen.name.error') : null;
+                    return text?.isEmpty == true ? tt('mdpsembastrecord.screen.name.error') : null;
                   },
                 ),
                 Container(height: 16),
@@ -120,7 +118,7 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
                   controller: _descriptionController,
                   focusNode: _descriptionFocus,
                   textCapitalization: TextCapitalization.sentences,
-                  label: tt('mdpsqliterecord.screen.description'),
+                  label: tt('mdpsembastrecord.screen.description'),
                   lines: 3,
                 ),
               ],
@@ -136,23 +134,7 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
     FocusScope.of(context).unfocus();
 
     if (_formKey.currentState!.validate()) {
-      final now = DateTime.now();
-
-      final SQLiteRecord record = SQLiteRecord.fromJson(<String, dynamic>{
-        SQLiteRecord.COL_NAME: _nameController.text,
-        SQLiteRecord.COL_DESCRIPTION: _descriptionController.text,
-        SQLiteRecord.COL_CREATED: now.millisecondsSinceEpoch,
-      });
-
-      final SaveSQLiteRecordDataTask result = await MainDataProvider.instance!.executeDataTask<SaveSQLiteRecordDataTask>(
-        SaveSQLiteRecordDataTask(
-          data: record,
-        ),
-      );
-
-      if (result.result?.id != null) {
-        popNotDisposed(context, mounted);
-      }
+      //TODO
     }
   }
 }
