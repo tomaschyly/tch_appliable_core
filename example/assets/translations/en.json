@@ -2,6 +2,7 @@
   "home.screen.title": "Home",
   "list.empty": "There are no items here",
   "list.item.loading": "Loading...",
+  "mdphttp.screen.title": "MDP Http",
   "mdpsqlite.screen.title": "MDP SQLite",
   "mdpsqliterecord.screen.description": "Description",
   "mdpsqliterecord.screen.name": "Name",

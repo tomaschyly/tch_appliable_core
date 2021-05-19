@@ -2,6 +2,7 @@
   "home.screen.title": "Domov",
   "list.empty": "Žiadne položky",
   "list.item.loading": "Načítam...",
+  "mdphttp.screen.title": "MDP Http",
   "mdpsqlite.screen.title": "MDP SQLite",
   "mdpsqliterecord.screen.description": "Popis",
   "mdpsqliterecord.screen.name": "Názov",

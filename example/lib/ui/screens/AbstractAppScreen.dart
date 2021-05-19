@@ -1,4 +1,5 @@
 import 'package:example/ui/screens/HomeScreen.dart';
+import 'package:example/ui/screens/mdpHttp/MDPHttpScreen.dart';
 import 'package:example/ui/screens/mdpSQLite/MDPSQLiteScreen.dart';
 import 'package:example/ui/widgets/IconButtonWidget.dart';
 import 'package:flutter/material.dart';
@@ -51,6 +52,19 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
         },
         title: Text(
           tt('mdpsqlite.screen.title'),
+        ),
+      ),
+      DrawerOption(
+        onSelect: (BuildContext context) {
+          pushNamedNewStack(context, MDPHttpScreen.ROUTE, arguments: <String, String>{'router-fade-animation': '1'});
+        },
+        isSelected: (BuildContext context) {
+          final RoutingArguments? arguments = RoutingArguments.of(context);
+
+          return arguments?.route == MDPHttpScreen.ROUTE;
+        },
+        title: Text(
+          tt('mdphttp.screen.title'),
         ),
       ),
     ];

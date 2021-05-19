@@ -1,3 +1,4 @@
+import 'package:sqflite/sqflite.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class SQLiteRecord extends DataModel {

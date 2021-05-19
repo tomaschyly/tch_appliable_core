@@ -3,6 +3,7 @@ import 'package:example/model/SQLiteRecord.dart';
 import 'package:example/ui/screens/HomeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class App extends StatelessWidget {
@@ -30,7 +31,7 @@ class App extends StatelessWidget {
       preferencesOptions: PreferencesOptions(),
       mainDataProviderOptions: MainDataProviderOptions(
         sqLiteOptions: SQLiteOptions(
-          databasePath: () async => join((await getDatabasesPath())!, 'default.db'),
+          databasePath: () async => join((await getDatabasesPath()), 'default.db'),
           version: 1,
           onCreate: _dbInit,
         ),

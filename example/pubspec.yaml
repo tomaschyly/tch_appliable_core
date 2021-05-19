@@ -19,6 +19,9 @@ dependencies:
 
   path: ^1.8.0-nullsafety.3
 
+  http: ^0.13.0
+  sqflite: ^2.0.0+3
+
 flutter:
   uses-material-design: true
 
