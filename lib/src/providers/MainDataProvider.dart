@@ -22,12 +22,14 @@ class MainDataProviderOptions {
   MockUpOptions? mockUpOptions;
   HTTPClientOptions? httpClientOptions;
   SQLiteOptions? sqLiteOptions;
+  SembastOptions? sembastOptions;
 
   /// MainDataProviderOptions initialization
   MainDataProviderOptions({
     this.mockUpOptions,
     this.httpClientOptions,
     this.sqLiteOptions,
+    this.sembastOptions,
   });
 }
 
@@ -61,6 +63,11 @@ class MainDataProvider {
     if (theSqLiteOptions != null) {
       _initializedSources.add(SQLiteSource(options: theSqLiteOptions));
     }
+
+    final theSembastOptions = options.sembastOptions;
+    if (theSembastOptions != null) {
+      _initializedSources.add(SembastSource(options: theSembastOptions));
+    }
   }
 
   /// Get source if it was initialized
@@ -76,6 +83,9 @@ class MainDataProvider {
         break;
       case MainDataProviderSource.SQLite:
         theSource = _initializedSources.firstWhereOrNull((element) => element is SQLiteSource);
+        break;
+      case MainDataProviderSource.Sembast:
+        theSource = _initializedSources.firstWhereOrNull((element) => element is SembastSource);
         break;
       default:
         throw Exception('Cannot get not implemented source $source');
@@ -146,6 +156,8 @@ class MainDataProvider {
       theSource = _initializedSources.firstWhereOrNull((element) => element is HTTPSource);
     } else if (dataTask.options is SQLiteTaskOptions) {
       theSource = _initializedSources.firstWhereOrNull((element) => element is SQLiteSource);
+    } else if (dataTask.options is SembastTaskOptions) {
+      theSource = _initializedSources.firstWhereOrNull((element) => element is SembastSource);
     } else {
       throw Exception('Cannot get not implemented source for options ${dataTask.options}');
     }
@@ -803,6 +815,44 @@ class SembastSource extends AbstractSource {
     return database;
   }
 
+  /// Insert data into database store with int as autoincrement
+  Future<int> _insert(String store, Map<String, dynamic> data) async {
+    final database = await _open();
+
+    final theStore = Sembast.intMapStoreFactory.store(store);
+
+    return theStore.add(database, data);
+  }
+
+  /// Update data in database store for id
+  Future<void> _update(String store, Map<String, dynamic> data, int id) async {
+    final database = await _open();
+
+    final theStore = Sembast.intMapStoreFactory.store(store);
+
+    await theStore.record(id).put(database, data);
+  }
+
+  /// Insert or update depending on if existing already
+  Future<int> save(String store, Map<String, dynamic> data, {int? id}) async {
+    if (id != null && id > 0) {
+      await _update(store, data, id);
+
+      return id;
+    } else {
+      return _insert(store, data);
+    }
+  }
+
+  /// Delete data from database store for id
+  Future<void> delete(String store, int id) async {
+    final database = await _open();
+
+    final theStore = Sembast.intMapStoreFactory.store(store);
+
+    await theStore.record(id).delete(database);
+  }
+
   /// Register the DataSource for data
   @override
   registerDataSource(MainDataSource dataSource) {
@@ -840,7 +890,29 @@ class SembastSource extends AbstractSource {
   /// Execute one time DataTask against the source
   @override
   Future<T> executeDataTask<T extends DataTask>(T dataTask) async {
-    throw Exception('SembastSource is not implemented');
+    final options = dataTask.options as SembastTaskOptions;
+
+    final Map<String, dynamic> data = dataTask.data.toJson();
+
+    switch (options.type) {
+      case SembastType.Query:
+        //TODO
+        throw Exception("SembastSource query Task is not implemented");
+        break;
+      case SembastType.Save:
+        //TODO
+        break;
+      case SembastType.Delete:
+        //TODO
+        throw Exception("SembastSource delete Task is not implemented");
+        break;
+    }
+
+    if (dataTask.reFetchMethods != null) {
+      await reFetchData(methods: dataTask.reFetchMethods);
+    }
+
+    return dataTask;
   }
 
   /// ReFetch data for DataRequest based on methods or identifiers

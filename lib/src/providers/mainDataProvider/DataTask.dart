@@ -46,6 +46,21 @@ class SQLiteTaskOptions extends DataTaskOptions {
   });
 }
 
+enum SembastType {
+  Query,
+  Save,
+  Delete,
+}
+
+class SembastTaskOptions extends DataTaskOptions {
+  final SembastType type;
+
+  /// SembastTaskOptions initialization
+  SembastTaskOptions({
+    required this.type,
+  });
+}
+
 class DataTask<T extends DataModel, R extends DataModel> {
   final String method;
   final DataTaskOptions options;

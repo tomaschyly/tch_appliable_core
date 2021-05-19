@@ -38,6 +38,9 @@ class App extends StatelessWidget {
         httpClientOptions: HTTPClientOptions(
           hostUrl: 'https://jsonplaceholder.typicode.com',
         ),
+        sembastOptions: SembastOptions(
+          databasePath: () async => join((await getDatabasesPath()), 'sembast.db'),
+        ),
       ),
     );
   }
