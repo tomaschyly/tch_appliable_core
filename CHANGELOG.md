@@ -1,3 +1,9 @@
+## [0.4.0] - 20.5.2021
+
+* **Warning:** changes to exports from package, may require updated imports and dependencies
+* Finished HTTPSource implementation
+* SembastSource implementation
+
 ## [0.3.0] - 13.5.2021
 
 * **Warning:** changed the way ScreenState options are overriden/initialized
