@@ -900,11 +900,18 @@ class SembastSource extends AbstractSource {
         throw Exception("SembastSource query Task is not implemented");
         break;
       case SembastType.Save:
-        //TODO
+        final int id = await save(
+          dataTask.method,
+          data,
+          id: data[options.idKey],
+        );
+
+        dataTask.result = dataTask.processResult(<String, dynamic>{'id': id});
         break;
       case SembastType.Delete:
-        //TODO
-        throw Exception("SembastSource delete Task is not implemented");
+        await delete(dataTask.method, data[options.idKey]);
+
+        dataTask.result = dataTask.processResult(<String, dynamic>{'deleted': true});
         break;
     }
 

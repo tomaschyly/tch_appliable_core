@@ -1,3 +1,5 @@
+import 'package:example/model/SembastRecord.dart';
+import 'package:example/model/dataTasks/SaveSembastRecordDataTask.dart';
 import 'package:example/ui/screens/AbstractAppScreen.dart';
 import 'package:example/ui/widgets/TextFormFieldWidget.dart';
 import 'package:flutter/material.dart';
@@ -134,7 +136,23 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
     FocusScope.of(context).unfocus();
 
     if (_formKey.currentState!.validate()) {
-      //TODO
+      final now = DateTime.now();
+
+      final SembastRecord record = SembastRecord.fromJson(<String, dynamic>{
+        SembastRecord.COL_NAME: _nameController.text,
+        SembastRecord.COL_DESCRIPTION: _descriptionController.text,
+        SembastRecord.COL_CREATED: now.millisecondsSinceEpoch,
+      });
+
+      final SaveSembastRecordDataTask result = await MainDataProvider.instance!.executeDataTask<SaveSembastRecordDataTask>(
+        SaveSembastRecordDataTask(
+          data: record,
+        ),
+      );
+
+      if (result.result?.id != null) {
+        popNotDisposed(context, mounted);
+      }
     }
   }
 }

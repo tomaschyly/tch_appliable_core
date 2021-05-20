@@ -54,10 +54,12 @@ enum SembastType {
 
 class SembastTaskOptions extends DataTaskOptions {
   final SembastType type;
+  final String idKey;
 
   /// SembastTaskOptions initialization
   SembastTaskOptions({
     required this.type,
+    this.idKey = 'id',
   });
 }
 
