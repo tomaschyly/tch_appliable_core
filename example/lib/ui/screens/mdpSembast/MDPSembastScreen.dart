@@ -1,3 +1,6 @@
+import 'package:example/model/SembastRecord.dart';
+import 'package:example/model/dataRequests/GetSembastRecordsDataRequest.dart';
+import 'package:example/model/dataTasks/DeleteSembastRecordDataTask.dart';
 import 'package:example/ui/screens/AbstractAppScreen.dart';
 import 'package:example/ui/screens/mdpSembast/MDPSembastRecordScreen.dart';
 import 'package:flutter/material.dart';
@@ -60,6 +63,54 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
-    return Container();
+    return ListDataWidget<GetSembastRecordsDataRequest, SembastRecord>(
+      dataRequest: GetSembastRecordsDataRequest(
+        <String, dynamic>{},
+      ),
+      processResult: (GetSembastRecordsDataRequest dataRequest) {
+        return dataRequest.result?.records;
+      },
+      buildItem: (BuildContext context, int position, SembastRecord item) {
+        return Material(
+          color: Colors.transparent,
+          child: InkWell(
+            child: Container(
+              height: 48,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Flexible(child: Text(item.name)),
+                ],
+              ),
+            ),
+            onLongPress: () {
+              _deleteRecord(item);
+            },
+          ),
+        );
+      },
+      buildLoadingItemWithGlobalKey: (BuildContext context, GlobalKey globalKey) {
+        return LoadingItemWidget(
+          containerKey: globalKey,
+          text: Text(tt('list.item.loading')),
+        );
+      },
+      emptyState: Container(
+        width: 576,
+        padding: const EdgeInsets.all(16),
+        child: Text(tt('list.empty')),
+      ),
+    );
+  }
+
+  /// Delete selected Record from DB
+  Future<void> _deleteRecord(SembastRecord record) {
+    return MainDataProvider.instance!.executeDataTask<DeleteSembastRecordDataTask>(
+      DeleteSembastRecordDataTask(
+        data: record,
+      ),
+    );
   }
 }

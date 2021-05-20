@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -815,6 +816,66 @@ class SembastSource extends AbstractSource {
     return database;
   }
 
+  /// Query data from database
+  Future<List<Map<String, dynamic>>> query(String store, Map<String, dynamic> parameters) async {
+    final database = await _open();
+
+    final theStore = Sembast.intMapStoreFactory.store(store);
+
+    final List<Sembast.Filter> filters = [];
+
+    for (String key in parameters.keys) {
+      final List<String> parts = key.split(' ');
+
+      if (parts.length < 2) {
+        parts.add('=');
+      }
+
+      if (parts.length != 2) {
+        continue;
+      }
+
+      switch (parts[1]) {
+        case '=':
+          filters.add(Sembast.Filter.equals(parts[0], parameters[key]));
+          break;
+        case 'LIKE':
+          filters.add(Sembast.Filter.matchesRegExp(parts[0], RegExp(parameters[key], caseSensitive: false)));
+          break;
+        case '>':
+          filters.add(Sembast.Filter.greaterThan(parts[0], parameters[key]));
+          break;
+        case '>=':
+          filters.add(Sembast.Filter.greaterThanOrEquals(parts[0], parameters[key]));
+          break;
+        case '<':
+          filters.add(Sembast.Filter.lessThan(parts[0], parameters[key]));
+          break;
+        case '<=':
+          filters.add(Sembast.Filter.lessThanOrEquals(parts[0], parameters[key]));
+          break;
+      }
+    }
+
+    final finder = Sembast.Finder(
+      filter: Sembast.Filter.and(filters),
+    );
+
+    final List<Sembast.RecordSnapshot<int, Map<String, Object?>>> snapshot = await theStore.find(database, finder: finder);
+
+    final List<Map<String, dynamic>> results = [];
+
+    snapshot.forEach((Sembast.RecordSnapshot<int, Map<String, Object?>> record) {
+      final data = Map<String, dynamic>.from(record.value);
+
+      data['id'] = record.key;
+
+      results.add(data);
+    });
+
+    return results;
+  }
+
   /// Insert data into database store with int as autoincrement
   Future<int> _insert(String store, Map<String, dynamic> data) async {
     final database = await _open();
@@ -851,6 +912,19 @@ class SembastSource extends AbstractSource {
     final theStore = Sembast.intMapStoreFactory.store(store);
 
     await theStore.record(id).delete(database);
+  }
+
+  /// Query data from database and update DataSources
+  Future<void> _queryDataUpdate(DataRequest dataRequest) async {
+    final List<Map<String, dynamic>> results = await query(dataRequest.method, dataRequest.parameters);
+
+    _dataSources.forEach((MainDataSource dataSource) {
+      if (dataSource.identifiers.contains(dataRequest.identifier)) {
+        dataSource.setResult(dataRequest.identifier, <String, dynamic>{
+          'list': results,
+        });
+      }
+    });
   }
 
   /// Register the DataSource for data
@@ -896,8 +970,14 @@ class SembastSource extends AbstractSource {
 
     switch (options.type) {
       case SembastType.Query:
-        //TODO
-        throw Exception("SembastSource query Task is not implemented");
+        final List<Map<String, dynamic>> results = await query(
+          dataTask.method,
+          data,
+        );
+
+        dataTask.result = dataTask.processResult(<String, dynamic>{
+          'list': results,
+        });
         break;
       case SembastType.Save:
         final int id = await save(
@@ -906,7 +986,7 @@ class SembastSource extends AbstractSource {
           id: data[options.idKey],
         );
 
-        dataTask.result = dataTask.processResult(<String, dynamic>{'id': id});
+        dataTask.result = dataTask.processResult(<String, dynamic>{options.idKey: id});
         break;
       case SembastType.Delete:
         await delete(dataTask.method, data[options.idKey]);
@@ -951,7 +1031,7 @@ class SembastSource extends AbstractSource {
           final DataRequest? dataRequest = dataSource.requestForIdentifier(identifier);
 
           if (dataRequest != null) {
-            // await _queryDataUpdate(dataRequest); //TODO
+            await _queryDataUpdate(dataRequest);
             break;
           }
         }
