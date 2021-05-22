@@ -780,10 +780,14 @@ class SQLiteSource extends AbstractSource {
 
 class SembastOptions {
   final Future<String> Function() databasePath;
+  final int version;
+  final Sembast.OnVersionChangedFunction? onVersionChanged;
 
   /// SembastOptions initialization
   SembastOptions({
     required this.databasePath,
+    required this.version,
+    this.onVersionChanged,
   });
 }
 
@@ -808,7 +812,11 @@ class SembastSource extends AbstractSource {
     if (database == null) {
       Sembast.DatabaseFactory dbFactory = databaseFactoryIo;
 
-      database = await dbFactory.openDatabase(await _options.databasePath());
+      database = await dbFactory.openDatabase(
+        await _options.databasePath(),
+        version: _options.version,
+        onVersionChanged: _options.onVersionChanged,
+      );
 
       _database = database;
     }

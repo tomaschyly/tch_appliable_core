@@ -1,3 +1,8 @@
+## [0.4.2] - 22.5.2021
+
+* SembastSource options add DB migration parameters
+* Update dependencies
+
 ## [0.4.1] - 22.5.2021
 
 * CoreApp push after initialization optional arguments

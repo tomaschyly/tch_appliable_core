@@ -40,13 +40,14 @@ class App extends StatelessWidget {
         ),
         sembastOptions: SembastOptions(
           databasePath: () async => join((await getDatabasesPath()), 'sembast.db'),
+          version: 1,
         ),
       ),
     );
   }
 
   /// Initialize db tables
-  Future _dbInit(Database database, int version) async {
+  Future<void> _dbInit(Database database, int version) async {
     await SQLiteRecord.createTable(database);
   }
 }
