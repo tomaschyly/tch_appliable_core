@@ -14,6 +14,7 @@ class CoreApp extends AbstractStatefulWidget {
   final Future<void> Function(BuildContext context)? onAppInitStart;
   final Future<void> Function(BuildContext context)? onAppInitEnd;
   final String initialScreenRoute;
+  final Map<String, String>? initialScreenRouteArguments;
   final RouteFactory onGenerateRoute;
   final AbstractAppDataStateSnapshot snapshot;
   final List<NavigatorObserver>? navigatorObservers;
@@ -30,6 +31,7 @@ class CoreApp extends AbstractStatefulWidget {
     this.onAppInitStart,
     this.onAppInitEnd,
     required this.initialScreenRoute,
+    this.initialScreenRouteArguments,
     required this.onGenerateRoute,
     required this.snapshot,
     this.navigatorObservers,
@@ -75,6 +77,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> {
           onAppInitStart: widget.onAppInitStart,
           onAppInitEnd: widget.onAppInitEnd,
           initialScreenRoute: widget.initialScreenRoute,
+          initialScreenRouteArguments: widget.initialScreenRouteArguments,
           translatorOptions: widget.translatorOptions,
           preferencesOptions: widget.preferencesOptions,
           mainDataProviderOptions: widget.mainDataProviderOptions,
@@ -151,6 +154,7 @@ class _InitializationScreen extends StatelessWidget {
   final Future<void> Function(BuildContext context)? onAppInitStart;
   final Future<void> Function(BuildContext context)? onAppInitEnd;
   final String initialScreenRoute;
+  final Map<String, String>? initialScreenRouteArguments;
   final TranslatorOptions? translatorOptions;
   final PreferencesOptions? preferencesOptions;
   final MainDataProviderOptions? mainDataProviderOptions;
@@ -162,6 +166,7 @@ class _InitializationScreen extends StatelessWidget {
     this.onAppInitStart,
     this.onAppInitEnd,
     required this.initialScreenRoute,
+    this.initialScreenRouteArguments,
     this.translatorOptions,
     this.preferencesOptions,
     this.mainDataProviderOptions,
@@ -220,10 +225,10 @@ class _InitializationScreen extends StatelessWidget {
       if (diff.inMilliseconds < initializationMinDurationInMilliseconds) {
         Future.delayed(
           Duration(milliseconds: initializationMinDurationInMilliseconds - diff.inMilliseconds),
-          () => pushNamedNewStack(context, initialScreenRoute),
+          () => pushNamedNewStack(context, initialScreenRoute, arguments: initialScreenRouteArguments),
         );
       } else {
-        pushNamedNewStack(context, initialScreenRoute);
+        pushNamedNewStack(context, initialScreenRoute, arguments: initialScreenRouteArguments);
       }
     }
   }

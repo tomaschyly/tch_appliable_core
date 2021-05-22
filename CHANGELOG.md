@@ -1,3 +1,7 @@
+## [0.4.1] - 22.5.2021
+
+* CoreApp push after initialization optional arguments
+
 ## [0.4.0] - 20.5.2021
 
 * **Warning:** changes to exports from package, may require updated imports and dependencies
