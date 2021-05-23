@@ -19,6 +19,7 @@ class CoreApp extends AbstractStatefulWidget {
   final AbstractAppDataStateSnapshot snapshot;
   final List<NavigatorObserver>? navigatorObservers;
   final ThemeData? theme;
+  final Widget Function(BuildContext context, Widget child)? builder;
   final TranslatorOptions? translatorOptions;
   final PreferencesOptions? preferencesOptions;
   final MainDataProviderOptions? mainDataProviderOptions;
@@ -36,6 +37,7 @@ class CoreApp extends AbstractStatefulWidget {
     required this.snapshot,
     this.navigatorObservers,
     this.theme,
+    this.builder,
     this.translatorOptions,
     this.preferencesOptions,
     this.mainDataProviderOptions,
@@ -89,11 +91,16 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> {
         ],
         theme: widget.theme,
         builder: (BuildContext context, Widget? child) {
-          WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
             determineScreen(context);
           });
 
-          return child ?? Container();
+          final theBuilder = widget.builder;
+          if (theBuilder != null) {
+            return theBuilder(context, child ?? Container());
+          } else {
+            return child ?? Container();
+          }
         },
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
         supportedLocales: theTranslatorOptions?.supportedLocales ?? const <Locale>[Locale('en', 'US')],

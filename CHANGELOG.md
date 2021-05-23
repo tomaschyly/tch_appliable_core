@@ -1,3 +1,7 @@
+## [0.4.3] - 23.5.2021
+
+* Builder param for CoreApp
+
 ## [0.4.2] - 22.5.2021
 
 * SembastSource options add DB migration parameters
