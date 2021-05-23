@@ -196,4 +196,5 @@ Use `firstBuildOnly` for initialization on first build with BuildContext availab
 
 ## Roadmap
 
-*Coming soon...*
+Until version 1.0.0 there will not be predictable roadmap. Instead development is dependant on requirements of projects where this package is used.
+Core pillars of this package are however already implemented.
