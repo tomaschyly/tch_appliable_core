@@ -15,14 +15,15 @@ If some instructions are not clear enough, then analyse usage inside the example
 6. [Screens, Widgets & Responsivity](#screens-widgets--responsivity)
 7. [MainDataProvider & DataWidgets](#maindataprovider--datawidgets)
 8. [Media](#media)
-9. [Roadmap](#roadmap)
+9. [Utils](#utils)
+10. [Roadmap](#roadmap)
 
 ## Installation
 
 In your project's `pubspec.yaml` add:
 ```yaml
 dependencies:
-  tch_appliable_core: ^0.4.3
+  tch_appliable_core: ^0.4.4
 ```
 
 ## App Create
@@ -193,6 +194,16 @@ Use `firstBuildOnly` for initialization on first build with BuildContext availab
 ## Media
 
 *Coming soon...*
+
+## Utils
+
+This package includes a number of utils, methods and extensions. Check the code for useful features that you can use.
+
+* Boundary
+* Color
+* List
+* Numbers
+* Text
 
 ## Roadmap
 

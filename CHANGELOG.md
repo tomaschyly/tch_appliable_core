@@ -1,3 +1,7 @@
+## [0.4.4] - 27.5.2021
+
+* Add Color utils
+
 ## [0.4.3] - 23.5.2021
 
 * Builder param for CoreApp
