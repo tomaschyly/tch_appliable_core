@@ -6,6 +6,7 @@ import 'package:tch_appliable_core/src/core/Translator.dart';
 import 'package:tch_appliable_core/src/providers/MainDataProvider.dart';
 import 'package:tch_appliable_core/src/ui/widgets/AbstractResponsiveWidget.dart';
 import 'package:tch_appliable_core/src/ui/widgets/AbstractStatefulWidget.dart';
+import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class CoreApp extends AbstractStatefulWidget {
   final String title;
@@ -226,6 +227,8 @@ class _InitializationScreen extends StatelessWidget {
       if (onAppInitEnd != null) {
         await onAppInitEnd!(context);
       }
+
+      CoreAppState.instance.invalidateApp();
 
       final diff = DateTime.now().difference(start);
 

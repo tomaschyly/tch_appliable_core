@@ -1,3 +1,7 @@
+## [0.4.5] - 31.5.2021
+
+* Invalidate CoreApp when init done
+
 ## [0.4.4] - 27.5.2021
 
 * Add Color utils
