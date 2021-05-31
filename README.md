@@ -5,6 +5,8 @@ Flutter core package used by [Tomas Chyly](https://tomas-chyly.com/en/) & [appli
 This package includes example, in this example you should be able to see basic usage of features provided by this package.
 If some instructions are not clear enough, then analyse usage inside the example.
 
+**Platforms notice:** I have worked on projects that use Flutter on all platforms, but my focus is on **Mobile** and **Desktop**. Therefore some widgets and features may not work on **Web**, but should work on other platforms. Personally I do not consider Flutter ready for web dev.
+
 ## Contents
 
 1. [Installation](#installation)
