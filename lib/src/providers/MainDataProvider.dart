@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -166,6 +165,14 @@ class MainDataProvider {
   Future<T> executeDataTask<T extends DataTask>(T dataTask) {
     AbstractSource? theSource;
 
+    if (dataTask.mockUpTaskOptions != null) {
+      theSource = _initializedSources.firstWhereOrNull((element) => element is MockUpSource);
+
+      if (theSource != null) {
+        return theSource.executeDataTask<T>(dataTask);
+      }
+    }
+
     if (dataTask.options is MockUpTaskOptions) {
       theSource = _initializedSources.firstWhereOrNull((element) => element is MockUpSource);
     } else if (dataTask.options is HTTPTaskOptions) {
@@ -295,6 +302,20 @@ abstract class AbstractSource {
 
   /// ReFetch data for DataRequest based on methods or identifiers
   Future<void> reFetchData({List<String>? methods, List<String>? identifiers});
+
+  MainDataProviderSource sourceForTaskOptions(DataTaskOptions options) {
+    if (options is MockUpTaskOptions) {
+      return MainDataProviderSource.MockUp;
+    } else if (options is HTTPTaskOptions) {
+      return MainDataProviderSource.HTTPClient;
+    } else if (options is SQLiteTaskOptions) {
+      return MainDataProviderSource.SQLite;
+    } else if (options is SembastTaskOptions) {
+      return MainDataProviderSource.Sembast;
+    } else {
+      throw Exception('Cannot get source for options $options');
+    }
+  }
 }
 
 class MockUpOptions {
@@ -351,17 +372,22 @@ class MockUpSource extends AbstractSource {
     return data;
   }
 
-  /// Query data from mockup in memory data and update DataSources
-  Future<void> _queryDataUpdate(DataRequest dataRequest) async {
-    Map<String, dynamic> data = await _sourceMockUpData(dataRequest.source);
+  /// Query data from mockup in memory data
+  Future<dynamic> _query(MainDataProviderSource source, String identifier) async {
+    Map<String, dynamic> data = await _sourceMockUpData(source);
 
-    final dynamic identifierData = data[dataRequest.identifier];
+    final dynamic identifierData = data[identifier];
 
     if (identifierData == null) {
-      throw Exception('Missing mockUpData for identifier ${dataRequest.identifier}');
+      throw Exception('Missing mockUpData for identifier $identifier');
     }
 
-    final List<Map<String, dynamic>> results = List<Map<String, dynamic>>.from(identifierData);
+    return identifierData;
+  }
+
+  /// Query data from mockup in memory data and update DataSources
+  Future<void> _queryDataUpdate(DataRequest dataRequest) async {
+    final List<Map<String, dynamic>> results = List<Map<String, dynamic>>.from(await _query(dataRequest.source, dataRequest.identifier));
 
     _dataSources.forEach((MainDataSource dataSource) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
@@ -421,8 +447,46 @@ class MockUpSource extends AbstractSource {
 
   /// Execute one time DataTask against the source
   @override
-  Future<T> executeDataTask<T extends DataTask>(T dataTask) {
-    throw Exception('MockUpSource is not implemented');
+  Future<T> executeDataTask<T extends DataTask>(T dataTask) async {
+    final options = dataTask.mockUpTaskOptions!;
+
+    String identifier = dataTask.method;
+    final Map<String, dynamic> data = dataTask.data.toJson();
+    if (data.isNotEmpty) {
+      for (String key in data.keys) {
+        identifier += '_${key}_${data[key]}';
+      }
+    }
+
+    final random = Random();
+    int delay = 0;
+
+    if (options.maxDelayMilliseconds > 0 && options.maxDelayMilliseconds > options.minDelayMilliseconds) {
+      delay = random.nextInt(options.maxDelayMilliseconds - options.minDelayMilliseconds) + options.minDelayMilliseconds;
+
+      await Future.delayed(Duration(milliseconds: delay ~/ 2));
+    }
+
+    switch (options.type) {
+      case MockUpType.Query:
+        final Map<String, dynamic> results = Map<String, dynamic>.from(await _query(
+          sourceForTaskOptions(dataTask.options),
+          identifier,
+        ));
+
+        if (options.maxDelayMilliseconds > 0 && options.maxDelayMilliseconds > options.minDelayMilliseconds) {
+          await Future.delayed(Duration(milliseconds: delay ~/ 2));
+        }
+
+        dataTask.result = dataTask.processResult(results);
+        break;
+    }
+
+    if (dataTask.reFetchMethods != null) {
+      await reFetchData(methods: dataTask.reFetchMethods);
+    }
+
+    return dataTask;
   }
 
   /// ReFetch data for DataRequest based on methods or identifiers

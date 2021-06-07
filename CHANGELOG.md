@@ -1,3 +1,7 @@
+## [0.5.1] - 7.6.2021
+
+* MockUpSource support for query Task
+
 ## [0.5.0] - 7.6.2021
 
 * Partially implement MockUpSource, works for DataWidgets 

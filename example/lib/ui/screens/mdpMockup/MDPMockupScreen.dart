@@ -1,6 +1,7 @@
 import 'package:example/model/SembastRecord.dart';
 import 'package:example/model/dataRequests/GetMockupRecordsDataRequest.dart';
 import 'package:example/ui/screens/AbstractAppScreen.dart';
+import 'package:example/ui/screens/mdpMockup/MDPMockupTaskScreen.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class MDPMockupScreen extends AbstractAppScreen {
@@ -16,7 +17,17 @@ class _MDPMockupScreenState extends AbstractAppScreenState<MDPMockupScreen> {
   AbstractScreenStateOptions options = AppScreenStateOptions.drawer(
     screenName: MDPMockupScreen.ROUTE,
     title: tt('mdpmockup.screen.title'),
-  );
+  )..appBarOptions = <AppBarOption>[
+      AppBarOption(
+        onTap: (BuildContext context) {
+          pushNamed(context, MDPMockupTaskScreen.ROUTE);
+        },
+        icon: Icon(
+          Icons.login,
+          color: Colors.black,
+        ),
+      ),
+    ];
 
   @override
   Widget extraLargeDesktopScreen(BuildContext context) => _BodyWidget();

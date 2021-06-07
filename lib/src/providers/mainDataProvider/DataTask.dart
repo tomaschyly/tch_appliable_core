@@ -84,13 +84,19 @@ class DataTask<T extends DataModel, R extends DataModel> {
   });
 }
 
+enum MockUpType {
+  Query,
+}
+
 class MockUpTaskOptions {
+  final MockUpType type;
   final bool delayedResult;
   final int minDelayMilliseconds;
   final int maxDelayMilliseconds;
 
   /// MockUpTaskOptions initialization
   const MockUpTaskOptions({
+    required this.type,
     this.delayedResult = false,
     this.minDelayMilliseconds = 200,
     this.maxDelayMilliseconds = 2000,
