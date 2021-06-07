@@ -30,6 +30,7 @@ class App extends StatelessWidget {
       ),
       preferencesOptions: PreferencesOptions(),
       mainDataProviderOptions: MainDataProviderOptions(
+        mockUpOptions: MockUpOptions(),
         sqLiteOptions: SQLiteOptions(
           databasePath: () async => join((await getDatabasesPath()), 'default.db'),
           version: 1,

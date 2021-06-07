@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart';
+import 'package:path/path.dart';
 import 'package:sembast/sembast.dart' as Sembast;
 import 'package:sembast/sembast_io.dart';
 import 'package:sqflite/sqflite.dart' as SQLite;
@@ -72,8 +75,16 @@ class MainDataProvider {
   }
 
   /// Get source if it was initialized
-  AbstractSource? _initialitedSource(MainDataProviderSource source) {
+  AbstractSource? _initialitedSource(MainDataProviderSource source, [MockUpRequestOptions? mockUpOptions]) {
     AbstractSource? theSource;
+
+    if (mockUpOptions != null) {
+      theSource = _initializedSources.firstWhereOrNull((element) => element is MockUpSource);
+
+      if (theSource != null) {
+        return theSource;
+      }
+    }
 
     switch (source) {
       case MainDataProviderSource.MockUp:
@@ -100,7 +111,11 @@ class MainDataProvider {
     final MainDataSource dataSource = MainDataSource(dataRequests);
 
     for (DataRequest dataRequest in dataRequests) {
-      AbstractSource? theSource = _initialitedSource(dataRequest.source);
+      AbstractSource? theSource = _initialitedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
+
+      if (theSource is MockUpSource) {
+        dataRequest.sourceRegisteredTo = MainDataProviderSource.MockUp;
+      }
 
       if (theSource == null) {
         throw Exception('Cannot register for not initialized source ${dataRequest.source}');
@@ -114,7 +129,7 @@ class MainDataProvider {
 
   /// UnRegister the DataSource from source/s
   void unRegisterDataRequests(MainDataSource dataSource) {
-    for (MainDataProviderSource source in dataSource.sources) {
+    for (MainDataProviderSource source in dataSource.sourcesRegisteredTo) {
       AbstractSource? theSource = _initialitedSource(source);
 
       if (theSource == null) {
@@ -127,7 +142,7 @@ class MainDataProvider {
 
   /// Check if DataRequest has next page
   bool dataRequestHasNextPage(DataRequest dataRequest) {
-    AbstractSource? theSource = _initialitedSource(dataRequest.source);
+    AbstractSource? theSource = _initialitedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
 
     if (theSource == null) {
       throw Exception('Cannot check nextPage for not initialized source ${dataRequest.source}');
@@ -138,7 +153,7 @@ class MainDataProvider {
 
   /// Request to load next page of DataRequest
   dataRequestLoadNextPage(DataRequest dataRequest) {
-    AbstractSource? theSource = _initialitedSource(dataRequest.source);
+    AbstractSource? theSource = _initialitedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
 
     if (theSource == null) {
       throw Exception('Cannot load nextPage for not initialized source ${dataRequest.source}');
@@ -185,7 +200,7 @@ class MainDataProvider {
   void _updateMainDataSourceState(MainDataSource mainDataSource) {
     final List<MainDataProviderSourceState> states = [];
 
-    mainDataSource.sources.forEach((MainDataProviderSource source) {
+    mainDataSource.sourcesRegisteredTo.forEach((MainDataProviderSource source) {
       AbstractSource? theSource = _initialitedSource(source);
 
       if (theSource == null) {
@@ -282,13 +297,21 @@ abstract class AbstractSource {
   Future<void> reFetchData({List<String>? methods, List<String>? identifiers});
 }
 
-class MockUpOptions {}
+class MockUpOptions {
+  final String assetsDataPath;
+
+  /// MockUpOptions initialization
+  const MockUpOptions({
+    this.assetsDataPath = 'assets/mockUpData',
+  });
+}
 
 class MockUpSource extends AbstractSource {
   @override
   MainDataProviderSource get isSource => MainDataProviderSource.MockUp;
 
   final MockUpOptions _options;
+  final Map<MainDataProviderSource, Map<String, dynamic>> _mockUpData = Map();
 
   /// MockUpSource initialization
   MockUpSource({
@@ -297,16 +320,91 @@ class MockUpSource extends AbstractSource {
     state = ValueNotifier(MainDataProviderSourceState.Ready);
   }
 
+  /// Get mockUp data for MainDataProviderSource, if not exists try to load from assets
+  Future<Map<String, dynamic>> _sourceMockUpData(MainDataProviderSource source) async {
+    Map<String, dynamic>? data = _mockUpData[source];
+
+    if (data == null) {
+      String assetPath = _options.assetsDataPath;
+
+      switch (source) {
+        case MainDataProviderSource.HTTPClient:
+          assetPath = join(assetPath, 'HTTPClient.json');
+          break;
+        case MainDataProviderSource.SQLite:
+          assetPath = join(assetPath, 'SQLite.json');
+          break;
+        case MainDataProviderSource.Sembast:
+          assetPath = join(assetPath, 'Sembast.json');
+          break;
+        default:
+          throw Exception('Cannot init mockUp data for source $source');
+      }
+
+      String assetData = await rootBundle.loadString(assetPath);
+
+      _mockUpData[source] = jsonDecode(assetData);
+
+      data = _mockUpData[source]!;
+    }
+
+    return data;
+  }
+
+  /// Query data from mockup in memory data and update DataSources
+  Future<void> _queryDataUpdate(DataRequest dataRequest) async {
+    Map<String, dynamic> data = await _sourceMockUpData(dataRequest.source);
+
+    final dynamic identifierData = data[dataRequest.identifier];
+
+    if (identifierData == null) {
+      throw Exception('Missing mockUpData for identifier ${dataRequest.identifier}');
+    }
+
+    final List<Map<String, dynamic>> results = List<Map<String, dynamic>>.from(identifierData);
+
+    _dataSources.forEach((MainDataSource dataSource) {
+      if (dataSource.identifiers.contains(dataRequest.identifier)) {
+        dataSource.setResult(dataRequest.identifier, <String, dynamic>{
+          'list': results,
+        });
+      }
+    });
+  }
+
   /// Register the DataSource for data
   @override
   registerDataSource(MainDataSource dataSource) {
-    throw Exception('MockUpSource is not implemented');
+    _dataSources.add(dataSource);
+
+    registerDataRequests(dataSource);
+
+    MainDataProvider.instance!._updateMainDataSourceState(dataSource);
+
+    int minDelayMilliseconds = dataSource.mockupMinDelayMilliseconds;
+    int maxDelayMilliseconds = dataSource.mockupMaxDelayMilliseconds;
+
+    if (maxDelayMilliseconds > 0 && maxDelayMilliseconds > minDelayMilliseconds) {
+      final random = Random();
+
+      int delay = random.nextInt(maxDelayMilliseconds - minDelayMilliseconds) + minDelayMilliseconds;
+
+      Future.delayed(Duration(milliseconds: delay)).then((value) {
+        reFetchData(identifiers: dataSource.identifiers);
+      });
+    } else {
+      reFetchData(identifiers: dataSource.identifiers);
+    }
   }
 
   /// UnRegister the DataSource from receiving data
   @override
   unRegisterDataSource(MainDataSource dataSource) {
-    throw Exception('MockUpSource is not implemented');
+    unRegisterDataRequests(dataSource);
+
+    _dataSources.remove(dataSource);
+
+    dataSource.dispose();
   }
 
   /// Check if DataRequest has next page
@@ -329,8 +427,39 @@ class MockUpSource extends AbstractSource {
 
   /// ReFetch data for DataRequest based on methods or identifiers
   @override
-  Future<void> reFetchData({List<String>? methods, List<String>? identifiers}) {
-    throw Exception('MockUpSource is not implemented');
+  Future<void> reFetchData({List<String>? methods, List<String>? identifiers}) async {
+    if (methods == null && identifiers == null) {
+      throw Exception('Provide either methods or identifiers');
+    }
+
+    if (methods != null) {
+      final List<String> identifiers = <String>[];
+
+      for (String method in methods) {
+        for (MainDataSource dataSource in _dataSources) {
+          final DataRequest? dataRequest = dataSource.requestForMethod(method);
+
+          if (dataRequest != null && !identifiers.contains(dataRequest.identifier)) {
+            identifiers.add(dataRequest.identifier);
+          }
+        }
+      }
+
+      await reFetchData(identifiers: identifiers);
+    }
+
+    if (identifiers != null) {
+      for (String identifier in identifiers) {
+        for (MainDataSource dataSource in _dataSources) {
+          final DataRequest? dataRequest = dataSource.requestForIdentifier(identifier);
+
+          if (dataRequest != null) {
+            await _queryDataUpdate(dataRequest);
+            break;
+          }
+        }
+      }
+    }
   }
 }
 

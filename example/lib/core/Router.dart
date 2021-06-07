@@ -1,5 +1,6 @@
 import 'package:example/ui/screens/HomeScreen.dart';
 import 'package:example/ui/screens/mdpHttp/MDPHttpScreen.dart';
+import 'package:example/ui/screens/mdpMockup/MDPMockupScreen.dart';
 import 'package:example/ui/screens/mdpSQLite/MDPSQLiteRecordScreen.dart';
 import 'package:example/ui/screens/mdpSQLite/MDPSQLiteScreen.dart';
 import 'package:example/ui/screens/mdpSembast/MDPSembastRecordScreen.dart';
@@ -25,6 +26,8 @@ Route<Object> onGenerateRoute(RouteSettings settings) {
         return createRoute((BuildContext context) => MDPSembastScreen(), settings);
       case MDPSembastRecordScreen.ROUTE:
         return createRoute((BuildContext context) => MDPSembastRecordScreen(), settings);
+      case MDPMockupScreen.ROUTE:
+        return createRoute((BuildContext context) => MDPMockupScreen(), settings);
       default:
         throw Exception('Implement OnGenerateRoute in app');
     }

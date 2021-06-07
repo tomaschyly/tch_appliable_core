@@ -1,0 +1,16 @@
+{
+    "record": [
+        {
+            "id": 1,
+            "name": "John Doe",
+            "description": "Lorem ipsum dolor sit amet...",
+            "created": 1623060496000
+        },
+        {
+            "id": 2,
+            "name": "Jane Doe",
+            "description": "Lorem ipsum dolor sit amet...",
+            "created": 1623060543000
+        }
+    ]
+}

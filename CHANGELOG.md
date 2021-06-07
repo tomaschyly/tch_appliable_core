@@ -1,3 +1,7 @@
+## [0.5.0] - 7.6.2021
+
+* Partially implement MockUpSource, works for DataWidgets 
+
 ## [0.4.5] - 31.5.2021
 
 * Invalidate CoreApp when init done

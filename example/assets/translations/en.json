@@ -3,6 +3,8 @@
   "list.empty": "There are no items here",
   "list.item.loading": "Loading...",
   "mdphttp.screen.title": "MDP Http",
+  "mdpmockup.screen.description": "Mockup ListDataWidget acting like the Sembast example is running on mockup data.",
+  "mdpmockup.screen.title": "MDP Mockup",
   "mdpsembast.screen.title": "MDP Sembast",
   "mdpsembastrecord.screen.title": "MDP Sembast Record",
   "mdpsembastrecord.screen.description": "Description",

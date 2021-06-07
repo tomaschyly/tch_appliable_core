@@ -3,6 +3,8 @@
   "list.empty": "Žiadne položky",
   "list.item.loading": "Načítam...",
   "mdphttp.screen.title": "MDP Http",
+  "mdpmockup.screen.description": "Mockup ListDataWidget ktorý sa tvári, že beží ako Sembast príklad ale cez mockup data.",
+  "mdpmockup.screen.title": "MDP Mockup",
   "mdpsembast.screen.title": "MDP Sembast",
   "mdpsembastrecord.screen.title": "MDP Sembast Záznam",
   "mdpsembastrecord.screen.description": "Popis",

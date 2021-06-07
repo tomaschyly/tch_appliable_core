@@ -33,7 +33,40 @@ class MainDataSource {
   List<String> get identifiers => _dataRequests.map((dataRequest) => dataRequest.identifier).toList();
 
   /// Get list of sources by DataRequests
-  List<MainDataProviderSource> get sources => _dataRequests.map((dataReqeust) => dataReqeust.source).toList();
+  List<MainDataProviderSource> get sources => _dataRequests.map((dataRequest) => dataRequest.source).toList();
+
+  /// Get list of sources to which DataSource is actually registered
+  List<MainDataProviderSource> get sourcesRegisteredTo => _dataRequests.map((dataRequest) => dataRequest.sourceRegisteredTo ?? dataRequest.source).toList();
+
+  /// Get minDelayMilliseconds for Mockup
+  int get mockupMinDelayMilliseconds {
+    int minDelayMilliseconds = 0;
+
+    _dataRequests.forEach((dataRequest) {
+      final theMockUpRequestOptions = dataRequest.mockUpRequestOptions;
+
+      if (theMockUpRequestOptions != null) {
+        minDelayMilliseconds += theMockUpRequestOptions.minDelayMilliseconds;
+      }
+    });
+
+    return minDelayMilliseconds;
+  }
+
+  /// Get minDelayMilliseconds for Mockup
+  int get mockupMaxDelayMilliseconds {
+    int maxDelayMilliseconds = 0;
+
+    _dataRequests.forEach((dataRequest) {
+      final theMockUpRequestOptions = dataRequest.mockUpRequestOptions;
+
+      if (theMockUpRequestOptions != null) {
+        maxDelayMilliseconds += theMockUpRequestOptions.maxDelayMilliseconds;
+      }
+    });
+
+    return maxDelayMilliseconds;
+  }
 
   /// Find DataRequest of this DataSource for method
   DataRequest? requestForMethod(String method) {

@@ -1,8 +1,9 @@
 import 'package:tch_appliable_core/src/model/DataModel.dart';
 
-abstract class DataTaskOptions {}
-
-class MockUpTaskOptions extends DataTaskOptions {}
+abstract class DataTaskOptions {
+  /// DataTaskOptions initialization
+  const DataTaskOptions();
+}
 
 enum HTTPType {
   Get,
@@ -16,7 +17,7 @@ class HTTPTaskOptions extends DataTaskOptions {
   final Map<String, dynamic> Function(String body)? processBody;
 
   /// HTTPTaskOptions initialization
-  HTTPTaskOptions({
+  const HTTPTaskOptions({
     required this.type,
     this.url,
     this.headers,
@@ -38,7 +39,7 @@ class SQLiteTaskOptions extends DataTaskOptions {
   final List<dynamic>? rawArguments;
 
   /// SQLiteTaskOptions initialization
-  SQLiteTaskOptions({
+  const SQLiteTaskOptions({
     required this.type,
     this.idKey = 'id',
     this.rawQuery,
@@ -57,7 +58,7 @@ class SembastTaskOptions extends DataTaskOptions {
   final String idKey;
 
   /// SembastTaskOptions initialization
-  SembastTaskOptions({
+  const SembastTaskOptions({
     required this.type,
     this.idKey = 'id',
   });
@@ -66,6 +67,7 @@ class SembastTaskOptions extends DataTaskOptions {
 class DataTask<T extends DataModel, R extends DataModel> {
   final String method;
   final DataTaskOptions options;
+  final MockUpTaskOptions? mockUpTaskOptions;
   final DataModel data;
   final R? Function(Map<String, dynamic> json) processResult;
   R? result;
@@ -75,8 +77,22 @@ class DataTask<T extends DataModel, R extends DataModel> {
   DataTask({
     required this.method,
     required this.options,
+    this.mockUpTaskOptions,
     required this.data,
     required this.processResult,
     this.reFetchMethods,
+  });
+}
+
+class MockUpTaskOptions {
+  final bool delayedResult;
+  final int minDelayMilliseconds;
+  final int maxDelayMilliseconds;
+
+  /// MockUpTaskOptions initialization
+  const MockUpTaskOptions({
+    this.delayedResult = false,
+    this.minDelayMilliseconds = 200,
+    this.maxDelayMilliseconds = 2000,
   });
 }
