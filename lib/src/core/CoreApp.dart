@@ -149,7 +149,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> {
   }
 
   /// ReBuild whole app
-  void invalidateApp() {
+  void _invalidateApp() {
     setStateNotDisposed(() {});
   }
 }
@@ -228,7 +228,7 @@ class _InitializationScreen extends StatelessWidget {
         await onAppInitEnd!(context);
       }
 
-      CoreAppState.instance.invalidateApp();
+      CoreAppState.instance._invalidateApp();
 
       final diff = DateTime.now().difference(start);
 
