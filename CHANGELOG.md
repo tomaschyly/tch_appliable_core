@@ -1,3 +1,7 @@
+## [0.5.2] - 7.6.2021
+
+* Removed CoreAppState invalidateApp as it does not do what it used to
+
 ## [0.5.1] - 7.6.2021
 
 * MockUpSource support for query Task
