@@ -93,6 +93,7 @@ class MockUpTaskOptions {
   final bool delayedResult;
   final int minDelayMilliseconds;
   final int maxDelayMilliseconds;
+  final String? assetDataPath;
 
   /// MockUpTaskOptions initialization
   const MockUpTaskOptions({
@@ -100,5 +101,6 @@ class MockUpTaskOptions {
     this.delayedResult = false,
     this.minDelayMilliseconds = 200,
     this.maxDelayMilliseconds = 2000,
+    this.assetDataPath,
   });
 }

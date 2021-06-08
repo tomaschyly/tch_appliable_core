@@ -1,3 +1,7 @@
+## [0.5.3] - 8.6.2021
+
+* Mockup data by optional param in Requests & Tasks
+
 ## [0.5.2] - 7.6.2021
 
 * Removed CoreAppState invalidateApp as it does not do what it used to

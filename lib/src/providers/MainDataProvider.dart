@@ -373,21 +373,28 @@ class MockUpSource extends AbstractSource {
   }
 
   /// Query data from mockup in memory data
-  Future<dynamic> _query(MainDataProviderSource source, String identifier) async {
-    Map<String, dynamic> data = await _sourceMockUpData(source);
+  Future<dynamic> _query(MainDataProviderSource source, String identifier, [String? assetDataPath]) async {
+    if (assetDataPath != null) {
+      String assetData = await rootBundle.loadString(assetDataPath);
 
-    final dynamic identifierData = data[identifier];
+      return jsonDecode(assetData);
+    } else {
+      Map<String, dynamic> data = await _sourceMockUpData(source);
 
-    if (identifierData == null) {
-      throw Exception('Missing mockUpData for identifier $identifier');
+      final dynamic identifierData = data[identifier];
+
+      if (identifierData == null) {
+        throw Exception('Missing mockUpData for identifier $identifier');
+      }
+
+      return identifierData;
     }
-
-    return identifierData;
   }
 
   /// Query data from mockup in memory data and update DataSources
   Future<void> _queryDataUpdate(DataRequest dataRequest) async {
-    final List<Map<String, dynamic>> results = List<Map<String, dynamic>>.from(await _query(dataRequest.source, dataRequest.identifier));
+    final List<Map<String, dynamic>> results =
+        List<Map<String, dynamic>>.from(await _query(dataRequest.source, dataRequest.identifier, dataRequest.mockUpRequestOptions?.assetDataPath));
 
     _dataSources.forEach((MainDataSource dataSource) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
@@ -472,6 +479,7 @@ class MockUpSource extends AbstractSource {
         final Map<String, dynamic> results = Map<String, dynamic>.from(await _query(
           sourceForTaskOptions(dataTask.options),
           identifier,
+          dataTask.mockUpTaskOptions?.assetDataPath,
         ));
 
         if (options.maxDelayMilliseconds > 0 && options.maxDelayMilliseconds > options.minDelayMilliseconds) {

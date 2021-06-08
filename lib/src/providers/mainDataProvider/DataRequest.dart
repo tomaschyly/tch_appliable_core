@@ -38,11 +38,13 @@ class MockUpRequestOptions {
   final bool delayedResult;
   final int minDelayMilliseconds;
   final int maxDelayMilliseconds;
+  final String? assetDataPath;
 
   /// MockUpRequestOptions initialization
   const MockUpRequestOptions({
     this.delayedResult = false,
     this.minDelayMilliseconds = 200,
     this.maxDelayMilliseconds = 2000,
+    this.assetDataPath,
   });
 }
