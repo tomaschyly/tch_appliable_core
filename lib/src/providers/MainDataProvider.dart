@@ -407,7 +407,7 @@ class MockUpSource extends AbstractSource {
           data = List<Map<String, dynamic>>.from(data);
         }
 
-        data = jsonEncode(data);
+        json = jsonEncode(data);
       } catch (e) {
         exception = SourceException(originalException: e);
       }

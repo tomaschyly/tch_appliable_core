@@ -1,3 +1,7 @@
+## [0.5.6] - 9.6.2021
+
+* Fix variable typo
+
 ## [0.5.5] - 9.6.2021
 
 * Fix missing code 
