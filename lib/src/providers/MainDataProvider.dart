@@ -631,6 +631,10 @@ class HTTPSource extends AbstractSource {
     SourceException? exception;
 
     try {
+      final response = await query(dataRequest);
+
+      json = response.body;
+
       if (response.statusCode >= 400) {
         exception = SourceException(
           originalException: null,
