@@ -393,26 +393,57 @@ class MockUpSource extends AbstractSource {
 
   /// Query data from mockup in memory data and update DataSources
   Future<void> _queryDataUpdate(DataRequest dataRequest) async {
-    List<Map<String, dynamic>>? results;
     SourceException? exception;
 
-    try {
-      results = List<Map<String, dynamic>>.from(await _query(dataRequest.source, dataRequest.identifier, dataRequest.mockUpRequestOptions?.assetDataPath));
-    } catch (e) {
-      exception = SourceException(originalException: e);
-    }
+    if (dataRequest.source == MainDataProviderSource.HTTPClient) {
+      String? json;
 
-    _dataSources.forEach((MainDataSource dataSource) {
-      if (dataSource.identifiers.contains(dataRequest.identifier)) {
-        dataSource.setResult(
-          dataRequest.identifier,
-          <String, dynamic>{
-            'list': results,
-          },
-          exception,
-        );
+      try {
+        dynamic data = await _query(dataRequest.source, dataRequest.identifier, dataRequest.mockUpRequestOptions?.assetDataPath);
+
+        if (data is Map) {
+          data = Map<String, dynamic>.from(data);
+        } else {
+          data = List<Map<String, dynamic>>.from(data);
+        }
+
+        data = jsonEncode(data);
+      } catch (e) {
+        exception = SourceException(originalException: e);
       }
-    });
+
+      _dataSources.forEach((MainDataSource dataSource) {
+        if (dataSource.identifiers.contains(dataRequest.identifier)) {
+          dataSource.setResult(
+            dataRequest.identifier,
+            <String, dynamic>{
+              'response': json,
+            },
+            exception,
+          );
+        }
+      });
+    } else {
+      List<Map<String, dynamic>>? results;
+
+      try {
+        results = List<Map<String, dynamic>>.from(await _query(dataRequest.source, dataRequest.identifier, dataRequest.mockUpRequestOptions?.assetDataPath));
+      } catch (e) {
+        exception = SourceException(originalException: e);
+      }
+
+      _dataSources.forEach((MainDataSource dataSource) {
+        if (dataSource.identifiers.contains(dataRequest.identifier)) {
+          dataSource.setResult(
+            dataRequest.identifier,
+            <String, dynamic>{
+              'list': results,
+            },
+            exception,
+          );
+        }
+      });
+    }
   }
 
   /// Register the DataSource for data
@@ -600,10 +631,6 @@ class HTTPSource extends AbstractSource {
     SourceException? exception;
 
     try {
-      final response = await query(dataRequest);
-
-      json = response.body;
-
       if (response.statusCode >= 400) {
         exception = SourceException(
           originalException: null,

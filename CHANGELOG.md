@@ -1,3 +1,8 @@
+## [0.5.4] - 9.6.2021
+
+* MDP MockupSource better comform to other sources
+* MDP sources now sent optionally SourceException instead of crashing
+
 ## [0.5.3] - 8.6.2021
 
 * Mockup data by optional param in Requests & Tasks
