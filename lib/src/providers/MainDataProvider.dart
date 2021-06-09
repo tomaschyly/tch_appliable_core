@@ -393,14 +393,24 @@ class MockUpSource extends AbstractSource {
 
   /// Query data from mockup in memory data and update DataSources
   Future<void> _queryDataUpdate(DataRequest dataRequest) async {
-    final List<Map<String, dynamic>> results =
-        List<Map<String, dynamic>>.from(await _query(dataRequest.source, dataRequest.identifier, dataRequest.mockUpRequestOptions?.assetDataPath));
+    List<Map<String, dynamic>>? results;
+    SourceException? exception;
+
+    try {
+      results = List<Map<String, dynamic>>.from(await _query(dataRequest.source, dataRequest.identifier, dataRequest.mockUpRequestOptions?.assetDataPath));
+    } catch (e) {
+      exception = SourceException(originalException: e);
+    }
 
     _dataSources.forEach((MainDataSource dataSource) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
-        dataSource.setResult(dataRequest.identifier, <String, dynamic>{
-          'list': results,
-        });
+        dataSource.setResult(
+          dataRequest.identifier,
+          <String, dynamic>{
+            'list': results,
+          },
+          exception,
+        );
       }
     });
   }
@@ -476,17 +486,25 @@ class MockUpSource extends AbstractSource {
 
     switch (options.type) {
       case MockUpType.Query:
-        final Map<String, dynamic> results = Map<String, dynamic>.from(await _query(
-          sourceForTaskOptions(dataTask.options),
-          identifier,
-          dataTask.mockUpTaskOptions?.assetDataPath,
-        ));
+        Map<String, dynamic>? results;
+        SourceException? exception;
+
+        try {
+          results = Map<String, dynamic>.from(await _query(
+            sourceForTaskOptions(dataTask.options),
+            identifier,
+            dataTask.mockUpTaskOptions?.assetDataPath,
+          ));
+        } catch (e) {
+          exception = SourceException(originalException: e);
+        }
 
         if (options.maxDelayMilliseconds > 0 && options.maxDelayMilliseconds > options.minDelayMilliseconds) {
           await Future.delayed(Duration(milliseconds: delay ~/ 2));
         }
 
-        dataTask.result = dataTask.processResult(results);
+        dataTask.result = results != null ? dataTask.processResult(results) : null;
+        dataTask.error = exception;
         break;
     }
 
@@ -560,7 +578,7 @@ class HTTPSource extends AbstractSource {
   }
 
   /// Query data from remote API
-  Future<String?> query(DataRequest dataRequest) async {
+  Future<Response> query(DataRequest dataRequest) async {
     final List<String> values = [];
     dataRequest.parameters.forEach((key, value) {
       values.add('$key=$value');
@@ -568,29 +586,43 @@ class HTTPSource extends AbstractSource {
 
     final String url = '${_options.hostUrl}${dataRequest.method}?${values.join('&')}';
 
-    try {
-      final Response response = await get(
-        Uri.parse(url),
-        headers: _options.headers,
-      );
+    final Response response = await get(
+      Uri.parse(url),
+      headers: _options.headers,
+    );
 
-      return response.body;
-    } catch (e) {
-      debugPrint('HTTPSource.query error: $e');
-    }
-
-    return null;
+    return response;
   }
 
   /// Query data from remote API and update DataSources
   Future<void> _queryDataUpdate(DataRequest dataRequest) async {
-    final String? response = await query(dataRequest);
+    String? json;
+    SourceException? exception;
+
+    try {
+      final response = await query(dataRequest);
+
+      json = response.body;
+
+      if (response.statusCode >= 400) {
+        exception = SourceException(
+          originalException: null,
+          httpStatusCode: response.statusCode,
+        );
+      }
+    } catch (e) {
+      exception = SourceException(originalException: e);
+    }
 
     _dataSources.forEach((MainDataSource dataSource) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
-        dataSource.setResult(dataRequest.identifier, <String, dynamic>{
-          'response': response,
-        });
+        dataSource.setResult(
+          dataRequest.identifier,
+          <String, dynamic>{
+            'response': json,
+          },
+          exception,
+        );
       }
     });
   }
@@ -659,10 +691,16 @@ class HTTPSource extends AbstractSource {
           } else {
             dataTask.result = dataTask.processResult(jsonDecode(response.body));
           }
-        } catch (e) {
-          debugPrint('HTTPSource.executeDataTask error: $e');
 
+          if (response.statusCode >= 400) {
+            dataTask.error = SourceException(
+              originalException: null,
+              httpStatusCode: response.statusCode,
+            );
+          }
+        } catch (e) {
           dataTask.result = null;
+          dataTask.error = SourceException(originalException: e);
         }
         break;
       case HTTPType.Post:
@@ -680,10 +718,16 @@ class HTTPSource extends AbstractSource {
           } else {
             dataTask.result = dataTask.processResult(jsonDecode(response.body));
           }
-        } catch (e) {
-          debugPrint('HTTPSource.executeDataTask error: $e');
 
+          if (response.statusCode >= 400) {
+            dataTask.error = SourceException(
+              originalException: null,
+              httpStatusCode: response.statusCode,
+            );
+          }
+        } catch (e) {
           dataTask.result = null;
+          dataTask.error = SourceException(originalException: e);
         }
         break;
     }
@@ -847,13 +891,24 @@ class SQLiteSource extends AbstractSource {
 
   /// Query data from database and update DataSources
   Future<void> _queryDataUpdate(DataRequest dataRequest) async {
-    final List<Map<String, dynamic>> results = await query(dataRequest.method, dataRequest.parameters);
+    List<Map<String, dynamic>>? results;
+    SourceException? exception;
+
+    try {
+      results = await query(dataRequest.method, dataRequest.parameters);
+    } catch (e) {
+      exception = SourceException(originalException: e);
+    }
 
     _dataSources.forEach((MainDataSource dataSource) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
-        dataSource.setResult(dataRequest.identifier, <String, dynamic>{
-          'list': results,
-        });
+        dataSource.setResult(
+          dataRequest.identifier,
+          <String, dynamic>{
+            'list': results,
+          },
+          exception,
+        );
       }
     });
   }
@@ -904,33 +959,59 @@ class SQLiteSource extends AbstractSource {
         await raw(options.rawQuery!);
         break;
       case SQLiteType.Query:
-        final List<Map<String, dynamic>> results = await query(
-          dataTask.method,
-          data,
-          rawQuery: options.rawQuery,
-          rawArguments: options.rawArguments,
-        );
+        List<Map<String, dynamic>>? results;
+        SourceException? exception;
 
-        dataTask.result = dataTask.processResult(<String, dynamic>{
-          'list': results,
-        });
+        try {
+          results = await query(
+            dataTask.method,
+            data,
+            rawQuery: options.rawQuery,
+            rawArguments: options.rawArguments,
+          );
+        } catch (e) {
+          exception = SourceException(originalException: e);
+        }
+
+        dataTask.result = results != null
+            ? dataTask.processResult(<String, dynamic>{
+                'list': results,
+              })
+            : null;
+        dataTask.error = exception;
         break;
       case SQLiteType.Save:
-        final int id = await save(
-          dataTask.method,
-          data,
-          id: data[options.idKey],
-        );
+        int? id;
+        SourceException? exception;
 
-        dataTask.result = dataTask.processResult(<String, dynamic>{'id': id});
+        try {
+          id = await save(
+            dataTask.method,
+            data,
+            id: data[options.idKey],
+          );
+        } catch (e) {
+          exception = SourceException(originalException: e);
+        }
+
+        dataTask.result = id != null ? dataTask.processResult(<String, dynamic>{'id': id}) : null;
+        dataTask.error = exception;
         break;
       case SQLiteType.Delete:
-        final int deleted = await delete(
-          dataTask.method,
-          data[options.idKey],
-        );
+        int? deleted;
+        SourceException? exception;
 
-        dataTask.result = dataTask.processResult(<String, dynamic>{'deleted': deleted});
+        try {
+          deleted = await delete(
+            dataTask.method,
+            data[options.idKey],
+          );
+        } catch (e) {
+          exception = SourceException(originalException: e);
+        }
+
+        dataTask.result = deleted != null ? dataTask.processResult(<String, dynamic>{'deleted': deleted}) : null;
+        dataTask.error = exception;
         break;
     }
 
@@ -1125,13 +1206,24 @@ class SembastSource extends AbstractSource {
 
   /// Query data from database and update DataSources
   Future<void> _queryDataUpdate(DataRequest dataRequest) async {
-    final List<Map<String, dynamic>> results = await query(dataRequest.method, dataRequest.parameters);
+    List<Map<String, dynamic>>? results;
+    SourceException? exception;
+
+    try {
+      results = await query(dataRequest.method, dataRequest.parameters);
+    } catch (e) {
+      exception = SourceException(originalException: e);
+    }
 
     _dataSources.forEach((MainDataSource dataSource) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
-        dataSource.setResult(dataRequest.identifier, <String, dynamic>{
-          'list': results,
-        });
+        dataSource.setResult(
+          dataRequest.identifier,
+          <String, dynamic>{
+            'list': results,
+          },
+          exception,
+        );
       }
     });
   }
@@ -1179,28 +1271,52 @@ class SembastSource extends AbstractSource {
 
     switch (options.type) {
       case SembastType.Query:
-        final List<Map<String, dynamic>> results = await query(
-          dataTask.method,
-          data,
-        );
+        List<Map<String, dynamic>>? results;
+        SourceException? exception;
 
-        dataTask.result = dataTask.processResult(<String, dynamic>{
-          'list': results,
-        });
+        try {
+          results = await query(
+            dataTask.method,
+            data,
+          );
+        } catch (e) {
+          exception = SourceException(originalException: e);
+        }
+
+        dataTask.result = results != null
+            ? dataTask.processResult(<String, dynamic>{
+                'list': results,
+              })
+            : null;
+        dataTask.error = exception;
         break;
       case SembastType.Save:
-        final int id = await save(
-          dataTask.method,
-          data,
-          id: data[options.idKey],
-        );
+        int? id;
+        SourceException? exception;
 
-        dataTask.result = dataTask.processResult(<String, dynamic>{options.idKey: id});
+        try {
+          id = await save(
+            dataTask.method,
+            data,
+            id: data[options.idKey],
+          );
+        } catch (e) {
+          exception = SourceException(originalException: e);
+        }
+
+        dataTask.result = id != null ? dataTask.processResult(<String, dynamic>{options.idKey: id}) : null;
+        dataTask.error = exception;
         break;
       case SembastType.Delete:
-        await delete(dataTask.method, data[options.idKey]);
+        try {
+          await delete(dataTask.method, data[options.idKey]);
 
-        dataTask.result = dataTask.processResult(<String, dynamic>{'deleted': true});
+          dataTask.result = dataTask.processResult(<String, dynamic>{'deleted': true});
+        } catch (e) {
+          dataTask.result = null;
+          dataTask.error = SourceException(originalException: e);
+        }
+
         break;
     }
 
@@ -1247,4 +1363,15 @@ class SembastSource extends AbstractSource {
       }
     }
   }
+}
+
+class SourceException {
+  final Object? originalException;
+  final int? httpStatusCode;
+
+  /// SourceException initialization
+  SourceException({
+    required this.originalException,
+    this.httpStatusCode,
+  });
 }

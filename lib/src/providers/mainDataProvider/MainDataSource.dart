@@ -92,12 +92,13 @@ class MainDataSource {
   }
 
   /// Set response or already processed result from source as result
-  void setResult(String identifier, Map<String, dynamic> result) {
+  void setResult(String identifier, Map<String, dynamic>? result, SourceException? exception) {
     final List<DataRequest> dataRequests = List.from(_dataRequests);
 
     dataRequests.forEach((dataRequest) {
       if (dataRequest.identifier == identifier) {
-        dataRequest.result = dataRequest.processResult(result);
+        dataRequest.result = result != null ? dataRequest.processResult(result) : null;
+        dataRequest.error = exception;
       }
     });
 

@@ -1,4 +1,5 @@
 import 'package:tch_appliable_core/src/model/DataModel.dart';
+import 'package:tch_appliable_core/src/providers/MainDataProvider.dart';
 
 abstract class DataTaskOptions {
   /// DataTaskOptions initialization
@@ -71,6 +72,7 @@ class DataTask<T extends DataModel, R extends DataModel> {
   final DataModel data;
   final R? Function(Map<String, dynamic> json) processResult;
   R? result;
+  SourceException? error;
   final List<String>? reFetchMethods;
 
   /// DataTask initialization

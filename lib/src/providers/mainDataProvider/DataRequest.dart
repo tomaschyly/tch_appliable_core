@@ -23,6 +23,7 @@ class DataRequest<T extends DataModel> {
   final Map<String, dynamic> parameters;
   final T? Function(Map<String, dynamic> json) processResult;
   T? result;
+  SourceException? error;
 
   /// DataRequest initialization
   DataRequest({
