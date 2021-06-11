@@ -30,6 +30,8 @@ abstract class AbstractScreen extends AbstractStatefulWidget {}
 abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractStatefulWidgetState<T> with RouteAware {
   @protected
   late AbstractScreenStateOptions options;
+  @protected
+  ValueNotifier<bool> isLoading = ValueNotifier(false);
 
   final GlobalKey<ScreenMessengerWidgetState> _messengerKey = GlobalKey();
 
@@ -64,49 +66,57 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
       firstBuildOnly(context);
     }
 
-    Widget theContent = buildContent(context);
-    if (options.safeArea) {
-      theContent = SafeArea(
-        top: false,
-        child: theContent,
-      );
-    }
-
-    final Widget? theDrawer = createDrawer(context);
-    if (options.drawerIsPermanentlyVisible && theDrawer != null) {
-      theContent = Container(
-        width: double.infinity,
-        height: double.infinity,
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            theDrawer,
-            Expanded(child: theContent),
-          ],
-        ),
-      );
-    }
-
-    return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
-      appBar: createAppBar(context),
-      body: Builder(
-        builder: (BuildContext context) {
-          return ScreenMessengerWidget(
-            key: _messengerKey,
-            options: options,
-            displayMessage: screenMessage,
+    return ValueListenableBuilder<bool>(
+      valueListenable: isLoading,
+      builder: (BuildContext context, bool value, Widget? child) {
+        Widget theContent = buildContent(context);
+        if (options.safeArea) {
+          theContent = SafeArea(
+            top: false,
             child: theContent,
           );
-        },
-      ),
-      bottomNavigationBar: createBottomBar(context),
-      drawer: !options.drawerIsPermanentlyVisible ? theDrawer : null,
-      floatingActionButton: createFloatingActionButton(context),
-      floatingActionButtonAnimator: setFloatingActionButtonAnimator(context),
-      floatingActionButtonLocation: setFloatingActionButtonLocation(context),
+        }
+
+        final Widget? theDrawer = createDrawer(context);
+        if (options.drawerIsPermanentlyVisible && theDrawer != null) {
+          theContent = Container(
+            width: double.infinity,
+            height: double.infinity,
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                theDrawer,
+                Expanded(child: theContent),
+              ],
+            ),
+          );
+        }
+
+        return ScreenDataState(
+          child: Scaffold(
+            backgroundColor: Theme.of(context).backgroundColor,
+            appBar: createAppBar(context),
+            body: Builder(
+              builder: (BuildContext context) {
+                return ScreenMessengerWidget(
+                  key: _messengerKey,
+                  options: options,
+                  displayMessage: screenMessage,
+                  child: theContent,
+                );
+              },
+            ),
+            bottomNavigationBar: createBottomBar(context),
+            drawer: !options.drawerIsPermanentlyVisible ? theDrawer : null,
+            floatingActionButton: createFloatingActionButton(context),
+            floatingActionButtonAnimator: setFloatingActionButtonAnimator(context),
+            floatingActionButtonLocation: setFloatingActionButtonLocation(context),
+          ),
+          isLoading: isLoading.value,
+        );
+      },
     );
   }
 
@@ -173,6 +183,35 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
   void onResume() {
     _messengerKey.currentState?.onResume();
   }
+
+  /// Execute any asynchronous Task that needs to display loading state
+  @protected
+  Future<void> executeAsyncTask(Future<void> Function() task) async {
+    isLoading.value = true;
+
+    await task();
+
+    isLoading.value = false;
+  }
+}
+
+class ScreenDataState extends InheritedWidget {
+  final bool isLoading;
+
+  /// ScreenDataState initialization
+  ScreenDataState({
+    required Widget child,
+    required this.isLoading,
+  }) : super(child: child);
+
+  /// Access current ScreenDataState anywhere from BuildContext
+  static T? of<T extends ScreenDataState>(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<T>();
+  }
+
+  /// Disable update notifications
+  @override
+  bool updateShouldNotify(InheritedWidget oldWidget) => false;
 }
 
 class AppBarOption {

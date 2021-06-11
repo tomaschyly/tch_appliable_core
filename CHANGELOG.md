@@ -1,3 +1,7 @@
+## [0.6.0] - 11.6.2021
+
+* ScreenDataState with isLoading, executeAsyncTask and extensibility
+
 ## [0.5.6] - 9.6.2021
 
 * Fix variable typo
