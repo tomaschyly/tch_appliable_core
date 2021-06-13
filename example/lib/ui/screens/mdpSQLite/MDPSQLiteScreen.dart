@@ -1,6 +1,8 @@
 import 'package:example/model/SQLiteRecord.dart';
+import 'package:example/model/SQLiteRecordQuery.dart';
 import 'package:example/model/dataRequests/GetSQLiteRecordsDataRequest.dart';
 import 'package:example/model/dataTasks/DeleteSQLiteRecordDataTask.dart';
+import 'package:example/model/dataTasks/DeleteSQLiteRecordsDataTask.dart';
 import 'package:example/ui/screens/AbstractAppScreen.dart';
 import 'package:example/ui/screens/mdpSQLite/MDPSQLiteRecordScreen.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +28,21 @@ class _MDPSQLiteScreenState extends AbstractAppScreenState<MDPSQLiteScreen> {
         },
         icon: Icon(
           Icons.add,
+          color: Colors.black,
+        ),
+      ),
+      AppBarOption(
+        onTap: (BuildContext context) {
+          MainDataProvider.instance!.executeDataTask(
+            DeleteSQLiteRecordsDataTask(
+              data: SQLiteRecordQuery.fromJson({
+                // 'name': 'a',
+              }),
+            ),
+          );
+        },
+        icon: Icon(
+          Icons.delete,
           color: Colors.black,
         ),
       ),

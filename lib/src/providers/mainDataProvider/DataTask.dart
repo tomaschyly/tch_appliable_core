@@ -31,6 +31,7 @@ enum SQLiteType {
   Query,
   Save,
   Delete,
+  DeleteWhere,
 }
 
 class SQLiteTaskOptions extends DataTaskOptions {

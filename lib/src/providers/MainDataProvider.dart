@@ -920,6 +920,21 @@ class SQLiteSource extends AbstractSource {
     return database.delete(table, where: 'id = ?', whereArgs: [id]);
   }
 
+  /// Delete data from database by where parameters
+  Future<int> deleteWhere(String table, Map<String, dynamic> parameters) async {
+    final database = await _open();
+
+    String? where;
+    List<dynamic>? whereArgs;
+
+    if (parameters.isNotEmpty) {
+      where = parameters.keys.join(' ');
+      whereArgs = parameters.values.toList();
+    }
+
+    return database.delete(table, where: where, whereArgs: whereArgs);
+  }
+
   /// Query data from database and update DataSources
   Future<void> _queryDataUpdate(DataRequest dataRequest) async {
     List<Map<String, dynamic>>? results;
@@ -1043,6 +1058,19 @@ class SQLiteSource extends AbstractSource {
 
         dataTask.result = deleted != null ? dataTask.processResult(<String, dynamic>{'deleted': deleted}) : null;
         dataTask.error = exception;
+        break;
+      case SQLiteType.DeleteWhere:
+        try {
+          int deleted = await deleteWhere(
+            dataTask.method,
+            data,
+          );
+
+          dataTask.result = dataTask.processResult(<String, dynamic>{'deleted': deleted});
+        } catch (e) {
+          dataTask.result = null;
+          dataTask.error = SourceException(originalException: e);
+        }
         break;
     }
 
