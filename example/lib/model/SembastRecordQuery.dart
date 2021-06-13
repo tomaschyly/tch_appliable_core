@@ -6,7 +6,7 @@ class SembastRecordQuery extends DataModel {
 
   /// SembastRecordQuery initialization from JSON map
   SembastRecordQuery.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
-    name = json['name'];
+    name = json[SembastRecord.COL_NAME];
   }
 
   /// Covert the object into JSON map

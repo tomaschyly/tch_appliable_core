@@ -6,7 +6,7 @@ class SQLiteRecordQuery extends DataModel {
 
   /// SQLiteRecordQuery initialization from JSON map
   SQLiteRecordQuery.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
-    name = json['name'];
+    name = json[SQLiteRecord.COL_NAME];
   }
 
   /// Covert the object into JSON map
