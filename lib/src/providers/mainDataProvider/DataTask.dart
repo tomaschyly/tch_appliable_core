@@ -53,6 +53,7 @@ enum SembastType {
   Query,
   Save,
   Delete,
+  DeleteWhere,
 }
 
 class SembastTaskOptions extends DataTaskOptions {

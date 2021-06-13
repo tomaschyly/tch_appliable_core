@@ -1,3 +1,7 @@
+## [0.6.1] - 13.6.2021
+
+* MDP SQLiteSource and SembastSource deleteWhere DataTask type for multiple records batch deletion
+
 ## [0.6.0] - 11.6.2021
 
 * ScreenDataState with isLoading, executeAsyncTask and extensibility

@@ -1,6 +1,8 @@
 import 'package:example/model/SembastRecord.dart';
+import 'package:example/model/SembastRecordQuery.dart';
 import 'package:example/model/dataRequests/GetSembastRecordsDataRequest.dart';
 import 'package:example/model/dataTasks/DeleteSembastRecordDataTask.dart';
+import 'package:example/model/dataTasks/DeleteSembastRecordsDataTask.dart';
 import 'package:example/ui/screens/AbstractAppScreen.dart';
 import 'package:example/ui/screens/mdpSembast/MDPSembastRecordScreen.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +28,21 @@ class _MDPSembastScreenState extends AbstractAppScreenState<MDPSembastScreen> {
         },
         icon: Icon(
           Icons.add,
+          color: Colors.black,
+        ),
+      ),
+      AppBarOption(
+        onTap: (BuildContext context) {
+          MainDataProvider.instance!.executeDataTask(
+            DeleteSembastRecordsDataTask(
+              data: SembastRecordQuery.fromJson({
+                // 'name': 'a',
+              }),
+            ),
+          );
+        },
+        icon: Icon(
+          Icons.delete,
           color: Colors.black,
         ),
       ),

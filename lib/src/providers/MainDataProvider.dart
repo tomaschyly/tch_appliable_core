@@ -1071,6 +1071,7 @@ class SQLiteSource extends AbstractSource {
           dataTask.result = null;
           dataTask.error = SourceException(originalException: e);
         }
+
         break;
     }
 
@@ -1165,12 +1166,8 @@ class SembastSource extends AbstractSource {
     return database;
   }
 
-  /// Query data from database
-  Future<List<Map<String, dynamic>>> query(String store, Map<String, dynamic> parameters) async {
-    final database = await _open();
-
-    final theStore = Sembast.intMapStoreFactory.store(store);
-
+  /// Convert parameters into Finder Filters
+  List<Sembast.Filter> _filtersFromParameters(Map<String, dynamic> parameters) {
     final List<Sembast.Filter> filters = [];
 
     for (String key in parameters.keys) {
@@ -1206,8 +1203,17 @@ class SembastSource extends AbstractSource {
       }
     }
 
+    return filters;
+  }
+
+  /// Query data from database
+  Future<List<Map<String, dynamic>>> query(String store, Map<String, dynamic> parameters) async {
+    final database = await _open();
+
+    final theStore = Sembast.intMapStoreFactory.store(store);
+
     final finder = Sembast.Finder(
-      filter: Sembast.Filter.and(filters),
+      filter: Sembast.Filter.and(_filtersFromParameters(parameters)),
     );
 
     final List<Sembast.RecordSnapshot<int, Map<String, Object?>>> snapshot = await theStore.find(database, finder: finder);
@@ -1261,6 +1267,19 @@ class SembastSource extends AbstractSource {
     final theStore = Sembast.intMapStoreFactory.store(store);
 
     await theStore.record(id).delete(database);
+  }
+
+  /// Delete data from database by where parameters
+  Future<void> deleteWhere(String store, Map<String, dynamic> parameters) async {
+    final database = await _open();
+
+    final theStore = Sembast.intMapStoreFactory.store(store);
+
+    final finder = Sembast.Finder(
+      filter: Sembast.Filter.and(_filtersFromParameters(parameters)),
+    );
+
+    await theStore.delete(database, finder: finder);
   }
 
   /// Query data from database and update DataSources
@@ -1369,6 +1388,17 @@ class SembastSource extends AbstractSource {
       case SembastType.Delete:
         try {
           await delete(dataTask.method, data[options.idKey]);
+
+          dataTask.result = dataTask.processResult(<String, dynamic>{'deleted': true});
+        } catch (e) {
+          dataTask.result = null;
+          dataTask.error = SourceException(originalException: e);
+        }
+
+        break;
+      case SembastType.DeleteWhere:
+        try {
+          await deleteWhere(dataTask.method, data);
 
           dataTask.result = dataTask.processResult(<String, dynamic>{'deleted': true});
         } catch (e) {
