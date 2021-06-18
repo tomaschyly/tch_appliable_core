@@ -1,3 +1,7 @@
+## [0.6.3] - 18.6.2021
+
+* Utils improvements
+
 ## [0.6.2] - 18.6.2021
 
 * ScreenDataState supports also optional Tag/s for isLoading pairing

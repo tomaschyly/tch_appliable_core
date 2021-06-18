@@ -96,5 +96,8 @@ class Translator {
   }
 
   /// Default DateFormat localized to current Language
-  DateFormat get localizedDateFormat => DateFormat.yMMMMEEEEd(_currentLanguage).add_jm();
+  DateFormat get localizedDateTimeFormat => DateFormat.yMMMMEEEEd(_currentLanguage).add_jm();
+
+  /// Default DateFormat localized to current Language
+  DateFormat get localizedDateFormat => DateFormat.yMMMMEEEEd(_currentLanguage);
 }

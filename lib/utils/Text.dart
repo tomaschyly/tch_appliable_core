@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:tch_appliable_core/src/core/Translator.dart';
 
 /// Truncate text for limit, optionally find nearest whitespace for whole words
 String truncateText(
@@ -77,4 +78,13 @@ Widget textWithLinks(
     text,
     style: textStyle,
   );
+}
+
+/// Convert milliseconds since epoch to default formatted text, requires enabled Translator
+String millisToDefault(int millis, {bool time = true}) {
+  if (time) {
+    return Translator.instance!.localizedDateTimeFormat.format(DateTime.fromMillisecondsSinceEpoch(millis));
+  } else {
+    return Translator.instance!.localizedDateFormat.format(DateTime.fromMillisecondsSinceEpoch(millis));
+  }
 }

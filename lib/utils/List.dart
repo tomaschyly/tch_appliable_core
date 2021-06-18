@@ -1,3 +1,6 @@
+/// Convenience class for easy autoimport
+class ListExtensionDummy {}
+
 extension ListExtension<E> on List<E> {
   /// Returns the first element that satisfies the given predicate or null.
   E? firstWhereOrNull(bool test(E element)) {
