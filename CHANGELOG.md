@@ -1,3 +1,7 @@
+## [0.6.2] - 18.6.2021
+
+* ScreenDataState supports also optional Tag/s for isLoading pairing
+
 ## [0.6.1] - 13.6.2021
 
 * MDP SQLiteSource and SembastSource deleteWhere DataTask type for multiple records batch deletion

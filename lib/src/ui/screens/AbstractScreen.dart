@@ -34,6 +34,7 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
   ValueNotifier<bool> isLoading = ValueNotifier(false);
 
   final GlobalKey<ScreenMessengerWidgetState> _messengerKey = GlobalKey();
+  final List<String> _loadingTags = [];
 
   /// Manually dispose of resources
   @override
@@ -115,6 +116,7 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
             floatingActionButtonLocation: setFloatingActionButtonLocation(context),
           ),
           isLoading: isLoading.value,
+          loadingTags: _loadingTags,
         );
       },
     );
@@ -186,7 +188,21 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
 
   /// Execute any asynchronous Task that needs to display loading state
   @protected
-  Future<void> executeAsyncTask(Future<void> Function() task) async {
+  Future<void> executeAsyncTask(
+    Future<void> Function() task, {
+    String? tag,
+    List<String>? tags,
+  }) async {
+    _loadingTags.clear();
+
+    if (tag != null) {
+      _loadingTags.add(tag);
+    }
+
+    if (tags != null) {
+      _loadingTags.addAll(tags);
+    }
+
     isLoading.value = true;
 
     await task();
@@ -197,11 +213,13 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
 
 class ScreenDataState extends InheritedWidget {
   final bool isLoading;
+  final List<String> loadingTags;
 
   /// ScreenDataState initialization
   ScreenDataState({
     required Widget child,
     required this.isLoading,
+    required this.loadingTags,
   }) : super(child: child);
 
   /// Access current ScreenDataState anywhere from BuildContext
