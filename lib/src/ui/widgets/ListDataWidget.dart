@@ -106,6 +106,7 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
         }
 
         return Scrollbar(
+          controller: _scrollController,
           child: CustomScrollView(
             controller: _scrollController,
             slivers: content,
