@@ -118,6 +118,8 @@ To transfer parameters between screens, use `RoutingArguments`.
 
 Translator is an optional feature of this package. You activate it by providing `TranslatorOptions` to the CoreApp.
 
+Translator works well with my [JsTrions](https://github.com/tomaschyly/JsTrions) JSON translations app.
+
 ```dart
 ...
 @override
