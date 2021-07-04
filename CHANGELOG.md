@@ -1,3 +1,7 @@
+## [0.7.0] - 4.7.2021
+
+* CoreApp Dark theme detection and support
+
 ## [0.6.3] - 18.6.2021
 
 * Utils improvements

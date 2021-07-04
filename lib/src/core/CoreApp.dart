@@ -20,6 +20,7 @@ class CoreApp extends AbstractStatefulWidget {
   final AbstractAppDataStateSnapshot snapshot;
   final List<NavigatorObserver>? navigatorObservers;
   final ThemeData? theme;
+  final ThemeData? darkTheme;
   final Widget Function(BuildContext context, Widget child)? builder;
   final TranslatorOptions? translatorOptions;
   final PreferencesOptions? preferencesOptions;
@@ -38,6 +39,7 @@ class CoreApp extends AbstractStatefulWidget {
     required this.snapshot,
     this.navigatorObservers,
     this.theme,
+    this.darkTheme,
     this.builder,
     this.translatorOptions,
     this.preferencesOptions,
@@ -49,11 +51,12 @@ class CoreApp extends AbstractStatefulWidget {
   State<StatefulWidget> createState() => CoreAppState();
 }
 
-class CoreAppState extends AbstractStatefulWidgetState<CoreApp> {
+class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBindingObserver {
   static CoreAppState get instance => _instance;
 
   static late CoreAppState _instance;
 
+  bool _isOSDarkMode = false;
   ResponsiveScreen _responsiveScreen = ResponsiveScreen.UnDetermined;
   final Map<String, List<String>> _messages = Map();
 
@@ -63,6 +66,16 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> {
     _instance = this;
 
     super.initState();
+
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  /// Manually dispose of resources
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+
+    super.dispose();
   }
 
   /// Create view layout from widgets
@@ -91,8 +104,11 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> {
           if (theNavigatorObservers != null) ...theNavigatorObservers,
         ],
         theme: widget.theme,
+        darkTheme: widget.darkTheme,
         builder: (BuildContext context, Widget? child) {
           WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            determineOSThemeMode(context);
+
             determineScreen(context);
           });
 
@@ -107,9 +123,36 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> {
         supportedLocales: theTranslatorOptions?.supportedLocales ?? const <Locale>[Locale('en', 'US')],
       ),
       snapshot: widget.snapshot
+        ..isOSDarkMode = _isOSDarkMode
         ..responsiveScreen = _responsiveScreen
         ..messages = _messages,
     );
+  }
+
+  /// OS changed Theme mode, determine is OS Dark mode
+  @override
+  void didChangePlatformBrightness() {
+    super.didChangePlatformBrightness();
+
+    final isOSDarkMode = WidgetsBinding.instance!.window.platformBrightness == Brightness.dark;
+
+    if (isOSDarkMode != _isOSDarkMode) {
+      _isOSDarkMode = isOSDarkMode;
+
+      setStateNotDisposed(() {});
+    }
+  }
+
+  /// Determine if is OS Dark mode enabled
+  @protected
+  determineOSThemeMode(BuildContext context) {
+    final isOSDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
+
+    if (isOSDarkMode != _isOSDarkMode) {
+      _isOSDarkMode = isOSDarkMode;
+
+      setStateNotDisposed(() {});
+    }
   }
 
   /// Determine correct screen by width for responsivity
@@ -264,6 +307,7 @@ class AppDataState extends InheritedWidget {
 }
 
 abstract class AbstractAppDataStateSnapshot {
+  bool isOSDarkMode = false;
   late ResponsiveScreen responsiveScreen;
   late Map<String, List<String>> messages;
 
