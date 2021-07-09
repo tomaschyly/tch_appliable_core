@@ -80,6 +80,14 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
     super.dispose();
   }
 
+  /// Run initializations of screen on first build only
+  @override
+  firstBuildOnly(BuildContext context) {
+    super.firstBuildOnly(context);
+
+    determineOSThemeMode(context, false);
+  }
+
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
@@ -156,13 +164,15 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
 
   /// Determine if is OS Dark mode enabled
   @protected
-  determineOSThemeMode(BuildContext context) {
+  determineOSThemeMode(BuildContext context, [bool setState = true]) {
     final isOSDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
 
     if (isOSDarkMode != _isOSDarkMode) {
       _isOSDarkMode = isOSDarkMode;
 
-      setStateNotDisposed(() {});
+      if (setState) {
+        setStateNotDisposed(() {});
+      }
     }
   }
 
