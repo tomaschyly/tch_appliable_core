@@ -80,14 +80,6 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
     super.dispose();
   }
 
-  /// Run initializations of screen on first build only
-  @override
-  firstBuildOnly(BuildContext context) {
-    super.firstBuildOnly(context);
-
-    determineOSThemeMode(context, false);
-  }
-
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
@@ -247,7 +239,7 @@ class _InitializationScreen extends StatelessWidget {
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       _appInit(context);
     });
 

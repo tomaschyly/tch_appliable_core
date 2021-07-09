@@ -1,3 +1,7 @@
+## [0.7.3] - 9.7.2021
+
+* Fix DarkMode automatic startup
+
 ## [0.7.2] - 9.7.2021
 
 * Improve DarkMode automatic startup
