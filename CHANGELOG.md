@@ -1,3 +1,7 @@
+## [0.7.1] - 9.7.2021
+
+* Improve DarkMode handling/switching
+
 ## [0.7.0] - 4.7.2021
 
 * CoreApp Dark theme detection and support

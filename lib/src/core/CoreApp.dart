@@ -21,6 +21,7 @@ class CoreApp extends AbstractStatefulWidget {
   final List<NavigatorObserver>? navigatorObservers;
   final ThemeData? theme;
   final ThemeData? darkTheme;
+  final String? darkThemePrefsKey;
   final Widget Function(BuildContext context, Widget child)? builder;
   final TranslatorOptions? translatorOptions;
   final PreferencesOptions? preferencesOptions;
@@ -40,6 +41,7 @@ class CoreApp extends AbstractStatefulWidget {
     this.navigatorObservers,
     this.theme,
     this.darkTheme,
+    this.darkThemePrefsKey,
     this.builder,
     this.translatorOptions,
     this.preferencesOptions,
@@ -84,6 +86,14 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
     final theNavigatorObservers = widget.navigatorObservers;
     final theTranslatorOptions = widget.translatorOptions;
 
+    final theDarkThemePrefsKey = widget.darkThemePrefsKey;
+    bool darkMode = _isOSDarkMode;
+    if (theDarkThemePrefsKey != null) {
+      final darkModeType = prefsInt(theDarkThemePrefsKey) == null ? DarkMode.Automatic : DarkMode.values[prefsInt(theDarkThemePrefsKey)!];
+
+      darkMode = darkModeType == DarkMode.Automatic ? darkMode : darkModeType == DarkMode.Enabled;
+    }
+
     return AppDataState(
       child: MaterialApp(
         title: widget.title,
@@ -103,8 +113,8 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
           routeObserver,
           if (theNavigatorObservers != null) ...theNavigatorObservers,
         ],
-        theme: widget.theme,
-        darkTheme: widget.darkTheme,
+        theme: darkMode ? widget.darkTheme : widget.theme,
+        // darkTheme: widget.darkTheme,
         builder: (BuildContext context, Widget? child) {
           WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
             determineOSThemeMode(context);
@@ -124,6 +134,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
       ),
       snapshot: widget.snapshot
         ..isOSDarkMode = _isOSDarkMode
+        ..isDarkMode = darkMode
         ..responsiveScreen = _responsiveScreen
         ..messages = _messages,
     );
@@ -308,6 +319,7 @@ class AppDataState extends InheritedWidget {
 
 abstract class AbstractAppDataStateSnapshot {
   bool isOSDarkMode = false;
+  bool isDarkMode = false;
   late ResponsiveScreen responsiveScreen;
   late Map<String, List<String>> messages;
 
@@ -325,4 +337,10 @@ abstract class AbstractAppDataStateSnapshot {
 
     return null;
   }
+}
+
+enum DarkMode {
+  Automatic,
+  Enabled,
+  Disabled,
 }
