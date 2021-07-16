@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tch_appliable_core/src/model/DataModel.dart';
 import 'package:tch_appliable_core/src/providers/mainDataProvider/DataRequest.dart';
 import 'package:tch_appliable_core/src/ui/widgets/AbstractDataWidget.dart';
+import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 typedef ProcessResult<R extends DataRequest, I extends DataModel> = List<I>? Function(R dataRequest);
 
@@ -15,6 +17,7 @@ class ListDataWidget<R extends DataRequest, I extends DataModel> extends Abstrac
   final BuildLoadingItemWithGlobalKey buildLoadingItemWithGlobalKey;
   final Widget emptyState;
   final Widget? childAfterList;
+  final PullToRefreshOptions pullToRefreshOptions;
 
   /// ListDataWidget initialization
   ListDataWidget({
@@ -25,6 +28,7 @@ class ListDataWidget<R extends DataRequest, I extends DataModel> extends Abstrac
     required this.buildLoadingItemWithGlobalKey,
     required this.emptyState,
     this.childAfterList,
+    this.pullToRefreshOptions = const PullToRefreshOptions(),
   }) : super(key: key, dataRequests: <DataRequest>[if (dataRequest != null) dataRequest]);
 
   /// Create state for widget
@@ -34,6 +38,7 @@ class ListDataWidget<R extends DataRequest, I extends DataModel> extends Abstrac
 
 class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends AbstractDataWidgetState<ListDataWidget<R, I>> {
   final ScrollController _scrollController = ScrollController();
+  final RefreshController _refreshController = RefreshController();
   GlobalKey _loadingItemKey = GlobalKey();
   double _loadingItemHeight = 0;
   bool _isLastPage = false;
@@ -52,6 +57,7 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
   @override
   void dispose() {
     _scrollController.dispose();
+    _refreshController.dispose();
 
     super.dispose();
   }
@@ -105,19 +111,31 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
           content.add(theChildAfterList);
         }
 
-        return Scrollbar(
+        Widget list = Scrollbar(
           controller: _scrollController,
           child: CustomScrollView(
             controller: _scrollController,
             slivers: content,
           ),
         );
+
+        if (widget.pullToRefreshOptions.enabled) {
+          list = SmartRefresher(
+            controller: _refreshController,
+            enablePullDown: true,
+            header: widget.pullToRefreshOptions.header,
+            onRefresh: () => _refresh(),
+            child: list,
+          );
+        }
+
+        return list;
       },
     );
   }
 
   /// Calculate height of LoadingItem
-  _initLoadingItemHeight() {
+  void _initLoadingItemHeight() {
     if (_loadingItemHeight > 0 || _loadingItemKey.currentContext == null) {
       return;
     }
@@ -129,8 +147,34 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
     }
   }
 
+  /// Pull down refresh, reload data and optionally call custom callback
+  Future<void> _refresh() async {
+    final theCallback = widget.pullToRefreshOptions.callback;
+
+    if (theCallback != null) {
+      await theCallback();
+    }
+
+    final theDataSource = dataSource;
+
+    if (widget.pullToRefreshOptions.refetchData && theDataSource != null) {
+      await theDataSource.refetchData();
+    }
+
+    Future.delayed(kThemeAnimationDuration, () => _refreshController.refreshCompleted());
+  }
+
+  /// Reload data from the DataSource
+  Future<void> refetchData() async {
+    final theDataSource = dataSource;
+
+    if (theDataSource != null) {
+      return theDataSource.refetchData();
+    }
+  }
+
   /// Check if is scrolled to the end of list, call next page if yes
-  _isEndOfList() {
+  void _isEndOfList() {
     if (_scrollController.hasClients) {
       final double maxScroll = _scrollController.position.maxScrollExtent;
       final double scrolled = _scrollController.position.pixels;
@@ -142,7 +186,7 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
   }
 
   /// If is last item attempt to load next page
-  _loadNextPage() {
+  void _loadNextPage() {
     if (_isLastPage) {
       return;
     }
@@ -198,4 +242,19 @@ class LoadingItemWidget extends StatelessWidget {
       ]),
     );
   }
+}
+
+class PullToRefreshOptions {
+  final bool enabled;
+  final bool refetchData;
+  final Future<void> Function()? callback;
+  final Widget? header;
+
+  /// PullToRefreshOptions initialization
+  const PullToRefreshOptions({
+    this.enabled = false,
+    this.refetchData = true,
+    this.callback,
+    this.header,
+  });
 }

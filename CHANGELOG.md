@@ -1,3 +1,7 @@
+## [0.7.4] - 16.7.2021
+
+* ListDataWidget support pullToRefresh
+
 ## [0.7.3] - 9.7.2021
 
 * Fix DarkMode automatic startup

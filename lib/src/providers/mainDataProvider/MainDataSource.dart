@@ -105,6 +105,13 @@ class MainDataSource {
     results.value = dataRequests;
   }
 
+  /// Refetch data for DataRequests of this source
+  Future<void> refetchData() async {
+    for (DataRequest dataRequest in _dataRequests) {
+      await MainDataProvider.instance!.reFetchData(dataRequest.source, identifiers: [dataRequest.identifier]);
+    }
+  }
+
   /// Check if DataRequest has next page
   bool hasNextPageOfRequest<R>() {
     final List<DataRequest> dataRequests = List.from(_dataRequests);
