@@ -1,3 +1,7 @@
+## [0.7.5] - 19.7.2021
+
+* ListDataWidget support for initial full screen loading
+
 ## [0.7.4] - 16.7.2021
 
 * ListDataWidget support pullToRefresh

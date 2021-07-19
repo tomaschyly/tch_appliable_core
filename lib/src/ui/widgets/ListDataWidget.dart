@@ -11,10 +11,14 @@ typedef ItemBuilder<I extends DataModel> = Widget Function(BuildContext context,
 
 typedef BuildLoadingItemWithGlobalKey = Widget Function(BuildContext context, GlobalKey globalKey);
 
+typedef BuildLoadingItemFullScreen = Widget Function(BuildContext context);
+
 class ListDataWidget<R extends DataRequest, I extends DataModel> extends AbstractDataWidget {
   final ProcessResult<R, I> processResult;
   final ItemBuilder<I> buildItem;
   final BuildLoadingItemWithGlobalKey buildLoadingItemWithGlobalKey;
+  final BuildLoadingItemFullScreen? buildLoadingItemFullScreen;
+  final bool initialLoadingFullScreen;
   final Widget emptyState;
   final Widget? childAfterList;
   final PullToRefreshOptions pullToRefreshOptions;
@@ -26,6 +30,8 @@ class ListDataWidget<R extends DataRequest, I extends DataModel> extends Abstrac
     required this.processResult,
     required this.buildItem,
     required this.buildLoadingItemWithGlobalKey,
+    this.buildLoadingItemFullScreen,
+    this.initialLoadingFullScreen = false,
     required this.emptyState,
     this.childAfterList,
     this.pullToRefreshOptions = const PullToRefreshOptions(),
@@ -40,6 +46,7 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
   final ScrollController _scrollController = ScrollController();
   final RefreshController _refreshController = RefreshController();
   GlobalKey _loadingItemKey = GlobalKey();
+  OverlayEntry? _loadingItemEntry;
   double _loadingItemHeight = 0;
   bool _isLastPage = false;
   List<I> _items = <I>[];
@@ -81,7 +88,18 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
 
         final R dataRequest = dataRequests.first as R;
 
+        Widget loadingItem = widget.buildLoadingItemWithGlobalKey(context, _loadingItemKey);
+
         if (dataRequest.result != null) {
+          final theLoadingItemEntry = _loadingItemEntry;
+          if (theLoadingItemEntry != null) {
+            _loadingItemEntry = null;
+
+            WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+              theLoadingItemEntry.remove();
+            });
+          }
+
           final List<I>? items = widget.processResult(dataRequest);
           _items = items ?? <I>[];
 
@@ -96,14 +114,29 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
                     childCount: _items.length,
                   ),
                 ),
-                if (!_isLastPage) widget.buildLoadingItemWithGlobalKey(context, _loadingItemKey),
+                if (!_isLastPage) loadingItem,
               ],
             );
           } else {
             return widget.emptyState;
           }
         } else {
-          content.add(widget.buildLoadingItemWithGlobalKey(context, _loadingItemKey));
+          if (widget.initialLoadingFullScreen) {
+            if (_loadingItemEntry == null) {
+              _loadingItemEntry = OverlayEntry(builder: (BuildContext context) {
+                return Material(
+                  color: Colors.transparent,
+                  child: widget.buildLoadingItemFullScreen?.call(context) ?? LoadingItemFullScreenWidget(),
+                );
+              });
+
+              WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+                Overlay.of(context)!.insert(_loadingItemEntry!);
+              });
+            }
+          } else {
+            content.add(loadingItem);
+          }
         }
 
         final theChildAfterList = widget.childAfterList;
@@ -240,6 +273,22 @@ class LoadingItemWidget extends StatelessWidget {
           ),
         ),
       ]),
+    );
+  }
+}
+
+class LoadingItemFullScreenWidget extends StatelessWidget {
+  /// Create view from widgets
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Center(
+        child: Container(
+          width: 24,
+          height: 24,
+          child: CircularProgressIndicator(),
+        ),
+      ),
     );
   }
 }
