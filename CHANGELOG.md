@@ -1,3 +1,7 @@
+## [0.8.0] - 21.7.2021
+
+* BoundaryPageRoute transition & widget
+
 ## [0.7.5] - 19.7.2021
 
 * ListDataWidget support for initial full screen loading

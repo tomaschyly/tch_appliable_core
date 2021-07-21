@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:tch_appliable_core/src/core/router/BoundaryPageRoute.dart';
 import 'package:tch_appliable_core/src/core/router/FadeAnimationPageRoute.dart';
 import 'package:tch_appliable_core/src/core/router/NoAnimationPageRoute.dart';
+import 'package:tch_appliable_core/utils/Boundary.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
@@ -28,7 +30,13 @@ Route<Object> createRoute(WidgetBuilder builder, RouteSettings settings) {
   } else {
     final arguments = settings.name?.routingArguments;
 
-    if (arguments?['router-no-animation'] != null) {
+    if (arguments != null && Boundary.validateRoutingJson(arguments)) {
+      return BoundaryPageRoute<Object>(
+        builder: builder,
+        boundary: Boundary.fromRoutingJson(arguments),
+        settings: settings,
+      );
+    } else if (arguments?['router-no-animation'] != null) {
       return NoAnimationPageRoute<Object>(builder: builder, settings: settings);
     } else if (arguments?['router-fade-animation'] != null) {
       return FadeAnimationPageRoute<Object>(builder: builder, settings: settings);

@@ -4,6 +4,7 @@ export 'src/core/CoreApp.dart';
 export 'src/core/Media.dart';
 export 'src/core/Preferences.dart';
 export 'src/core/RouterV1.dart';
+export 'src/core/router/BoundaryPageRoute.dart';
 export 'src/core/router/FadeAnimationPageRoute.dart';
 export 'src/core/router/NoAnimationPageRoute.dart';
 export 'src/core/Translator.dart';
