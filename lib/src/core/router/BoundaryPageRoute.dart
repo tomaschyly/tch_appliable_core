@@ -128,19 +128,12 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
-    final theBorderRadius = widget.borderRadius;
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
         child: Container(
           key: _containerKey,
-          child: _isAnimated
-              ? null
-              : ClipRRect(
-                  borderRadius: BorderRadius.circular(theBorderRadius ?? 0),
-                  child: widget.child,
-                ),
+          child: _isAnimated ? null : widget.child,
         ),
         onTap: () => pushAnimated(context),
       ),
@@ -205,10 +198,7 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
                     height: height,
                     child: Opacity(
                       opacity: 1 - firstCoefficient,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(theBorderRadius ?? 0),
-                        child: child,
-                      ),
+                      child: child,
                     ),
                   ),
                 );
@@ -237,8 +227,6 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
 
   /// Run Boundary transition in reverse to get back into original state
   void didPopNextAnimated() {
-    final theBorderRadius = widget.borderRadius;
-
     _transitionEntry = OverlayEntry(
       builder: (BuildContext context) {
         final double diffWidth = _targetBoundary.width - _childBoundary.width;
@@ -276,10 +264,7 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
                 height: height,
                 child: Opacity(
                   opacity: 1 - firstCoefficient,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(theBorderRadius ?? 0),
-                    child: child,
-                  ),
+                  child: child,
                 ),
               ),
             );

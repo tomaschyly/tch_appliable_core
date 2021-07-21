@@ -1,3 +1,7 @@
+## [0.8.2] - 21.7.2021
+
+* BoundaryPageRoute fix BorderRadius behaviour
+
 ## [0.8.1] - 21.7.2021
 
 * BoundaryPageRoute transition support optional BorderRadius
