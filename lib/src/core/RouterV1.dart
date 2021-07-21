@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:supercharged/supercharged.dart';
 import 'package:tch_appliable_core/src/core/router/BoundaryPageRoute.dart';
 import 'package:tch_appliable_core/src/core/router/FadeAnimationPageRoute.dart';
 import 'package:tch_appliable_core/src/core/router/NoAnimationPageRoute.dart';
@@ -35,6 +36,7 @@ Route<Object> createRoute(WidgetBuilder builder, RouteSettings settings) {
         builder: builder,
         boundary: Boundary.fromRoutingJson(arguments),
         settings: settings,
+        borderRadius: arguments['router-boundary-radius']?.toDouble(),
       );
     } else if (arguments?['router-no-animation'] != null) {
       return NoAnimationPageRoute<Object>(builder: builder, settings: settings);

@@ -7,6 +7,7 @@ const kBoundaryTransitionDuration = kThemeAnimationDuration;
 
 class BoundaryPageRoute<T> extends MaterialPageRoute<T> {
   final Boundary boundary;
+  final double? borderRadius;
 
   @override
   Duration get transitionDuration => kBoundaryTransitionDuration;
@@ -16,6 +17,7 @@ class BoundaryPageRoute<T> extends MaterialPageRoute<T> {
     required WidgetBuilder builder,
     required this.boundary,
     RouteSettings? settings,
+    this.borderRadius,
   }) : super(
           builder: builder,
           settings: settings,
@@ -24,6 +26,8 @@ class BoundaryPageRoute<T> extends MaterialPageRoute<T> {
   /// Build transitions to and from this Route
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    final theBorderRadius = borderRadius;
+
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         final double diffWidth = constraints.maxWidth - boundary.width;
@@ -40,6 +44,8 @@ class BoundaryPageRoute<T> extends MaterialPageRoute<T> {
         final double width = boundary.width + (diffWidth * animation.value);
         final double height = boundary.height + (diffHeight * animation.value);
 
+        final double actualBorderRadius = theBorderRadius != null ? (theBorderRadius * coefficient).roundToDouble() : 0;
+
         return Stack(
           children: [
             Positioned(
@@ -51,7 +57,10 @@ class BoundaryPageRoute<T> extends MaterialPageRoute<T> {
                   height: height,
                   child: Opacity(
                     opacity: firstCoefficient < 1 ? 0 : secondCoefficient,
-                    child: child,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(actualBorderRadius),
+                      child: child,
+                    ),
                   ),
                 ),
               ),
@@ -67,12 +76,14 @@ class BoundaryPageRouteWidget extends AbstractStatefulWidget {
   final Widget child;
   final String pushRoute;
   final Map<String, String>? pushArguments;
+  final double? borderRadius;
 
   /// BoundaryPageRouteWidget initialization
   BoundaryPageRouteWidget({
     required this.child,
     required this.pushRoute,
     this.pushArguments,
+    this.borderRadius,
   });
 
   /// Create state for widget
@@ -117,12 +128,19 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
+    final theBorderRadius = widget.borderRadius;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
         child: Container(
           key: _containerKey,
-          child: _isAnimated ? null : widget.child,
+          child: _isAnimated
+              ? null
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular(theBorderRadius ?? 0),
+                  child: widget.child,
+                ),
         ),
         onTap: () => pushAnimated(context),
       ),
@@ -132,6 +150,8 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
   /// Push to the target route with Boundary transition
   void pushAnimated(BuildContext context) {
     final media = MediaQuery.of(context);
+
+    final theBorderRadius = widget.borderRadius;
 
     final renderBox = _containerKey.currentContext!.findRenderObject() as RenderBox;
     final position = renderBox.localToGlobal(Offset.zero);
@@ -144,6 +164,10 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
     final thePushArguments = widget.pushArguments;
     if (thePushArguments != null) {
       arguments.addAll(thePushArguments);
+    }
+
+    if (theBorderRadius != null) {
+      arguments['router-boundary-radius'] = theBorderRadius.toString();
     }
 
     setStateNotDisposed(() {
@@ -181,7 +205,10 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
                     height: height,
                     child: Opacity(
                       opacity: 1 - firstCoefficient,
-                      child: child,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(theBorderRadius ?? 0),
+                        child: child,
+                      ),
                     ),
                   ),
                 );
@@ -210,6 +237,8 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
 
   /// Run Boundary transition in reverse to get back into original state
   void didPopNextAnimated() {
+    final theBorderRadius = widget.borderRadius;
+
     _transitionEntry = OverlayEntry(
       builder: (BuildContext context) {
         final double diffWidth = _targetBoundary.width - _childBoundary.width;
@@ -247,7 +276,10 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
                 height: height,
                 child: Opacity(
                   opacity: 1 - firstCoefficient,
-                  child: child,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(theBorderRadius ?? 0),
+                    child: child,
+                  ),
                 ),
               ),
             );

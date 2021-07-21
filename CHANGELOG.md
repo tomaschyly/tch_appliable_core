@@ -1,3 +1,7 @@
+## [0.8.1] - 21.7.2021
+
+* BoundaryPageRoute transition support optional BorderRadius
+
 ## [0.8.0] - 21.7.2021
 
 * BoundaryPageRoute transition & widget
