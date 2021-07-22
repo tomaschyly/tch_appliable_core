@@ -1,3 +1,7 @@
+## [0.8.4] - 22.7.2021
+
+* BoundaryPageRoute improve transition smoothness & add failsafes
+
 ## [0.8.3] - 22.7.2021
 
 * BoundaryPageRoute improve transition layout structure

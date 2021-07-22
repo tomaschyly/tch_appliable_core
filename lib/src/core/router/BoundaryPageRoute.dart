@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:tch_appliable_core/src/core/RouterV1.dart';
 import 'package:tch_appliable_core/src/ui/widgets/AbstractStatefulWidget.dart';
 import 'package:tch_appliable_core/utils/Boundary.dart';
 
-const kBoundaryTransitionDuration = kThemeAnimationDuration;
+const kBoundaryTransitionDuration = Duration(milliseconds: 300);
 
 class BoundaryPageRoute<T> extends MaterialPageRoute<T> {
   final Boundary boundary;
@@ -96,6 +98,7 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
   Boundary _childBoundary = Boundary.zero();
   Boundary _targetBoundary = Boundary.zero();
   OverlayEntry? _transitionEntry;
+  Timer? _failSafeTimer;
 
   /// Manually dispose of resources
   @override
@@ -106,6 +109,9 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
 
     _transitionEntry?.remove();
     _transitionEntry = null;
+
+    _failSafeTimer?.cancel();
+    _failSafeTimer = null;
 
     super.dispose();
   }
@@ -183,7 +189,7 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
                 final double height = _childBoundary.height + (diffHeight * _animationController.value);
 
                 final theTransitionEntry = _transitionEntry;
-                if (theTransitionEntry != null && (1 - firstCoefficient) < 0.1) {
+                if (theTransitionEntry != null && (1 - firstCoefficient) < 0.01) {
                   theTransitionEntry.remove();
                   _transitionEntry = null;
                 }
@@ -209,6 +215,17 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
         Overlay.of(context)!.insert(_transitionEntry!);
 
         _animationController.forward();
+
+        _failSafeTimer = Timer(
+          Duration(milliseconds: ((kBoundaryTransitionDuration.inMilliseconds / 3) * 1.25).toInt()),
+          () {
+            final theTransitionEntry = _transitionEntry;
+            if (theTransitionEntry != null) {
+              theTransitionEntry.remove();
+              _transitionEntry = null;
+            }
+          },
+        );
       });
     });
 
@@ -243,7 +260,7 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
             final double height = _childBoundary.height + (diffHeight * _animationController.value);
 
             final theTransitionEntry = _transitionEntry;
-            if (theTransitionEntry != null && (1 - firstCoefficient) > 0.9) {
+            if (theTransitionEntry != null && (1 - firstCoefficient) > 0.99) {
               theTransitionEntry.remove();
               _transitionEntry = null;
 
@@ -275,5 +292,22 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
     Overlay.of(context)!.insert(_transitionEntry!);
 
     _animationController.reverse();
+
+    _failSafeTimer = Timer(
+      Duration(milliseconds: (kBoundaryTransitionDuration.inMilliseconds * 1.25).toInt()),
+      () {
+        final theTransitionEntry = _transitionEntry;
+        if (theTransitionEntry != null) {
+          theTransitionEntry.remove();
+          _transitionEntry = null;
+
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            setStateNotDisposed(() {
+              _isAnimated = false;
+            });
+          });
+        }
+      },
+    );
   }
 }
