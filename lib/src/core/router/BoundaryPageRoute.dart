@@ -52,15 +52,13 @@ class BoundaryPageRoute<T> extends MaterialPageRoute<T> {
               left: left,
               top: top,
               child: ClipRRect(
-                child: Container(
-                  width: width,
-                  height: height,
-                  child: Opacity(
-                    opacity: firstCoefficient < 1 ? 0 : secondCoefficient,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(actualBorderRadius),
-                      child: child,
-                    ),
+                borderRadius: BorderRadius.circular(actualBorderRadius),
+                child: Opacity(
+                  opacity: firstCoefficient < 1 ? 0 : secondCoefficient,
+                  child: Container(
+                    width: width,
+                    height: height,
+                    child: child,
                   ),
                 ),
               ),

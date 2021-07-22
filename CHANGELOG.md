@@ -1,3 +1,7 @@
+## [0.8.3] - 22.7.2021
+
+* BoundaryPageRoute improve transition layout structure
+
 ## [0.8.2] - 21.7.2021
 
 * BoundaryPageRoute fix BorderRadius behaviour
