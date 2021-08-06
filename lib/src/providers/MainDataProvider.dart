@@ -43,7 +43,7 @@ class MainDataProvider {
 
   List<AbstractSource> get initializedSources => _initializedSources.toList(growable: false);
 
-  final MainDataProviderOptions _options;
+  MainDataProviderOptions _options;
   List<AbstractSource> _initializedSources = <AbstractSource>[];
 
   /// MainDataProvider initialization
@@ -51,6 +51,13 @@ class MainDataProvider {
     required MainDataProviderOptions options,
   }) : _options = options {
     _instance = this;
+
+    _initSources(options);
+  }
+
+  /// Initialize sources by options
+  void _initSources(MainDataProviderOptions options) {
+    _initializedSources.clear();
 
     final theMockUpOptions = options.mockUpOptions;
     if (theMockUpOptions != null) {
@@ -71,6 +78,11 @@ class MainDataProvider {
     if (theSembastOptions != null) {
       _initializedSources.add(SembastSource(options: theSembastOptions));
     }
+  }
+
+  /// Update MainDataProviderOptions and reInit
+  void updateOptions(MainDataProviderOptions options) {
+    _initSources(options);
   }
 
   /// Get source if it was initialized

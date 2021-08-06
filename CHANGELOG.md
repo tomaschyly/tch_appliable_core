@@ -1,3 +1,7 @@
+## [0.9.0] - 6.8.2021
+
+* CoreApp now updated MainDataProvider options & sources
+
 ## [0.8.4] - 22.7.2021
 
 * BoundaryPageRoute improve transition smoothness & add failsafes
