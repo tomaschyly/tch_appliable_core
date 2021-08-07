@@ -1,3 +1,7 @@
+## [0.9.2] - 7.8.2021
+
+* Translator support for dynamic parameters in translations
+
 ## [0.9.1] - 7.8.2021
 
 * Use dynamic headers instead of update of MainDataProvider options

@@ -20,7 +20,7 @@ class TranslatorOptions {
 }
 
 /// Shorthand to translate string to current Language
-String tt(String text) => Translator.instance?.translate(text) ?? text;
+String tt(String text, {Map<String, String>? parameters}) => Translator.instance?.translate(text, parameters: parameters) ?? text;
 
 class Translator {
   static Translator? get instance => _instance;
@@ -84,7 +84,17 @@ class Translator {
   }
 
   /// Translate string to current Language
-  String translate(String text) => _currentTranslations[text] != null ? _htmlUnescape.convert(_currentTranslations[text]!) : text;
+  String translate(String text, {Map<String, String>? parameters}) {
+    String translated = _currentTranslations[text] != null ? _htmlUnescape.convert(_currentTranslations[text]!) : text;
+
+    if (parameters != null) {
+      for (String key in parameters.keys) {
+        translated = translated.replaceAll(key, parameters[key]!);
+      }
+    }
+
+    return translated;
+  }
 
   /// Change current to new Language if supported in options
   void changeLanguage(String language) {
