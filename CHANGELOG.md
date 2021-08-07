@@ -1,3 +1,7 @@
+## [0.9.1] - 7.8.2021
+
+* Use dynamic headers instead of update of MainDataProvider options
+
 ## [0.9.0] - 6.8.2021
 
 * CoreApp now updated MainDataProvider options & sources

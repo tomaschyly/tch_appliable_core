@@ -80,17 +80,6 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
     super.dispose();
   }
 
-  /// Widget parameters changed
-  @override
-  void didUpdateWidget(covariant CoreApp oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    final theMainDataProviderOptions = widget.mainDataProviderOptions;
-    if (oldWidget.mainDataProviderOptions != theMainDataProviderOptions && theMainDataProviderOptions != null) {
-      MainDataProvider.instance?.updateOptions(theMainDataProviderOptions);
-    }
-  }
-
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {

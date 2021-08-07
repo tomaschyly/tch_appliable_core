@@ -80,11 +80,6 @@ class MainDataProvider {
     }
   }
 
-  /// Update MainDataProviderOptions and reInit
-  void updateOptions(MainDataProviderOptions options) {
-    _initSources(options);
-  }
-
   /// Get source if it was initialized
   AbstractSource? _initialitedSource(MainDataProviderSource source, [MockUpRequestOptions? mockUpOptions]) {
     AbstractSource? theSource;
@@ -599,11 +594,13 @@ class MockUpSource extends AbstractSource {
 class HTTPClientOptions {
   final String hostUrl;
   final Map<String, String>? headers;
+  final Map<String, String> Function()? dynamicHeaders;
 
   /// HTTPClientOptions initialization
   HTTPClientOptions({
     required this.hostUrl,
     this.headers,
+    this.dynamicHeaders,
   }) : assert(hostUrl.isNotEmpty);
 }
 
@@ -629,9 +626,14 @@ class HTTPSource extends AbstractSource {
 
     final String url = '${_options.hostUrl}${dataRequest.method}?${values.join('&')}';
 
+    final theHeaders = _options.headers != null ? Map<String, String>.from(_options.headers!) : Map<String, String>();
+    if (_options.dynamicHeaders != null) {
+      theHeaders.addAll(_options.dynamicHeaders!.call());
+    }
+
     final Response response = await get(
       Uri.parse(url),
-      headers: _options.headers,
+      headers: theHeaders,
     );
 
     return response;
