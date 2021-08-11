@@ -76,6 +76,7 @@ class BoundaryPageRouteWidget extends AbstractStatefulWidget {
   final Widget child;
   final String pushRoute;
   final Map<String, String>? pushArguments;
+  final void Function()? pushBeforeAction;
   final double? borderRadius;
 
   /// BoundaryPageRouteWidget initialization
@@ -83,6 +84,7 @@ class BoundaryPageRouteWidget extends AbstractStatefulWidget {
     required this.child,
     required this.pushRoute,
     this.pushArguments,
+    this.pushBeforeAction,
     this.borderRadius,
   });
 
@@ -147,6 +149,8 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
   /// Push to the target route with Boundary transition
   void pushAnimated(BuildContext context) {
     final media = MediaQuery.of(context);
+
+    widget.pushBeforeAction?.call();
 
     final theBorderRadius = widget.borderRadius;
 
