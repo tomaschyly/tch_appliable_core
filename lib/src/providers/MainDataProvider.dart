@@ -750,10 +750,10 @@ class HTTPSource extends AbstractSource {
         break;
       case HTTPType.Post:
         try {
-          final theHeaders = options.headers;
-
           Response response;
-          if (options.postDataFormat == HTTPPostDataFormat.ToJson && theHeaders != null) {
+          if (options.postDataFormat == HTTPPostDataFormat.ToJson) {
+            final theHeaders = options.headers ?? Map<String, String>();
+
             theHeaders.addAll(
               {"Content-Type": "application/json"},
             );
