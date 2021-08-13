@@ -1,3 +1,8 @@
+## [0.9.4] - 13.8.2021
+
+* HTTPSource have consistent endpoint usage
+* HTTP DataTask for POST enable sending as json
+
 ## [0.9.3] - 11.8.2021
 
 * BoundaryPageRoute optional action before push
