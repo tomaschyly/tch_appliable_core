@@ -711,7 +711,7 @@ class HTTPSource extends AbstractSource {
   Future<T> executeDataTask<T extends DataTask>(T dataTask) async {
     final options = dataTask.options as HTTPTaskOptions;
 
-    final String hostUrl = options.url ?? _options.hostUrl;
+    final String endpointUrl = options.url ?? '${_options.hostUrl}${dataTask.method}';
     final Map<String, dynamic> data = dataTask.data.toJson();
 
     switch (options.type) {
@@ -721,7 +721,7 @@ class HTTPSource extends AbstractSource {
           values.add('$key=$value');
         });
 
-        final String url = '$hostUrl?${values.join('&')}';
+        final String url = '$endpointUrl?${values.join('&')}';
 
         try {
           final Response response = await get(
@@ -751,7 +751,7 @@ class HTTPSource extends AbstractSource {
       case HTTPType.Post:
         try {
           final Response response = await post(
-            Uri.parse(hostUrl),
+            Uri.parse(endpointUrl),
             headers: options.headers,
             body: data,
           );
