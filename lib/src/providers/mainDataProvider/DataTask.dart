@@ -11,8 +11,14 @@ enum HTTPType {
   Post,
 }
 
+enum HTTPPostDataFormat {
+  FormData,
+  ToJson,
+}
+
 class HTTPTaskOptions extends DataTaskOptions {
   final HTTPType type;
+  final HTTPPostDataFormat postDataFormat;
   final String? url;
   final Map<String, String>? headers;
   final Map<String, dynamic> Function(String body)? processBody;
@@ -20,6 +26,7 @@ class HTTPTaskOptions extends DataTaskOptions {
   /// HTTPTaskOptions initialization
   const HTTPTaskOptions({
     required this.type,
+    this.postDataFormat = HTTPPostDataFormat.FormData,
     this.url,
     this.headers,
     this.processBody,

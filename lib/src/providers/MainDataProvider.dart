@@ -750,11 +750,26 @@ class HTTPSource extends AbstractSource {
         break;
       case HTTPType.Post:
         try {
-          final Response response = await post(
-            Uri.parse(endpointUrl),
-            headers: options.headers,
-            body: data,
-          );
+          final theHeaders = options.headers;
+
+          Response response;
+          if (options.postDataFormat == HTTPPostDataFormat.ToJson && theHeaders != null) {
+            theHeaders.addAll(
+              {"Content-Type": "application/json"},
+            );
+
+            response = await post(
+              Uri.parse(endpointUrl),
+              headers: theHeaders,
+              body: jsonEncode(data),
+            );
+          } else {
+            response = await post(
+              Uri.parse(endpointUrl),
+              headers: options.headers,
+              body: data,
+            );
+          }
 
           if (options.processBody != null) {
             final result = options.processBody!(response.body);
