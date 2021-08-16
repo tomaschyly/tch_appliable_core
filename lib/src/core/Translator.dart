@@ -111,3 +111,21 @@ class Translator {
   /// Default DateFormat localized to current Language
   DateFormat get localizedDateFormat => DateFormat.yMMMMEEEEd(_currentLanguage);
 }
+
+extension TranslationStringExtension on String {
+  /// Translate the string using Translator instance
+  String tt({Map<String, String>? parameters}) {
+    return Translator.instance?.translate(this, parameters: parameters) ?? this;
+  }
+
+  /// Apply translation parameters on string
+  String parameters(Map<String, String> parameters) {
+    String translated = this;
+
+    for (String key in parameters.keys) {
+      translated = translated.replaceAll(key, parameters[key]!);
+    }
+
+    return translated;
+  }
+}

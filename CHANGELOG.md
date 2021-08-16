@@ -1,3 +1,7 @@
+## [0.9.5] - 16.8.2021
+
+* Improve usage of Translator by providing String extensions
+
 ## [0.9.4] - 13.8.2021
 
 * HTTPSource have consistent endpoint usage
