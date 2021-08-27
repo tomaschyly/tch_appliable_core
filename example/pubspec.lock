@@ -300,7 +300,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.9.5"
+    version: "0.9.6"
   term_glyph:
     dependency: transitive
     description:

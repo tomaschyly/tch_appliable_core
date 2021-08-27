@@ -113,7 +113,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
           routeObserver,
           if (theNavigatorObservers != null) ...theNavigatorObservers,
         ],
-        theme: darkMode ? widget.darkTheme : widget.theme,
+        theme: darkMode ? (widget.darkTheme ?? widget.theme) : widget.theme,
         // darkTheme: widget.darkTheme,
         builder: (BuildContext context, Widget? child) {
           WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {

@@ -1,3 +1,7 @@
+## [0.9.6] - 27.8.2021
+
+* Fix wrong theme use when DarkMode and no DarkTheme
+
 ## [0.9.5] - 16.8.2021
 
 * Improve usage of Translator by providing String extensions
