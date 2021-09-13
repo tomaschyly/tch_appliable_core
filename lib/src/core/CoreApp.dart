@@ -9,6 +9,7 @@ import 'package:tch_appliable_core/src/ui/widgets/AbstractStatefulWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class CoreApp extends AbstractStatefulWidget {
+  final bool debugShowCheckedModeBanner;
   final String title;
   final Widget initializationUi;
   final int initializationMinDurationInMilliseconds;
@@ -29,6 +30,7 @@ class CoreApp extends AbstractStatefulWidget {
 
   /// CoreApp initialization
   CoreApp({
+    this.debugShowCheckedModeBanner = true,
     required this.title,
     required this.initializationUi,
     this.initializationMinDurationInMilliseconds = 0,
@@ -96,6 +98,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
 
     return AppDataState(
       child: MaterialApp(
+        debugShowCheckedModeBanner: widget.debugShowCheckedModeBanner,
         title: widget.title,
         home: _InitializationScreen(
           initializationUi: widget.initializationUi,

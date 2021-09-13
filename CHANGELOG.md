@@ -1,3 +1,7 @@
+## [0.9.7] - 13.9.2021
+
+* CoreApp add banner for debug
+
 ## [0.9.6] - 27.8.2021
 
 * Fix wrong theme use when DarkMode and no DarkTheme
