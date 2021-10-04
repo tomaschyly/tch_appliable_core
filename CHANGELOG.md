@@ -1,3 +1,7 @@
+## [0.9.8] - 4.10.2021
+
+* ListDataWidget expose optional controller
+
 ## [0.9.7] - 13.9.2021
 
 * CoreApp add banner for debug

@@ -14,6 +14,7 @@ typedef BuildLoadingItemWithGlobalKey = Widget Function(BuildContext context, Gl
 typedef BuildLoadingItemFullScreen = Widget Function(BuildContext context);
 
 class ListDataWidget<R extends DataRequest, I extends DataModel> extends AbstractDataWidget {
+  final ScrollController? scrollController;
   final ProcessResult<R, I> processResult;
   final ItemBuilder<I> buildItem;
   final BuildLoadingItemWithGlobalKey buildLoadingItemWithGlobalKey;
@@ -26,6 +27,7 @@ class ListDataWidget<R extends DataRequest, I extends DataModel> extends Abstrac
   /// ListDataWidget initialization
   ListDataWidget({
     Key? key,
+    this.scrollController,
     required R? dataRequest,
     required this.processResult,
     required this.buildItem,
@@ -43,7 +45,7 @@ class ListDataWidget<R extends DataRequest, I extends DataModel> extends Abstrac
 }
 
 class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends AbstractDataWidgetState<ListDataWidget<R, I>> {
-  final ScrollController _scrollController = ScrollController();
+  late ScrollController _scrollController;
   final RefreshController _refreshController = RefreshController();
   GlobalKey _loadingItemKey = GlobalKey();
   OverlayEntry? _loadingItemEntry;
@@ -57,13 +59,18 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
   void initState() {
     super.initState();
 
+    _scrollController = widget.scrollController ?? ScrollController();
+
     _scrollController.addListener(_isEndOfList);
   }
 
   /// Dispose of resources manually
   @override
   void dispose() {
-    _scrollController.dispose();
+    if (widget.scrollController == null) {
+      _scrollController.dispose();
+    }
+
     _refreshController.dispose();
 
     super.dispose();
