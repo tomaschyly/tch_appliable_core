@@ -1,3 +1,7 @@
+## [0.9.9] - 15.10.2021
+
+* Update packages to latest versions
+
 ## [0.9.8] - 4.10.2021
 
 * ListDataWidget expose optional controller
