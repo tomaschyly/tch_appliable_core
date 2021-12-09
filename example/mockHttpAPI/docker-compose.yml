@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  db: 
+    image: mariadb:10.7.1
+    environment:
+      - MARIADB_ROOT_PASSWORD=development
+    volumes:
+      - db:/var/lib/mysql
+  adminer:
+    build: 
+      context: ./adminer
+    ports: 
+      - 8081:80
+    depends_on:
+      - db
+  api:
+    build:
+      context: .
+    ports:
+      - 8080:80
+    volumes:
+      - ./src:/var/www/html/
+    depends_on:
+      - db
+volumes:
+  db:

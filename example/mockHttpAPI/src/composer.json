@@ -1,0 +1,10 @@
+{
+    "config": {
+        "platform": {
+            "php": "7.4.25"
+        }
+    },
+    "require": {
+        "fzaninotto/faker": "^1.9.2"
+    }
+}
