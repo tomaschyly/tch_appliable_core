@@ -1,3 +1,7 @@
+## [0.9.10] - 15.12.2021
+
+* Update ListDataWidget to include error state and flow
+
 ## [0.9.9] - 15.10.2021
 
 * Update packages to latest versions

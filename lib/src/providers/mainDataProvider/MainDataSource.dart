@@ -107,6 +107,15 @@ class MainDataSource {
 
   /// Refetch data for DataRequests of this source
   Future<void> refetchData() async {
+    final List<DataRequest> dataRequests = List.from(_dataRequests);
+
+    for (DataRequest dataRequest in dataRequests) {
+      dataRequest.result = null;
+      dataRequest.error = null;
+    }
+
+    results.value = dataRequests;
+
     for (DataRequest dataRequest in _dataRequests) {
       await MainDataProvider.instance!.reFetchData(dataRequest.source, identifiers: [dataRequest.identifier]);
     }

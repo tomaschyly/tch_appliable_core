@@ -13,7 +13,7 @@ typedef BuildLoadingItemWithGlobalKey = Widget Function(BuildContext context, Gl
 
 typedef BuildLoadingItemFullScreen = Widget Function(BuildContext context);
 
-typedef BuildErrorStateWidget = Widget Function(SourceException exception, Function refresh);
+typedef BuildErrorStateWidget = Widget Function(SourceException exception, VoidCallback refresh);
 
 class ListDataWidget<R extends DataRequest, I extends DataModel> extends AbstractDataWidget {
   final ScrollController? scrollController;
@@ -23,9 +23,9 @@ class ListDataWidget<R extends DataRequest, I extends DataModel> extends Abstrac
   final BuildLoadingItemFullScreen? buildLoadingItemFullScreen;
   final bool initialLoadingFullScreen;
   final Widget emptyState;
+  final BuildErrorStateWidget? buildErrorState;
   final Widget? childAfterList;
   final PullToRefreshOptions pullToRefreshOptions;
-  final BuildErrorStateWidget buildErrorState;
 
   /// ListDataWidget initialization
   ListDataWidget({
@@ -36,7 +36,7 @@ class ListDataWidget<R extends DataRequest, I extends DataModel> extends Abstrac
     required this.buildItem,
     required this.buildLoadingItemWithGlobalKey,
     this.buildLoadingItemFullScreen,
-    required this.buildErrorState,
+    this.buildErrorState,
     this.initialLoadingFullScreen = false,
     required this.emptyState,
     this.childAfterList,
@@ -57,7 +57,6 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
   bool _isLastPage = false;
   List<I> _items = <I>[];
   int _itemsBeforeNextPage = 0;
-  bool forcedLoading = false;
 
   /// State initialization
   @override
@@ -102,7 +101,10 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
 
         Widget loadingItem = widget.buildLoadingItemWithGlobalKey(context, _loadingItemKey);
 
-        if (dataRequest.error != null && !forcedLoading) {
+        final theBuildErrorState = widget.buildErrorState;
+        final theError = dataRequest.error;
+
+        if (theBuildErrorState != null && theError != null) {
           final theLoadingItemEntry = _loadingItemEntry;
           if (theLoadingItemEntry != null) {
             _loadingItemEntry = null;
@@ -112,30 +114,8 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
             });
           }
 
-          return widget.buildErrorState(dataRequest.error!, () {
-            _refresh(withLoading: true);
-          });
-
-        } else if(dataRequest.error != null && forcedLoading){
-          if (widget.initialLoadingFullScreen) {
-            if (_loadingItemEntry == null) {
-              _loadingItemEntry = OverlayEntry(builder: (BuildContext context) {
-                return Material(
-                  color: Colors.transparent,
-                  child: widget.buildLoadingItemFullScreen?.call(context) ?? LoadingItemFullScreenWidget(),
-                );
-              });
-
-              WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-                Overlay.of(context)!.insert(_loadingItemEntry!);
-              });
-            }
-          } else {
-            content.add(loadingItem);
-          }
-        }
-
-        if (dataRequest.result != null) {
+          return theBuildErrorState(theError, _refresh);
+        } else if (dataRequest.result != null) {
           final theLoadingItemEntry = _loadingItemEntry;
           if (theLoadingItemEntry != null) {
             _loadingItemEntry = null;
@@ -153,7 +133,7 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
               <Widget>[
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
-                        (BuildContext context, int position) {
+                    (BuildContext context, int position) {
                       return widget.buildItem(context, position, _items[position]);
                     },
                     childCount: _items.length,
@@ -226,12 +206,7 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
   }
 
   /// Pull down refresh, reload data and optionally call custom callback
-  Future<void> _refresh({bool withLoading = false}) async {
-    if (withLoading) {
-      setStateNotDisposed(() {
-        forcedLoading = withLoading;
-      });
-    }
+  Future<void> _refresh() async {
     final theCallback = widget.pullToRefreshOptions.callback;
 
     if (theCallback != null) {
@@ -245,7 +220,6 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
     }
 
     Future.delayed(kThemeAnimationDuration, () => _refreshController.refreshCompleted());
-    forcedLoading = false;
   }
 
   /// Reload data from the DataSource
