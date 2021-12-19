@@ -116,7 +116,7 @@ class MainDataSource {
 
     results.value = dataRequests;
 
-    for (DataRequest dataRequest in _dataRequests) {
+    for (DataRequest dataRequest in dataRequests) {
       await MainDataProvider.instance!.reFetchData(dataRequest.source, identifiers: [dataRequest.identifier]);
     }
   }

@@ -9,6 +9,7 @@ abstract class DataTaskOptions {
 enum HTTPType {
   Get,
   Post,
+  Delete,
 }
 
 enum HTTPPostDataFormat {
@@ -17,6 +18,7 @@ enum HTTPPostDataFormat {
 }
 
 class HTTPTaskOptions extends DataTaskOptions {
+  final bool useDio;
   final HTTPType type;
   final HTTPPostDataFormat postDataFormat;
   final String? url;
@@ -25,6 +27,7 @@ class HTTPTaskOptions extends DataTaskOptions {
 
   /// HTTPTaskOptions initialization
   const HTTPTaskOptions({
+    this.useDio = true,
     required this.type,
     this.postDataFormat = HTTPPostDataFormat.FormData,
     this.url,

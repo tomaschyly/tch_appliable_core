@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
@@ -618,7 +619,7 @@ class HTTPSource extends AbstractSource {
   }
 
   /// Query data from remote API
-  Future<Response> query(DataRequest dataRequest) async {
+  Future<_HTTPSourceResponse> query(DataRequest dataRequest) async {
     final List<String> values = [];
     dataRequest.parameters.forEach((key, value) {
       values.add('$key=$value');
@@ -631,12 +632,29 @@ class HTTPSource extends AbstractSource {
       theHeaders.addAll(_options.dynamicHeaders!.call());
     }
 
-    final Response response = await get(
-      Uri.parse(url),
-      headers: theHeaders,
-    );
+    if (dataRequest.httpRequestOptions.useDio) {
+      final response = await Dio().get<String>(
+        url,
+        options: Options(
+          headers: theHeaders,
+        ),
+      );
 
-    return response;
+      return _HTTPSourceResponse(
+        body: response.data,
+        statusCode: response.statusCode ?? 0,
+      );
+    } else {
+      final response = await get(
+        Uri.parse(url),
+        headers: theHeaders,
+      );
+
+      return _HTTPSourceResponse(
+        body: response.body,
+        statusCode: response.statusCode,
+      );
+    }
   }
 
   /// Query data from remote API and update DataSources
@@ -724,17 +742,38 @@ class HTTPSource extends AbstractSource {
         final String url = '$endpointUrl?${values.join('&')}';
 
         try {
-          final Response response = await get(
-            Uri.parse(url),
-            headers: options.headers,
-          );
+          _HTTPSourceResponse response;
+
+          if (options.useDio) {
+            final dioResponse = await Dio().get<String>(
+              url,
+              options: Options(
+                headers: options.headers,
+              ),
+            );
+
+            response = _HTTPSourceResponse(
+              body: dioResponse.data,
+              statusCode: dioResponse.statusCode ?? 0,
+            );
+          } else {
+            final httpResponse = await get(
+              Uri.parse(url),
+              headers: options.headers,
+            );
+
+            response = _HTTPSourceResponse(
+              body: httpResponse.body,
+              statusCode: httpResponse.statusCode,
+            );
+          }
 
           if (options.processBody != null) {
-            final result = options.processBody!(response.body);
+            final result = options.processBody!(response.body!);
 
             dataTask.result = dataTask.processResult(result);
           } else {
-            dataTask.result = dataTask.processResult(jsonDecode(response.body));
+            dataTask.result = dataTask.processResult(jsonDecode(response.body!));
           }
 
           if (response.statusCode >= 400) {
@@ -750,33 +789,132 @@ class HTTPSource extends AbstractSource {
         break;
       case HTTPType.Post:
         try {
-          Response response;
-          if (options.postDataFormat == HTTPPostDataFormat.ToJson) {
-            final theHeaders = options.headers ?? Map<String, String>();
+          _HTTPSourceResponse response;
 
-            theHeaders.addAll(
-              {"Content-Type": "application/json"},
+          if (options.useDio) {
+            if (options.postDataFormat == HTTPPostDataFormat.ToJson) {
+              final theHeaders = options.headers ?? Map<String, String>();
+
+              theHeaders.addAll(
+                {"Content-Type": "application/json"},
+              );
+
+              final dioResponse = await Dio().post<String>(
+                endpointUrl,
+                options: Options(
+                  headers: theHeaders,
+                ),
+              );
+
+              response = _HTTPSourceResponse(
+                body: dioResponse.data,
+                statusCode: dioResponse.statusCode ?? 0,
+              );
+            } else {
+              final dioResponse = await Dio().post<String>(
+                endpointUrl,
+                options: Options(
+                  headers: options.headers,
+                ),
+              );
+
+              response = _HTTPSourceResponse(
+                body: dioResponse.data,
+                statusCode: dioResponse.statusCode ?? 0,
+              );
+            }
+          } else {
+            if (options.postDataFormat == HTTPPostDataFormat.ToJson) {
+              final theHeaders = options.headers ?? Map<String, String>();
+
+              theHeaders.addAll(
+                {"Content-Type": "application/json"},
+              );
+
+              final httpResponse = await post(
+                Uri.parse(endpointUrl),
+                headers: theHeaders,
+                body: jsonEncode(data),
+              );
+
+              response = _HTTPSourceResponse(
+                body: httpResponse.body,
+                statusCode: httpResponse.statusCode,
+              );
+            } else {
+              final httpResponse = await post(
+                Uri.parse(endpointUrl),
+                headers: options.headers,
+                body: data,
+              );
+
+              response = _HTTPSourceResponse(
+                body: httpResponse.body,
+                statusCode: httpResponse.statusCode,
+              );
+            }
+          }
+
+          if (options.processBody != null) {
+            final result = options.processBody!(response.body!);
+
+            dataTask.result = dataTask.processResult(result);
+          } else {
+            dataTask.result = dataTask.processResult(jsonDecode(response.body!));
+          }
+
+          if (response.statusCode >= 400) {
+            dataTask.error = SourceException(
+              originalException: null,
+              httpStatusCode: response.statusCode,
+            );
+          }
+        } catch (e) {
+          dataTask.result = null;
+          dataTask.error = SourceException(originalException: e);
+        }
+        break;
+      case HTTPType.Delete:
+        final List<String> values = [];
+        data.forEach((key, value) {
+          values.add('$key=$value');
+        });
+
+        final String url = '$endpointUrl?${values.join('&')}';
+
+        try {
+          _HTTPSourceResponse response;
+
+          if (options.useDio) {
+            final dioResponse = await Dio().delete<String>(
+              url,
+              options: Options(
+                headers: options.headers,
+              ),
             );
 
-            response = await post(
-              Uri.parse(endpointUrl),
-              headers: theHeaders,
-              body: jsonEncode(data),
+            response = _HTTPSourceResponse(
+              body: dioResponse.data,
+              statusCode: dioResponse.statusCode ?? 0,
             );
           } else {
-            response = await post(
-              Uri.parse(endpointUrl),
+            final httpResponse = await delete(
+              Uri.parse(url),
               headers: options.headers,
-              body: data,
+            );
+
+            response = _HTTPSourceResponse(
+              body: httpResponse.body,
+              statusCode: httpResponse.statusCode,
             );
           }
 
           if (options.processBody != null) {
-            final result = options.processBody!(response.body);
+            final result = options.processBody!(response.body!);
 
             dataTask.result = dataTask.processResult(result);
           } else {
-            dataTask.result = dataTask.processResult(jsonDecode(response.body));
+            dataTask.result = dataTask.processResult(jsonDecode(response.body!));
           }
 
           if (response.statusCode >= 400) {
@@ -835,6 +973,17 @@ class HTTPSource extends AbstractSource {
       }
     }
   }
+}
+
+class _HTTPSourceResponse {
+  final String? body;
+  final int statusCode;
+
+  /// HTTPSourceResponse initialization
+  const _HTTPSourceResponse({
+    required this.body,
+    required this.statusCode,
+  });
 }
 
 class SQLiteOptions {

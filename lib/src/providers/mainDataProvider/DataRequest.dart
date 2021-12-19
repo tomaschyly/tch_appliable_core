@@ -18,6 +18,7 @@ class DataRequest<T extends DataModel> {
 
   final MainDataProviderSource source;
   MainDataProviderSource? sourceRegisteredTo;
+  final HTTPRequestOptions httpRequestOptions;
   final MockUpRequestOptions? mockUpRequestOptions;
   final String method;
   final Map<String, dynamic> parameters;
@@ -28,11 +29,21 @@ class DataRequest<T extends DataModel> {
   /// DataRequest initialization
   DataRequest({
     required this.source,
+    this.httpRequestOptions = const HTTPRequestOptions(),
     this.mockUpRequestOptions,
     required this.method,
     Map<String, dynamic>? parameters,
     required this.processResult,
   }) : this.parameters = parameters ?? Map();
+}
+
+class HTTPRequestOptions {
+  final bool useDio;
+
+  /// HTTPRequestOptions initialization
+  const HTTPRequestOptions({
+    this.useDio = true,
+  });
 }
 
 class MockUpRequestOptions {

@@ -1,3 +1,8 @@
+## [0.10.0] - 19.12.2021
+
+* Update dependencies
+* Http communication prefers Dio instead of Http client
+
 ## [0.9.10] - 15.12.2021
 
 * Update ListDataWidget to include error state and flow
