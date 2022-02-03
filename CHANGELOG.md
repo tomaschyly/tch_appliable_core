@@ -1,4 +1,4 @@
-## [0.10.1 - 3.2.2022
+## [0.10.1] - 3.2.2022
 
 * Fix post Dio requests not sending data
 
