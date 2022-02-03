@@ -1,3 +1,7 @@
+## [0.10.1 - 3.2.2022
+
+* Fix post Dio requests not sending data
+
 ## [0.10.0] - 19.12.2021
 
 * Update dependencies

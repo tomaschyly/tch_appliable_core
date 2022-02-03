@@ -804,6 +804,7 @@ class HTTPSource extends AbstractSource {
                 options: Options(
                   headers: theHeaders,
                 ),
+                data: jsonEncode(data),
               );
 
               response = _HTTPSourceResponse(
@@ -816,6 +817,7 @@ class HTTPSource extends AbstractSource {
                 options: Options(
                   headers: options.headers,
                 ),
+                data: data,
               );
 
               response = _HTTPSourceResponse(
