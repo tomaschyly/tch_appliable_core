@@ -1,3 +1,7 @@
+## [0.10.2] - 4.2.2022
+
+* Updates, make sure working with Flutter 2.10
+
 ## [0.10.1] - 3.2.2022
 
 * Fix post Dio requests not sending data
