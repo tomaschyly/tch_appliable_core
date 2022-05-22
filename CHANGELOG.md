@@ -1,3 +1,7 @@
+## [0.10.3] - 22.5.2022
+
+* Update packages
+
 ## [0.10.2] - 4.2.2022
 
 * Updates, make sure working with Flutter 2.10
