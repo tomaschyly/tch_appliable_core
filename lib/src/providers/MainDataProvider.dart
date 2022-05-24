@@ -1046,7 +1046,15 @@ class SQLiteSource extends AbstractSource {
   }
 
   /// Query data from database
-  Future<List<Map<String, dynamic>>> query(String table, Map<String, dynamic> parameters, {String? rawQuery, List<dynamic>? rawArguments}) async {
+  Future<List<Map<String, dynamic>>> query(
+    String table,
+    Map<String, dynamic> parameters, {
+    String? rawQuery,
+    List<dynamic>? rawArguments,
+    String? groupBy,
+    String? having,
+    String? orderBy,
+  }) async {
     final database = await _open();
 
     if (rawQuery?.isNotEmpty == true) {
@@ -1063,7 +1071,14 @@ class SQLiteSource extends AbstractSource {
       whereArgs = parameters.values.toList();
     }
 
-    final List<Map<String, dynamic>> results = await database.query(table, where: where, whereArgs: whereArgs);
+    final List<Map<String, dynamic>> results = await database.query(
+      table,
+      where: where,
+      whereArgs: whereArgs,
+      groupBy: groupBy,
+      having: having,
+      orderBy: orderBy,
+    );
 
     return results;
   }
@@ -1121,7 +1136,13 @@ class SQLiteSource extends AbstractSource {
     SourceException? exception;
 
     try {
-      results = await query(dataRequest.method, dataRequest.parameters);
+      results = await query(
+        dataRequest.method,
+        dataRequest.parameters,
+        groupBy: dataRequest.sqLiteRequestOptions.groupBy,
+        having: dataRequest.sqLiteRequestOptions.having,
+        orderBy: dataRequest.sqLiteRequestOptions.orderBy,
+      );
     } catch (e) {
       exception = SourceException(originalException: e);
     }
@@ -1194,6 +1215,9 @@ class SQLiteSource extends AbstractSource {
             data,
             rawQuery: options.rawQuery,
             rawArguments: options.rawArguments,
+            groupBy: options.groupBy,
+            having: options.having,
+            orderBy: options.orderBy,
           );
         } catch (e) {
           exception = SourceException(originalException: e);

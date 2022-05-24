@@ -49,6 +49,9 @@ class SQLiteTaskOptions extends DataTaskOptions {
   final String idKey;
   final String? rawQuery;
   final List<dynamic>? rawArguments;
+  final String? groupBy;
+  final String? having;
+  final String? orderBy;
 
   /// SQLiteTaskOptions initialization
   const SQLiteTaskOptions({
@@ -56,6 +59,9 @@ class SQLiteTaskOptions extends DataTaskOptions {
     this.idKey = 'id',
     this.rawQuery,
     this.rawArguments,
+    this.groupBy,
+    this.having,
+    this.orderBy,
   });
 }
 

@@ -20,6 +20,7 @@ class DataRequest<T extends DataModel> {
   MainDataProviderSource? sourceRegisteredTo;
   final HTTPRequestOptions httpRequestOptions;
   final MockUpRequestOptions? mockUpRequestOptions;
+  final SQLiteRequestOptions sqLiteRequestOptions;
   final String method;
   final Map<String, dynamic> parameters;
   final T? Function(Map<String, dynamic> json) processResult;
@@ -31,6 +32,7 @@ class DataRequest<T extends DataModel> {
     required this.source,
     this.httpRequestOptions = const HTTPRequestOptions(),
     this.mockUpRequestOptions,
+    this.sqLiteRequestOptions = const SQLiteRequestOptions(),
     required this.method,
     Map<String, dynamic>? parameters,
     required this.processResult,
@@ -58,5 +60,18 @@ class MockUpRequestOptions {
     this.minDelayMilliseconds = 200,
     this.maxDelayMilliseconds = 2000,
     this.assetDataPath,
+  });
+}
+
+class SQLiteRequestOptions {
+  final String? groupBy;
+  final String? having;
+  final String? orderBy;
+
+  /// SQLiteRequestOptions initialization
+  const SQLiteRequestOptions({
+    this.groupBy,
+    this.having,
+    this.orderBy,
   });
 }
