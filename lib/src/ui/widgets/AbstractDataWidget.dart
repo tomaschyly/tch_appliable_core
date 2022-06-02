@@ -61,7 +61,7 @@ abstract class AbstractDataWidgetState<T extends AbstractDataWidget> extends Abs
       _dataSource = MainDataProvider.instance!.registerDataRequests(_dataRequests);
 
       if (isFirst) {
-        WidgetsBinding.instance!.addPostFrameCallback((timeStamp) => setStateNotDisposed(() {}));
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) => setStateNotDisposed(() {}));
       }
     }
   }

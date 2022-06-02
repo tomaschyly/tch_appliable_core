@@ -174,7 +174,7 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
     setStateNotDisposed(() {
       _isAnimated = true;
 
-      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         _transitionEntry = OverlayEntry(
           builder: (BuildContext context) {
             final double diffWidth = _targetBoundary.width - _childBoundary.width;
@@ -268,7 +268,7 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
               theTransitionEntry.remove();
               _transitionEntry = null;
 
-              WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
                 setStateNotDisposed(() {
                   _isAnimated = false;
                 });
@@ -305,7 +305,7 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
           theTransitionEntry.remove();
           _transitionEntry = null;
 
-          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             setStateNotDisposed(() {
               _isAnimated = false;
             });

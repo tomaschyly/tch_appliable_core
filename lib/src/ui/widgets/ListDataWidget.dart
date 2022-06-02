@@ -83,7 +83,7 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
   /// Create screen content from widgets
   @override
   Widget buildContent(BuildContext context) {
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) => _initLoadingItemHeight());
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) => _initLoadingItemHeight());
 
     final theDataSource = dataSource;
     if (theDataSource == null) {
@@ -93,7 +93,7 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
     return ValueListenableBuilder(
       valueListenable: theDataSource.results,
       builder: (BuildContext context, List<DataRequest> dataRequests, Widget? child) {
-        WidgetsBinding.instance!.addPostFrameCallback((timeStamp) => _isEndOfList());
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) => _isEndOfList());
 
         final List<Widget> content = <Widget>[];
 
@@ -109,7 +109,7 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
           if (theLoadingItemEntry != null) {
             _loadingItemEntry = null;
 
-            WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
               theLoadingItemEntry.remove();
             });
           }
@@ -120,7 +120,7 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
           if (theLoadingItemEntry != null) {
             _loadingItemEntry = null;
 
-            WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
               theLoadingItemEntry.remove();
             });
           }
@@ -155,7 +155,7 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
                 );
               });
 
-              WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
                 Overlay.of(context)!.insert(_loadingItemEntry!);
               });
             }
@@ -255,7 +255,7 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
     _itemsBeforeNextPage = _items.length;
 
     if (dataSource?.hasNextPageOfRequest<R>() == true) {
-      WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         dataSource?.requestNextPageOfRequest<R>();
       });
     } else {

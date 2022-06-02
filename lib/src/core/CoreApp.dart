@@ -71,13 +71,13 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
 
     super.initState();
 
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   /// Manually dispose of resources
   @override
   void dispose() {
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
 
     super.dispose();
   }
@@ -119,7 +119,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
         theme: darkMode ? (widget.darkTheme ?? widget.theme) : widget.theme,
         // darkTheme: widget.darkTheme,
         builder: (BuildContext context, Widget? child) {
-          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             determineOSThemeMode(context);
 
             determineScreen(context);
@@ -148,7 +148,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
   void didChangePlatformBrightness() {
     super.didChangePlatformBrightness();
 
-    final isOSDarkMode = WidgetsBinding.instance!.window.platformBrightness == Brightness.dark;
+    final isOSDarkMode = WidgetsBinding.instance.window.platformBrightness == Brightness.dark;
 
     if (isOSDarkMode != _isOSDarkMode) {
       _isOSDarkMode = isOSDarkMode;
@@ -242,7 +242,7 @@ class _InitializationScreen extends StatelessWidget {
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _appInit(context);
     });
 
