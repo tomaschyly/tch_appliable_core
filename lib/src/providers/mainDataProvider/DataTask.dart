@@ -1,5 +1,6 @@
 import 'package:tch_appliable_core/src/model/DataModel.dart';
 import 'package:tch_appliable_core/src/providers/MainDataProvider.dart';
+import 'package:tch_appliable_core/src/providers/mainDataProvider/DataRequest.dart';
 
 abstract class DataTaskOptions {
   /// DataTaskOptions initialization
@@ -91,6 +92,7 @@ class DataTask<T extends DataModel, R extends DataModel> {
   final R? Function(Map<String, dynamic> json) processResult;
   R? result;
   SourceException? error;
+  final RequestPagination pagination;
   final List<String>? reFetchMethods;
 
   /// DataTask initialization
@@ -101,7 +103,8 @@ class DataTask<T extends DataModel, R extends DataModel> {
     required this.data,
     required this.processResult,
     this.reFetchMethods,
-  });
+    RequestPagination? pagination,
+  }) : this.pagination = pagination ?? RequestPagination();
 }
 
 enum MockUpType {

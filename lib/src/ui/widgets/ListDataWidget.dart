@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tch_appliable_core/src/model/DataModel.dart';
+import 'package:tch_appliable_core/src/providers/MainDataProvider.dart';
 import 'package:tch_appliable_core/src/providers/mainDataProvider/DataRequest.dart';
 import 'package:tch_appliable_core/src/ui/widgets/AbstractDataWidget.dart';
-import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 typedef ProcessResult<R extends DataRequest, I extends DataModel> = List<I>? Function(R dataRequest);
 
@@ -244,7 +244,8 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
   }
 
   /// If is last item attempt to load next page
-  void _loadNextPage() {
+  /// ListDataWidget & pagination work with single DataRequest per MainDataSource
+  void _loadNextPage() async {
     if (_isLastPage) {
       return;
     }
@@ -254,7 +255,7 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
     }
     _itemsBeforeNextPage = _items.length;
 
-    if (dataSource?.hasNextPageOfRequest<R>() == true) {
+    if (await dataSource?.hasNextPageOfRequest<R>() == true) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         dataSource?.requestNextPageOfRequest<R>();
       });

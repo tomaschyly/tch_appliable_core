@@ -91,6 +91,23 @@ class MainDataSource {
     return null;
   }
 
+  /// Set rawResult from response on request
+  void setRawResult(
+    String identifier,
+    List<Map<String, dynamic>>? results, {
+    bool lastHasNext = false,
+  }) {
+    _dataRequests.forEach((dataRequest) {
+      if (dataRequest.identifier == identifier) {
+        if (lastHasNext) {
+          dataRequest.lastHasNextPageRawResults = results;
+        } else {
+          dataRequest.rawResults = results;
+        }
+      }
+    });
+  }
+
   /// Set response or already processed result from source as result
   void setResult(String identifier, Map<String, dynamic>? result, SourceException? exception) {
     final List<DataRequest> dataRequests = List.from(_dataRequests);
@@ -122,12 +139,13 @@ class MainDataSource {
   }
 
   /// Check if DataRequest has next page
-  bool hasNextPageOfRequest<R>() {
+  /// ListDataWidget & pagination work with single DataRequest per MainDataSource
+  Future<bool> hasNextPageOfRequest<R>() async {
     final List<DataRequest> dataRequests = List.from(_dataRequests);
 
     for (DataRequest dataRequest in dataRequests) {
       if (dataRequest is R) {
-        // return CoreModule.instance.mainDataProvider.dataRequestHasNextPage(dataRequest); //TODO
+        return MainDataProvider.instance!.dataRequestHasNextPage(dataRequest);
       }
     }
 
@@ -135,12 +153,13 @@ class MainDataSource {
   }
 
   /// Request DataProvider to load next page of DataRequest
+  /// ListDataWidget & pagination work with single DataRequest per MainDataSource
   requestNextPageOfRequest<R>() {
     final List<DataRequest> dataRequests = List.from(_dataRequests);
 
     for (DataRequest dataRequest in dataRequests) {
       if (dataRequest is R) {
-        // CoreModule.instance.mainDataProvider.dataRequestLoadNextPage(dataRequest); //TODO
+        MainDataProvider.instance!.dataRequestLoadNextPage(dataRequest);
         break;
       }
     }

@@ -148,7 +148,7 @@ class MainDataProvider {
   }
 
   /// Check if DataRequest has next page
-  bool dataRequestHasNextPage(DataRequest dataRequest) {
+  Future<bool> dataRequestHasNextPage(DataRequest dataRequest) async {
     AbstractSource? theSource = _initialitedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
 
     if (theSource == null) {
@@ -300,7 +300,7 @@ abstract class AbstractSource {
   }
 
   /// Check if DataRequest has next page
-  bool dataRequestHasNextPage(DataRequest dataRequest);
+  Future<bool> dataRequestHasNextPage(DataRequest dataRequest);
 
   /// Request to load next page of DataRequest
   dataRequestLoadNextPage(DataRequest dataRequest);
@@ -491,14 +491,14 @@ class MockUpSource extends AbstractSource {
 
   /// Check if DataRequest has next page
   @override
-  bool dataRequestHasNextPage(DataRequest dataRequest) {
-    throw Exception('MockUpSource is not implemented');
+  Future<bool> dataRequestHasNextPage(DataRequest dataRequest) async {
+    throw Exception('MockUpSource dataRequestHasNextPage is not implemented');
   }
 
   /// Request to load next page of DataRequest
   @override
   dataRequestLoadNextPage(DataRequest dataRequest) {
-    throw Exception('MockUpSource is not implemented');
+    throw Exception('MockUpSource dataRequestLoadNextPage is not implemented');
   }
 
   /// Execute one time DataTask against the source
@@ -714,14 +714,14 @@ class HTTPSource extends AbstractSource {
 
   /// Check if DataRequest has next page
   @override
-  bool dataRequestHasNextPage(DataRequest dataRequest) {
-    throw Exception('HTTPSource is not implemented');
+  Future<bool> dataRequestHasNextPage(DataRequest dataRequest) async {
+    throw Exception('HTTPSource dataRequestHasNextPage is not implemented');
   }
 
   /// Request to load next page of DataRequest
   @override
   dataRequestLoadNextPage(DataRequest dataRequest) {
-    throw Exception('HTTPSource is not implemented');
+    throw Exception('HTTPSource dataRequestLoadNextPage is not implemented');
   }
 
   /// Execute one time DataTask against the source
@@ -1054,6 +1054,7 @@ class SQLiteSource extends AbstractSource {
     String? groupBy,
     String? having,
     String? orderBy,
+    RequestPagination? pagination,
   }) async {
     final database = await _open();
 
@@ -1071,6 +1072,14 @@ class SQLiteSource extends AbstractSource {
       whereArgs = parameters.values.toList();
     }
 
+    int? limit;
+    int? offset;
+
+    if (pagination?.enabled == true) {
+      limit = pagination!.pageSize;
+      offset = (pagination.page - 1) * limit;
+    }
+
     final List<Map<String, dynamic>> results = await database.query(
       table,
       where: where,
@@ -1078,7 +1087,13 @@ class SQLiteSource extends AbstractSource {
       groupBy: groupBy,
       having: having,
       orderBy: orderBy,
+      limit: limit,
+      offset: offset,
     );
+
+    if (pagination?.enabled == true) {
+      pagination!.page = pagination.page + 1;
+    }
 
     return results;
   }
@@ -1142,10 +1157,17 @@ class SQLiteSource extends AbstractSource {
         groupBy: dataRequest.sqLiteRequestOptions.groupBy,
         having: dataRequest.sqLiteRequestOptions.having,
         orderBy: dataRequest.sqLiteRequestOptions.orderBy,
+        pagination: dataRequest.pagination,
       );
     } catch (e) {
       exception = SourceException(originalException: e);
     }
+
+    _dataSources.forEach((MainDataSource dataSource) {
+      if (dataSource.identifiers.contains(dataRequest.identifier)) {
+        dataSource.setRawResult(dataRequest.identifier, results);
+      }
+    });
 
     _dataSources.forEach((MainDataSource dataSource) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
@@ -1184,14 +1206,60 @@ class SQLiteSource extends AbstractSource {
 
   /// Check if DataRequest has next page
   @override
-  bool dataRequestHasNextPage(DataRequest dataRequest) {
-    throw Exception('SQLiteSource is not implemented');
+  Future<bool> dataRequestHasNextPage(DataRequest dataRequest) async {
+    List<Map<String, dynamic>>? results;
+
+    try {
+      results = await query(
+        dataRequest.method,
+        dataRequest.parameters,
+        groupBy: dataRequest.sqLiteRequestOptions.groupBy,
+        having: dataRequest.sqLiteRequestOptions.having,
+        orderBy: dataRequest.sqLiteRequestOptions.orderBy,
+        pagination: dataRequest.pagination,
+      );
+    } catch (e) {
+      results = [];
+    }
+
+    _dataSources.forEach((MainDataSource dataSource) {
+      if (dataSource.identifiers.contains(dataRequest.identifier)) {
+        dataSource.setRawResult(
+          dataRequest.identifier,
+          results,
+          lastHasNext: true,
+        );
+      }
+    });
+
+    return results.isNotEmpty;
   }
 
   /// Request to load next page of DataRequest
   @override
   dataRequestLoadNextPage(DataRequest dataRequest) {
-    throw Exception('SQLiteSource is not implemented');
+    List<Map<String, dynamic>> paginationResults = dataRequest.lastHasNextPageRawResults!;
+    List<Map<String, dynamic>> rawResults = dataRequest.rawResults!.toList();
+
+    rawResults.addAll(paginationResults);
+
+    _dataSources.forEach((MainDataSource dataSource) {
+      if (dataSource.identifiers.contains(dataRequest.identifier)) {
+        dataSource.setRawResult(dataRequest.identifier, rawResults);
+      }
+    });
+
+    _dataSources.forEach((MainDataSource dataSource) {
+      if (dataSource.identifiers.contains(dataRequest.identifier)) {
+        dataSource.setResult(
+          dataRequest.identifier,
+          <String, dynamic>{
+            'list': rawResults,
+          },
+          null,
+        );
+      }
+    });
   }
 
   /// Execute one time DataTask against the source
@@ -1218,6 +1286,7 @@ class SQLiteSource extends AbstractSource {
             groupBy: options.groupBy,
             having: options.having,
             orderBy: options.orderBy,
+            pagination: dataTask.pagination,
           );
         } catch (e) {
           exception = SourceException(originalException: e);
@@ -1534,14 +1603,14 @@ class SembastSource extends AbstractSource {
 
   /// Check if DataRequest has next page
   @override
-  bool dataRequestHasNextPage(DataRequest dataRequest) {
-    throw Exception('SembastSource is not implemented');
+  Future<bool> dataRequestHasNextPage(DataRequest dataRequest) async {
+    throw Exception('SembastSource dataRequestHasNextPage is not implemented');
   }
 
   /// Request to load next page of DataRequest
   @override
   dataRequestLoadNextPage(DataRequest dataRequest) {
-    throw Exception('SembastSource is not implemented');
+    throw Exception('SembastSource dataRequestLoadNextPage is not implemented');
   }
 
   /// Execute one time DataTask against the source

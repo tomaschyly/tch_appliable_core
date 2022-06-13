@@ -14,8 +14,6 @@ class DataRequest<T extends DataModel> {
     return identifier;
   }
 
-  bool get isCollection => true;
-
   final MainDataProviderSource source;
   MainDataProviderSource? sourceRegisteredTo;
   final HTTPRequestOptions httpRequestOptions;
@@ -23,9 +21,12 @@ class DataRequest<T extends DataModel> {
   final SQLiteRequestOptions sqLiteRequestOptions;
   final String method;
   final Map<String, dynamic> parameters;
+  List<Map<String, dynamic>>? rawResults;
+  List<Map<String, dynamic>>? lastHasNextPageRawResults;
   final T? Function(Map<String, dynamic> json) processResult;
   T? result;
   SourceException? error;
+  final RequestPagination pagination;
 
   /// DataRequest initialization
   DataRequest({
@@ -36,7 +37,9 @@ class DataRequest<T extends DataModel> {
     required this.method,
     Map<String, dynamic>? parameters,
     required this.processResult,
-  }) : this.parameters = parameters ?? Map();
+    RequestPagination? pagination,
+  })  : this.parameters = parameters ?? Map(),
+        this.pagination = pagination ?? RequestPagination();
 }
 
 class HTTPRequestOptions {
@@ -74,4 +77,30 @@ class SQLiteRequestOptions {
     this.having,
     this.orderBy,
   });
+}
+
+class RequestPagination {
+  final int pageSize;
+  int page;
+  final bool enabled;
+
+  /// RequestPagination initialization
+  RequestPagination({
+    this.pageSize = 20,
+    this.page = 1,
+    this.enabled = true,
+  });
+
+  /// Create copy of this pagination with changes
+  RequestPagination copyWith({
+    int? pageSize,
+    int? page,
+    bool? enabled,
+  }) {
+    return RequestPagination(
+      pageSize: pageSize ?? this.pageSize,
+      page: page ?? this.page,
+      enabled: enabled ?? this.enabled,
+    );
+  }
 }
