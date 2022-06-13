@@ -1,3 +1,9 @@
+## [0.11.0] - 13.6.2022
+
+* **Warning:** pagination is enabled by default
+* SQLite and HTTP sources support pagination
+* Automatic pagination is integrated with ListDataWidget
+
 ## [0.10.3] - 22.5.2022
 
 * Update packages

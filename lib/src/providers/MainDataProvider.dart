@@ -490,9 +490,10 @@ class MockUpSource extends AbstractSource {
   }
 
   /// Check if DataRequest has next page
+  /// Mockup does not support pagination
   @override
   Future<bool> dataRequestHasNextPage(DataRequest dataRequest) async {
-    throw Exception('MockUpSource dataRequestHasNextPage is not implemented');
+    return false;
   }
 
   /// Request to load next page of DataRequest
@@ -1683,12 +1684,14 @@ class SembastSource extends AbstractSource {
   }
 
   /// Check if DataRequest has next page
+  /// Sembast does not support pagination
   @override
   Future<bool> dataRequestHasNextPage(DataRequest dataRequest) async {
-    throw Exception('SembastSource dataRequestHasNextPage is not implemented');
+    return false;
   }
 
   /// Request to load next page of DataRequest
+  /// Sembast does not support pagination
   @override
   dataRequestLoadNextPage(DataRequest dataRequest) {
     throw Exception('SembastSource dataRequestLoadNextPage is not implemented');
