@@ -1207,6 +1207,10 @@ class SQLiteSource extends AbstractSource {
   /// Check if DataRequest has next page
   @override
   Future<bool> dataRequestHasNextPage(DataRequest dataRequest) async {
+    if (!dataRequest.pagination.enabled) {
+      return false;
+    }
+
     List<Map<String, dynamic>>? results;
 
     try {
