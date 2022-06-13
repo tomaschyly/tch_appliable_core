@@ -1,7 +1,6 @@
 import 'package:example/core/Router.dart' as AppRouter;
 import 'package:example/model/SQLiteRecord.dart';
 import 'package:example/ui/screens/HomeScreen.dart';
-import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
@@ -37,7 +36,7 @@ class App extends StatelessWidget {
           onCreate: _dbInit,
         ),
         httpClientOptions: HTTPClientOptions(
-          hostUrl: 'https://jsonplaceholder.typicode.com',
+          hostUrl: 'https://628e5ae9a339dfef87acd124.mockapi.io/api',
         ),
         sembastOptions: SembastOptions(
           databasePath: () async => join((await getDatabasesPath()), 'sembast.db'),

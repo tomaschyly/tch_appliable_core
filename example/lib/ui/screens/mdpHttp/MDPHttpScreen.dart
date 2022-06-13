@@ -1,7 +1,6 @@
 import 'package:example/model/HttpRecord.dart';
 import 'package:example/model/dataRequests/GetHttpRecordsDataRequest.dart';
 import 'package:example/ui/screens/AbstractAppScreen.dart';
-import 'package:flutter/material.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class MDPHttpScreen extends AbstractAppScreen {
@@ -66,7 +65,9 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Flexible(child: Text(item.title)),
+              Flexible(child: Text(item.name)),
+              Spacer(),
+              Text(item.createdAt),
             ],
           ),
         );

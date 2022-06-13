@@ -8,6 +8,8 @@ require_once 'vendor/autoload.php';
  * Display JSON response.
  */
 function JSONResponse (array $data) {
+    header ("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+
     header ('Content-Type: application/json; charset=utf-8');
 
     echo json_encode ($data);

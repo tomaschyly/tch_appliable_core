@@ -94,7 +94,7 @@ class MainDataSource {
   /// Set rawResult from response on request
   void setRawResult(
     String identifier,
-    List<Map<String, dynamic>>? results, {
+    dynamic results, {
     bool lastHasNext = false,
   }) {
     _dataRequests.forEach((dataRequest) {

@@ -17,5 +17,9 @@ class GetHttpRecordsDataRequest extends DataRequest<HttpRecords> {
               'list': jsonDecode(recordsJson),
             });
           },
+          pagination: RequestPagination(
+            checkResultNotEmpty: requestPaginationCheckList,
+            combinePaginationResult: requestPaginationCombineLists,
+          ),
         );
 }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:tch_appliable_core/src/model/DataModel.dart';
 import 'package:tch_appliable_core/src/providers/MainDataProvider.dart';
 
@@ -21,8 +23,8 @@ class DataRequest<T extends DataModel> {
   final SQLiteRequestOptions sqLiteRequestOptions;
   final String method;
   final Map<String, dynamic> parameters;
-  List<Map<String, dynamic>>? rawResults;
-  List<Map<String, dynamic>>? lastHasNextPageRawResults;
+  dynamic rawResults;
+  dynamic lastHasNextPageRawResults;
   final T? Function(Map<String, dynamic> json) processResult;
   T? result;
   SourceException? error;
@@ -79,16 +81,23 @@ class SQLiteRequestOptions {
   });
 }
 
+typedef ResultsNotEmpty = bool Function(dynamic results);
+typedef ResultsCombination = dynamic Function(dynamic results, dynamic nextPageResults);
+
 class RequestPagination {
   final int pageSize;
   int page;
   final bool enabled;
+  final ResultsNotEmpty? checkResultNotEmpty;
+  final ResultsCombination? combinePaginationResult;
 
   /// RequestPagination initialization
   RequestPagination({
     this.pageSize = 20,
     this.page = 1,
     this.enabled = true,
+    this.checkResultNotEmpty,
+    this.combinePaginationResult,
   });
 
   /// Create copy of this pagination with changes
@@ -103,4 +112,21 @@ class RequestPagination {
       enabled: enabled ?? this.enabled,
     );
   }
+}
+
+/// Generic function to check list is not empty
+bool requestPaginationCheckList(dynamic results) {
+  List<Map<String, dynamic>> resultsList = List<Map<String, dynamic>>.from(jsonDecode(results));
+
+  return resultsList.isNotEmpty;
+}
+
+/// Generic function to combine two lists into one
+dynamic requestPaginationCombineLists(dynamic results, dynamic nextPageResults) {
+  List<Map<String, dynamic>> resultsList = List<Map<String, dynamic>>.from(jsonDecode(results)).toList();
+  List<Map<String, dynamic>> nextList = List<Map<String, dynamic>>.from(jsonDecode(nextPageResults));
+
+  resultsList.addAll(nextList);
+
+  return jsonEncode(resultsList);
 }

@@ -625,6 +625,12 @@ class HTTPSource extends AbstractSource {
       values.add('$key=$value');
     });
 
+    if (dataRequest.pagination.enabled) {
+      values.add('page=${dataRequest.pagination.page}');
+
+      values.add('limit=${dataRequest.pagination.pageSize}');
+    }
+
     final String url = '${_options.hostUrl}${dataRequest.method}?${values.join('&')}';
 
     final theHeaders = _options.headers != null ? Map<String, String>.from(_options.headers!) : Map<String, String>();
@@ -640,6 +646,10 @@ class HTTPSource extends AbstractSource {
         ),
       );
 
+      if (dataRequest.pagination.enabled) {
+        dataRequest.pagination.page++;
+      }
+
       return _HTTPSourceResponse(
         body: response.data,
         statusCode: response.statusCode ?? 0,
@@ -649,6 +659,10 @@ class HTTPSource extends AbstractSource {
         Uri.parse(url),
         headers: theHeaders,
       );
+
+      if (dataRequest.pagination.enabled) {
+        dataRequest.pagination.page++;
+      }
 
       return _HTTPSourceResponse(
         body: response.body,
@@ -676,6 +690,12 @@ class HTTPSource extends AbstractSource {
     } catch (e) {
       exception = SourceException(originalException: e);
     }
+
+    _dataSources.forEach((MainDataSource dataSource) {
+      if (dataSource.identifiers.contains(dataRequest.identifier)) {
+        dataSource.setRawResult(dataRequest.identifier, json);
+      }
+    });
 
     _dataSources.forEach((MainDataSource dataSource) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
@@ -715,13 +735,70 @@ class HTTPSource extends AbstractSource {
   /// Check if DataRequest has next page
   @override
   Future<bool> dataRequestHasNextPage(DataRequest dataRequest) async {
-    throw Exception('HTTPSource dataRequestHasNextPage is not implemented');
+    if (!dataRequest.pagination.enabled) {
+      return false;
+    }
+
+    String? json;
+
+    try {
+      final response = await query(dataRequest);
+
+      json = response.body;
+    } catch (e) {
+      json = null;
+    }
+
+    _dataSources.forEach((MainDataSource dataSource) {
+      if (dataSource.identifiers.contains(dataRequest.identifier)) {
+        dataSource.setRawResult(
+          dataRequest.identifier,
+          json,
+          lastHasNext: true,
+        );
+      }
+    });
+
+    final ResultsNotEmpty? checkResultNotEmpty = dataRequest.pagination.checkResultNotEmpty;
+
+    if (checkResultNotEmpty != null) {
+      return checkResultNotEmpty(json);
+    } else {
+      throw Exception('HTTPSource requires dataRequest.pagination.checkResultNotEmpty to know if there is next page to load');
+    }
   }
 
   /// Request to load next page of DataRequest
   @override
   dataRequestLoadNextPage(DataRequest dataRequest) {
-    throw Exception('HTTPSource dataRequestLoadNextPage is not implemented');
+    dynamic paginationResults = dataRequest.lastHasNextPageRawResults!;
+    dynamic rawResults = dataRequest.rawResults!;
+
+    final ResultsCombination? combine = dataRequest.pagination.combinePaginationResult;
+
+    if (combine != null) {
+      final dynamic json = combine(rawResults, paginationResults);
+
+      _dataSources.forEach((MainDataSource dataSource) {
+        if (dataSource.identifiers.contains(dataRequest.identifier)) {
+          dataSource.setRawResult(dataRequest.identifier, json);
+        }
+      });
+
+      _dataSources.forEach((MainDataSource dataSource) {
+        if (dataSource.identifiers.contains(dataRequest.identifier)) {
+          dataSource.setResult(
+            dataRequest.identifier,
+            <String, dynamic>{
+              'response': json,
+            },
+            null,
+          );
+        }
+      });
+    } else {
+      throw Exception('HTTPSource requires dataRequest.pagination.combinePaginationResult to combine results after loading next page');
+    }
   }
 
   /// Execute one time DataTask against the source
