@@ -105,11 +105,15 @@ class RequestPagination {
     int? pageSize,
     int? page,
     bool? enabled,
+    ResultsNotEmpty? checkResultNotEmpty,
+    ResultsCombination? combinePaginationResult,
   }) {
     return RequestPagination(
       pageSize: pageSize ?? this.pageSize,
       page: page ?? this.page,
       enabled: enabled ?? this.enabled,
+      checkResultNotEmpty: checkResultNotEmpty ?? this.checkResultNotEmpty,
+      combinePaginationResult: combinePaginationResult ?? this.combinePaginationResult,
     );
   }
 }
