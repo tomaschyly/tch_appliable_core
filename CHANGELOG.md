@@ -1,3 +1,7 @@
+## [0.11.1] - 17.6.2022
+
+* Fix bad pagination behaviour under certain conditions
+
 ## [0.11.0] - 13.6.2022
 
 * **Warning:** pagination is enabled by default

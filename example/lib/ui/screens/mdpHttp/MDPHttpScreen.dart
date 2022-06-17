@@ -1,6 +1,8 @@
 import 'package:example/model/HttpRecord.dart';
+import 'package:example/model/HttpRecords.dart';
 import 'package:example/model/dataRequests/GetHttpRecordsDataRequest.dart';
 import 'package:example/ui/screens/AbstractAppScreen.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class MDPHttpScreen extends AbstractAppScreen {
@@ -16,7 +18,17 @@ class _MDPHttpScreenState extends AbstractAppScreenState<MDPHttpScreen> {
   AbstractScreenStateOptions options = AppScreenStateOptions.drawer(
     screenName: MDPHttpScreen.ROUTE,
     title: tt('mdphttp.screen.title'),
-  );
+  )..appBarOptions = <AppBarOption>[
+      AppBarOption(
+        onTap: (BuildContext context) {
+          MainDataProvider.instance!.reFetchData(
+            MainDataProviderSource.HTTPClient,
+            methods: [HttpRecords.METHOD],
+          );
+        },
+        icon: SvgPicture.asset('images/arrows-rotate-solid.svg', color: Colors.black),
+      ),
+    ];
 
   @override
   Widget extraLargeDesktopScreen(BuildContext context) => _BodyWidget();

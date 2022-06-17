@@ -250,11 +250,11 @@ abstract class AbstractSource {
   final Map<String, DataRequest> _identifierRequests = Map();
 
   /// Register the DataSource for data
-  registerDataSource(MainDataSource dataSource);
+  void registerDataSource(MainDataSource dataSource);
 
   /// Register DataSource DataRequests for identifiers and example DataRequests mapping
   @protected
-  registerDataRequests(MainDataSource dataSource) {
+  void registerDataRequests(MainDataSource dataSource) {
     dataSource.identifiers.forEach((String identifier) {
       if (_identifiers.contains(identifier)) {
         final DataRequest dataRequest = dataSource.requestForIdentifier(identifier)!;
@@ -271,7 +271,7 @@ abstract class AbstractSource {
   }
 
   /// UnRegister the DataSource from receiving data
-  unRegisterDataSource(MainDataSource dataSource);
+  void unRegisterDataSource(MainDataSource dataSource);
 
   /// UnRegister DataSource DataRequests for identifiers if no other DataSource has equal
   @protected
@@ -456,7 +456,7 @@ class MockUpSource extends AbstractSource {
 
   /// Register the DataSource for data
   @override
-  registerDataSource(MainDataSource dataSource) {
+  void registerDataSource(MainDataSource dataSource) {
     _dataSources.add(dataSource);
 
     registerDataRequests(dataSource);
@@ -620,16 +620,25 @@ class HTTPSource extends AbstractSource {
   }
 
   /// Query data from remote API
-  Future<_HTTPSourceResponse> query(DataRequest dataRequest) async {
+  Future<_HTTPSourceResponse> query(
+    DataRequest dataRequest, {
+    bool paginate = false,
+  }) async {
     final List<String> values = [];
     dataRequest.parameters.forEach((key, value) {
       values.add('$key=$value');
     });
 
     if (dataRequest.pagination.enabled) {
-      values.add('page=${dataRequest.pagination.page}');
+      if (!paginate) {
+        values.add('page=1');
 
-      values.add('limit=${dataRequest.pagination.pageSize}');
+        values.add('limit=${dataRequest.pagination.pageSize * dataRequest.pagination.page}');
+      } else {
+        values.add('page=${dataRequest.pagination.page}');
+
+        values.add('limit=${dataRequest.pagination.pageSize}');
+      }
     }
 
     final String url = '${_options.hostUrl}${dataRequest.method}?${values.join('&')}';
@@ -647,10 +656,6 @@ class HTTPSource extends AbstractSource {
         ),
       );
 
-      if (dataRequest.pagination.enabled) {
-        dataRequest.pagination.page++;
-      }
-
       return _HTTPSourceResponse(
         body: response.data,
         statusCode: response.statusCode ?? 0,
@@ -661,10 +666,6 @@ class HTTPSource extends AbstractSource {
         headers: theHeaders,
       );
 
-      if (dataRequest.pagination.enabled) {
-        dataRequest.pagination.page++;
-      }
-
       return _HTTPSourceResponse(
         body: response.body,
         statusCode: response.statusCode,
@@ -673,12 +674,15 @@ class HTTPSource extends AbstractSource {
   }
 
   /// Query data from remote API and update DataSources
-  Future<void> _queryDataUpdate(DataRequest dataRequest) async {
+  Future<void> _queryDataUpdate(
+    DataRequest dataRequest, {
+    bool paginate = false,
+  }) async {
     String? json;
     SourceException? exception;
 
     try {
-      final response = await query(dataRequest);
+      final response = await query(dataRequest, paginate: paginate);
 
       json = response.body;
 
@@ -713,19 +717,22 @@ class HTTPSource extends AbstractSource {
 
   /// Register the DataSource for data
   @override
-  registerDataSource(MainDataSource dataSource) {
+  void registerDataSource(MainDataSource dataSource) {
     _dataSources.add(dataSource);
 
     registerDataRequests(dataSource);
 
     MainDataProvider.instance!._updateMainDataSourceState(dataSource);
 
-    reFetchData(identifiers: dataSource.identifiers);
+    reFetchData(
+      identifiers: dataSource.identifiers,
+      paginate: true,
+    );
   }
 
   /// UnRegister the DataSource from receiving data
   @override
-  unRegisterDataSource(MainDataSource dataSource) {
+  void unRegisterDataSource(MainDataSource dataSource) {
     unRegisterDataRequests(dataSource);
 
     _dataSources.remove(dataSource);
@@ -743,7 +750,12 @@ class HTTPSource extends AbstractSource {
     String? json;
 
     try {
-      final response = await query(dataRequest);
+      dataRequest.pagination.page++;
+
+      final response = await query(
+        dataRequest,
+        paginate: true,
+      );
 
       json = response.body;
     } catch (e) {
@@ -1019,7 +1031,11 @@ class HTTPSource extends AbstractSource {
 
   /// ReFetch data for DataRequest based on methods or identifiers
   @override
-  Future<void> reFetchData({List<String>? methods, List<String>? identifiers}) async {
+  Future<void> reFetchData({
+    List<String>? methods,
+    List<String>? identifiers,
+    bool paginate = false,
+  }) async {
     if (methods == null && identifiers == null) {
       throw Exception('Provide either methods or identifiers');
     }
@@ -1037,7 +1053,7 @@ class HTTPSource extends AbstractSource {
         }
       }
 
-      await reFetchData(identifiers: identifiers);
+      await reFetchData(identifiers: identifiers, paginate: paginate);
     }
 
     if (identifiers != null) {
@@ -1046,7 +1062,7 @@ class HTTPSource extends AbstractSource {
           final DataRequest? dataRequest = dataSource.requestForIdentifier(identifier);
 
           if (dataRequest != null) {
-            await _queryDataUpdate(dataRequest);
+            await _queryDataUpdate(dataRequest, paginate: paginate);
             break;
           }
         }
@@ -1133,6 +1149,7 @@ class SQLiteSource extends AbstractSource {
     String? having,
     String? orderBy,
     RequestPagination? pagination,
+    bool paginate = false,
   }) async {
     final database = await _open();
 
@@ -1154,8 +1171,14 @@ class SQLiteSource extends AbstractSource {
     int? offset;
 
     if (pagination?.enabled == true) {
-      limit = pagination!.pageSize;
-      offset = (pagination.page - 1) * limit;
+      if (!paginate) {
+        offset = 0;
+
+        limit = pagination!.pageSize * pagination.page;
+      } else {
+        limit = pagination!.pageSize;
+        offset = (pagination.page - 1) * limit;
+      }
     }
 
     final List<Map<String, dynamic>> results = await database.query(
@@ -1168,10 +1191,6 @@ class SQLiteSource extends AbstractSource {
       limit: limit,
       offset: offset,
     );
-
-    if (pagination?.enabled == true) {
-      pagination!.page = pagination.page + 1;
-    }
 
     return results;
   }
@@ -1224,7 +1243,10 @@ class SQLiteSource extends AbstractSource {
   }
 
   /// Query data from database and update DataSources
-  Future<void> _queryDataUpdate(DataRequest dataRequest) async {
+  Future<void> _queryDataUpdate(
+    DataRequest dataRequest, {
+    bool paginate = false,
+  }) async {
     List<Map<String, dynamic>>? results;
     SourceException? exception;
 
@@ -1236,6 +1258,7 @@ class SQLiteSource extends AbstractSource {
         having: dataRequest.sqLiteRequestOptions.having,
         orderBy: dataRequest.sqLiteRequestOptions.orderBy,
         pagination: dataRequest.pagination,
+        paginate: paginate,
       );
     } catch (e) {
       exception = SourceException(originalException: e);
@@ -1262,14 +1285,17 @@ class SQLiteSource extends AbstractSource {
 
   /// Register the DataSource for data
   @override
-  registerDataSource(MainDataSource dataSource) {
+  void registerDataSource(MainDataSource dataSource) {
     _dataSources.add(dataSource);
 
     registerDataRequests(dataSource);
 
     MainDataProvider.instance!._updateMainDataSourceState(dataSource);
 
-    reFetchData(identifiers: dataSource.identifiers);
+    reFetchData(
+      identifiers: dataSource.identifiers,
+      paginate: true,
+    );
   }
 
   /// UnRegister the DataSource from receiving data
@@ -1292,6 +1318,8 @@ class SQLiteSource extends AbstractSource {
     List<Map<String, dynamic>>? results;
 
     try {
+      dataRequest.pagination.page++;
+
       results = await query(
         dataRequest.method,
         dataRequest.parameters,
@@ -1299,6 +1327,7 @@ class SQLiteSource extends AbstractSource {
         having: dataRequest.sqLiteRequestOptions.having,
         orderBy: dataRequest.sqLiteRequestOptions.orderBy,
         pagination: dataRequest.pagination,
+        paginate: true,
       );
     } catch (e) {
       results = [];
@@ -1369,6 +1398,7 @@ class SQLiteSource extends AbstractSource {
             having: options.having,
             orderBy: options.orderBy,
             pagination: dataTask.pagination,
+            paginate: true,
           );
         } catch (e) {
           exception = SourceException(originalException: e);
@@ -1439,7 +1469,11 @@ class SQLiteSource extends AbstractSource {
 
   /// ReFetch data for DataRequest based on methods or identifiers
   @override
-  Future<void> reFetchData({List<String>? methods, List<String>? identifiers}) async {
+  Future<void> reFetchData({
+    List<String>? methods,
+    List<String>? identifiers,
+    bool paginate = false,
+  }) async {
     if (methods == null && identifiers == null) {
       throw Exception('Provide either methods or identifiers');
     }
@@ -1457,7 +1491,7 @@ class SQLiteSource extends AbstractSource {
         }
       }
 
-      await reFetchData(identifiers: identifiers);
+      await reFetchData(identifiers: identifiers, paginate: paginate);
     }
 
     if (identifiers != null) {
@@ -1466,7 +1500,7 @@ class SQLiteSource extends AbstractSource {
           final DataRequest? dataRequest = dataSource.requestForIdentifier(identifier);
 
           if (dataRequest != null) {
-            await _queryDataUpdate(dataRequest);
+            await _queryDataUpdate(dataRequest, paginate: paginate);
             break;
           }
         }
@@ -1663,7 +1697,7 @@ class SembastSource extends AbstractSource {
 
   /// Register the DataSource for data
   @override
-  registerDataSource(MainDataSource dataSource) {
+  void registerDataSource(MainDataSource dataSource) {
     _dataSources.add(dataSource);
 
     registerDataRequests(dataSource);

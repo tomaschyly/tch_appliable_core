@@ -4,7 +4,6 @@ import 'package:example/ui/screens/mdpMockup/MDPMockupScreen.dart';
 import 'package:example/ui/screens/mdpSQLite/MDPSQLiteScreen.dart';
 import 'package:example/ui/screens/mdpSembast/MDPSembastScreen.dart';
 import 'package:example/ui/widgets/IconButtonWidget.dart';
-import 'package:flutter/material.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class AppScreenStateOptions extends AbstractScreenStateOptions {
