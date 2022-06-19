@@ -13,6 +13,10 @@ class DataRequest<T extends DataModel> {
       }
     }
 
+    if (pagination.enabled) {
+      identifier += '_limit=${pagination.pageSize}_page=${pagination.page}';
+    }
+
     return identifier;
   }
 

@@ -1,3 +1,7 @@
+## [0.11.2] - 19.6.2022
+
+* Fix wrong DataRequests identification when pagination in use
+
 ## [0.11.1] - 17.6.2022
 
 * Fix bad pagination behaviour under certain conditions
