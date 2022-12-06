@@ -1,3 +1,7 @@
+## [0.12.0] - 6.12.2022
+
+* Update all able dependencies
+
 ## [0.11.2] - 19.6.2022
 
 * Fix wrong DataRequests identification when pagination in use
