@@ -233,16 +233,18 @@ class ScreenDataState extends InheritedWidget {
 }
 
 class AppBarOption {
-  final Function(BuildContext context) onTap;
+  final Function(BuildContext context)? onTap;
   final Widget? icon;
   final Widget? complexIcon;
+  final Widget? button;
 
   /// AppBarOption initialization
   AppBarOption({
     required this.onTap,
     required this.icon,
     this.complexIcon,
-  }) : assert(icon != null || complexIcon != null);
+    this.button,
+  }) : assert(icon != null || complexIcon != null || button != null);
 }
 
 class BottomBarOption {

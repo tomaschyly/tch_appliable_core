@@ -1,3 +1,7 @@
+## [0.12.1] - 14.12.2022
+
+* Improvements to Translator and AppBarOption
+
 ## [0.12.0] - 6.12.2022
 
 * Update all able dependencies

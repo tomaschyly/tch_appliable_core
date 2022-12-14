@@ -28,6 +28,7 @@ class Translator {
   static Translator? _instance;
 
   String get currentLanguage => _currentLanguage;
+  List<String> get languages => _options.languages;
 
   final HtmlUnescape _htmlUnescape = HtmlUnescape();
   final TranslatorOptions _options;
@@ -65,14 +66,14 @@ class Translator {
 
   /// Check if language code is supported in options, fallback to first supported language
   String langSupported(String languageCode) {
-    return _options.languages.contains(languageCode) ? languageCode : _options.languages.first;
+    return languages.contains(languageCode) ? languageCode : languages.first;
   }
 
   /// Initialize translations for language from assets JSON file
   Future<void> initTranslations(BuildContext context, [String? language]) async {
     final String theLanguage = language ?? _currentLanguage;
 
-    if (!_options.languages.contains(theLanguage)) {
+    if (!languages.contains(theLanguage)) {
       throw Exception('Translator cannot initialize unsupported language');
     }
 
@@ -98,10 +99,10 @@ class Translator {
 
   /// Change current to new Language if supported in options
   void changeLanguage(String language) {
-    if (_options.languages.contains(language)) {
+    if (languages.contains(language)) {
       _currentLanguage = language;
     } else {
-      _currentLanguage = _options.languages.first;
+      _currentLanguage = languages.first;
     }
   }
 
