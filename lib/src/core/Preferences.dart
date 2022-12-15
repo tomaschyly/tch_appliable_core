@@ -27,6 +27,15 @@ Future<bool> prefsSetDouble(String key, double value) => Preferences.instance?.s
 /// Shorthand to save string value to prefs
 Future<bool> prefsSetString(String key, String value) => Preferences.instance?.setString(key, value) ?? Future.value(false);
 
+/// Shorthand to remove int value from prefs
+Future<bool> prefsRemoveInt(String key) => Preferences.instance?.removeInt(key) ?? Future.value(false);
+
+/// Shorthand to remove double value from prefs
+Future<bool> prefsRemoveDouble(String key) => Preferences.instance?.removeDouble(key) ?? Future.value(false);
+
+/// Shorthand to remove string value from prefs
+Future<bool> prefsRemoveString(String key) => Preferences.instance?.removeString(key) ?? Future.value(false);
+
 class PreferencesOptions {
   final Map<String, int>? intPrefs;
   final Map<String, double>? doublePrefs;
@@ -115,5 +124,32 @@ class Preferences {
     stringPrefs[key] = value;
 
     return _prefs?.setString(key, value) ?? Future.value(false);
+  }
+
+  /// Remove int value for key
+  Future<bool> removeInt(String key) {
+    if (intPrefs.containsKey(key)) {
+      intPrefs.remove(key);
+    }
+
+    return _prefs?.remove(key) ?? Future.value(false);
+  }
+
+  /// Remove double value for key
+  Future<bool> removeDouble(String key) {
+    if (doublePrefs.containsKey(key)) {
+      doublePrefs.remove(key);
+    }
+
+    return _prefs?.remove(key) ?? Future.value(false);
+  }
+
+  /// Remove string value for key
+  Future<bool> removeString(String key) {
+    if (stringPrefs.containsKey(key)) {
+      stringPrefs.remove(key);
+    }
+
+    return _prefs?.remove(key) ?? Future.value(false);
   }
 }

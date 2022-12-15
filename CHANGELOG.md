@@ -1,3 +1,7 @@
+## [0.12.2] - 15.12.2022
+
+* Improvements to Preferences
+
 ## [0.12.1] - 14.12.2022
 
 * Improvements to Translator and AppBarOption
