@@ -25,7 +25,7 @@ If some instructions are not clear enough, then analyse usage inside the example
 In your project's `pubspec.yaml` add:
 ```yaml
 dependencies:
-  tch_appliable_core: ^0.12.2
+  tch_appliable_core: ^0.12.3
 ```
 
 ## App Create

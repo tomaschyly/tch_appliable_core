@@ -237,6 +237,7 @@ class AppBarOption {
   final Widget? icon;
   final Widget? complexIcon;
   final Widget? button;
+  final String? svgAssetPath;
 
   /// AppBarOption initialization
   AppBarOption({
@@ -244,7 +245,8 @@ class AppBarOption {
     required this.icon,
     this.complexIcon,
     this.button,
-  }) : assert(icon != null || complexIcon != null || button != null);
+    this.svgAssetPath,
+  }) : assert(icon != null || complexIcon != null || button != null || svgAssetPath != null);
 }
 
 class BottomBarOption {
@@ -252,6 +254,7 @@ class BottomBarOption {
   final bool Function(BuildContext context) isSelected;
   final Widget title;
   final Widget? icon;
+  final String? svgAssetPath;
 
   /// BottomBarOption initialization
   BottomBarOption({
@@ -259,6 +262,7 @@ class BottomBarOption {
     required this.isSelected,
     required this.title,
     this.icon,
+    this.svgAssetPath,
   });
 }
 
@@ -267,6 +271,7 @@ class DrawerOption {
   final bool Function(BuildContext context) isSelected;
   final Widget title;
   final Widget? icon;
+  final String? svgAssetPath;
 
   /// DrawerOption initialization
   DrawerOption({
@@ -274,5 +279,6 @@ class DrawerOption {
     required this.isSelected,
     required this.title,
     this.icon,
+    this.svgAssetPath,
   });
 }
