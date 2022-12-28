@@ -36,13 +36,13 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
     );
   }
 
-  /// Run initializations of screen on first build only
+  /// Run initializations of view on first build only
   @protected
   firstBuildOnly(BuildContext context) {
     _widgetState = WidgetState.Initialized;
   }
 
-  /// Create screen content from widgets
+  /// Create view content from widgets
   @protected
   Widget buildContent(BuildContext context);
 
@@ -54,7 +54,7 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
     }
   }
 
-  /// Invalidate screen for rebuild
+  /// Invalidate view for rebuild
   @protected
   void invalidate() {
     setStateNotDisposed(() {});
