@@ -6,7 +6,7 @@ import 'package:tch_appliable_core/src/ui/widgets/AbstractStatefulWidget.dart';
 typedef DisplayMessage = void Function(BuildContext context, String message);
 
 class ScreenMessengerWidget extends AbstractStatefulWidget {
-  final AbstractScreenStateOptions options;
+  final AbstractScreenOptions options;
   final DisplayMessage displayMessage;
   final Widget child;
 

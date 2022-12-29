@@ -1,3 +1,7 @@
+## [0.13.1] - 29.12.2022
+
+* Hotfix
+
 ## [0.13.0] - 29.12.2022
 
 * Support for flutter_hooks, AbstractHooksWidget as Stateless widget with hooks
