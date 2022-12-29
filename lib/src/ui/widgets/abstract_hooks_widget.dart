@@ -14,6 +14,7 @@ abstract class AbstractHooksWidget extends HookWidget {
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
+    final invalidate = useState<bool>(false);
     final state = useState<HookWidgetState>(HookWidgetState.notInitialized);
 
     useEffect(() {
@@ -26,7 +27,9 @@ abstract class AbstractHooksWidget extends HookWidget {
       firstBuildOnly(context);
     }
 
-    return buildContent(context);
+    return buildContent(context, () {
+      invalidate.value = !invalidate.value;
+    });
   }
 
   /// Run initializations of view on first build only
@@ -35,5 +38,5 @@ abstract class AbstractHooksWidget extends HookWidget {
 
   /// Create view content from widgets
   @protected
-  Widget buildContent(BuildContext context);
+  Widget buildContent(BuildContext context, VoidCallback invalidate);
 }
