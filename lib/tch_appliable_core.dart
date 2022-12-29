@@ -20,6 +20,7 @@ export 'package:flutter/material.dart';
 export 'src/ui/screens/AbstractScreen.dart';
 export 'src/ui/screens/AbstractResposiveScreen.dart';
 
+export 'package:flutter_hooks/flutter_hooks.dart';
 export 'src/ui/widgets/AbstractStatefulWidget.dart';
 export 'src/ui/widgets/abstract_hooks_widget.dart';
 export 'src/ui/widgets/AbstractResponsiveWidget.dart';

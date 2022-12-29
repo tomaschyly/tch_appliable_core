@@ -3,7 +3,7 @@ import 'package:tch_appliable_core/src/core/RouterV1.dart';
 import 'package:tch_appliable_core/src/ui/widgets/AbstractStatefulWidget.dart';
 import 'package:tch_appliable_core/src/ui/widgets/ScreenMessengerWidget.dart';
 
-class AbstractScreenStateOptions {
+class AbstractScreenOptions {
   String screenName;
   String title;
   bool safeArea;
@@ -16,8 +16,8 @@ class AbstractScreenStateOptions {
   List<DrawerOption>? drawerOptions;
   bool drawerIsPermanentlyVisible;
 
-  /// AbstractScreenStateOptions initialization for default state
-  AbstractScreenStateOptions.basic({
+  /// AbstractScreenOptions initialization for default state
+  AbstractScreenOptions.basic({
     required this.screenName,
     required this.title,
     this.safeArea = true,
@@ -29,7 +29,7 @@ abstract class AbstractScreen extends AbstractStatefulWidget {}
 
 abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractStatefulWidgetState<T> with RouteAware {
   @protected
-  late AbstractScreenStateOptions options;
+  late AbstractScreenOptions options;
   @protected
   ValueNotifier<bool> isLoading = ValueNotifier(false);
 
