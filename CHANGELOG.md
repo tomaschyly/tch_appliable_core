@@ -1,3 +1,8 @@
+## [0.13.0] - 29.12.2022
+
+* Support for flutter_hooks, AbstractHooksWidget as Stateless widget with hooks
+* **Warning:** AbstractScreenStateOptions are now called AbstractScreenOptions
+
 ## [0.12.3] - 18.12.2022
 
 * Improvements to screen options
