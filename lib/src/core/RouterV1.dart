@@ -51,6 +51,9 @@ Route<Object> createRoute(WidgetBuilder builder, RouteSettings settings) {
 class RoutingArguments {
   final String? route;
 
+  /// Have to use RoutingArguments.of(context) for this to work
+  bool isCurrent = false;
+
   final Map<String, String>? _query;
 
   /// RoutingArguments initialization
@@ -61,7 +64,9 @@ class RoutingArguments {
 
   /// RoutingArguments from current ModalRoute
   static RoutingArguments? of(BuildContext context) {
-    return ModalRoute.of(context)?.settings.name?.routingArguments;
+    final route = ModalRoute.of(context);
+
+    return route?.settings.name?.routingArguments?..isCurrent = route?.isCurrent ?? false;
   }
 
   /// Using [] operator gets value from query for key

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tch_appliable_core/src/core/CoreApp.dart';
 import 'package:tch_appliable_core/src/ui/screens/AbstractScreen.dart';
 import 'package:tch_appliable_core/src/ui/widgets/AbstractStatefulWidget.dart';
+import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 typedef DisplayMessage = void Function(BuildContext context, String message);
 
@@ -24,30 +25,34 @@ class ScreenMessengerWidget extends AbstractStatefulWidget {
 }
 
 class ScreenMessengerWidgetState extends AbstractStatefulWidgetState<ScreenMessengerWidget> {
-  /// Run initializations of screen on first build only
-  @override
-  firstBuildOnly(BuildContext context) {
-    super.firstBuildOnly(context);
-
-    final AbstractAppDataStateSnapshot? snapshot = AppDataState.of(context);
-    final String? message = snapshot?.getMessage(widget.options.screenName);
-
-    if (message != null) {
-      widget.displayMessage(context, message);
-    }
-  }
-
   /// Create view layout from widgets
   @override
-  Widget buildContent(BuildContext context) => widget.child;
+  Widget buildContent(BuildContext context) {
+    final routingArguments = RoutingArguments.of(context)!;
+
+    if (routingArguments.isCurrent) {
+      final AbstractAppDataStateSnapshot? snapshot = AppDataState.of(context);
+      final String? message = snapshot?.getMessage(widget.options.screenName);
+
+      if (message != null) {
+        widget.displayMessage(context, message);
+      }
+    }
+
+    return widget.child;
+  }
 
   /// Display message when already on current screen
   void onResume() {
-    final AbstractAppDataStateSnapshot? snapshot = AppDataState.of(context);
-    final String? message = snapshot?.getMessage(widget.options.screenName);
+    final routingArguments = RoutingArguments.of(context)!;
 
-    if (message != null) {
-      widget.displayMessage(context, message);
+    if (routingArguments.isCurrent) {
+      final AbstractAppDataStateSnapshot? snapshot = AppDataState.of(context);
+      final String? message = snapshot?.getMessage(widget.options.screenName);
+
+      if (message != null) {
+        widget.displayMessage(context, message);
+      }
     }
   }
 }

@@ -1,11 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:tch_appliable_core/src/core/Preferences.dart';
-import 'package:tch_appliable_core/src/core/RouterV1.dart';
-import 'package:tch_appliable_core/src/core/Translator.dart';
-import 'package:tch_appliable_core/src/providers/MainDataProvider.dart';
-import 'package:tch_appliable_core/src/ui/widgets/AbstractResponsiveWidget.dart';
-import 'package:tch_appliable_core/src/ui/widgets/AbstractStatefulWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class CoreApp extends AbstractStatefulWidget {
@@ -139,6 +132,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
         ..isOSDarkMode = _isOSDarkMode
         ..isDarkMode = darkMode
         ..responsiveScreen = _responsiveScreen
+        ..addScreenMessage = addScreenMessage
         ..messages = _messages,
     );
   }
@@ -204,7 +198,9 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
       _messages[screenName] = List<String>.empty(growable: true);
     }
 
-    _messages[screenName]!.add(message);
+    setStateNotDisposed(() {
+      _messages[screenName]!.add(message);
+    });
   }
 
   /// ReBuild whole app
@@ -303,6 +299,9 @@ class _InitializationScreen extends StatelessWidget {
   }
 }
 
+/// Shorthand to get AbstractAppDataStateSnapshot from context
+AbstractAppDataStateSnapshot getAbstractAppDataStateSnapshot(BuildContext context) => AppDataState.of<AbstractAppDataStateSnapshot>(context)!;
+
 class AppDataState extends InheritedWidget {
   final AbstractAppDataStateSnapshot snapshot;
 
@@ -326,6 +325,7 @@ abstract class AbstractAppDataStateSnapshot {
   bool isOSDarkMode = false;
   bool isDarkMode = false;
   late ResponsiveScreen responsiveScreen;
+  late void Function(String screenName, String message) addScreenMessage;
   late Map<String, List<String>> messages;
 
   /// AbstractAppDataStateSnapshot initialization

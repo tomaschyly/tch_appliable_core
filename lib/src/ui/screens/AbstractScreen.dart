@@ -117,6 +117,8 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
           ),
           isLoading: isLoading.value,
           loadingTags: _loadingTags,
+          executeAsyncTaskCallback: executeAsyncTask,
+          loading: isLoading,
         );
       },
     );
@@ -150,12 +152,14 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
   @protected
   void screenMessage(BuildContext context, String message) {
     Future.delayed(kThemeAnimationDuration, () {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          message,
-          textAlign: TextAlign.center,
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            textAlign: TextAlign.center,
+          ),
         ),
-      ));
+      );
     });
   }
 
@@ -211,15 +215,35 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
   }
 }
 
+typedef ExecuteAsyncTaskCallback = Future<void> Function(
+  Future<void> Function() task, {
+  String? tag,
+  List<String>? tags,
+});
+
+/// Shorthand to get ScreenDataState from context
+ScreenDataState getScreenDataState(BuildContext context) => ScreenDataState.of<ScreenDataState>(context)!;
+
+/// Set loading state on parent AbstractScreenState
+void setScreenStateLoadingState(BuildContext context, bool loading) {
+  final state = getScreenDataState(context);
+
+  state.loading.value = loading;
+}
+
 class ScreenDataState extends InheritedWidget {
   final bool isLoading;
   final List<String> loadingTags;
+  final ExecuteAsyncTaskCallback executeAsyncTaskCallback;
+  final ValueNotifier<bool> loading;
 
   /// ScreenDataState initialization
   ScreenDataState({
     required Widget child,
     required this.isLoading,
     required this.loadingTags,
+    required this.executeAsyncTaskCallback,
+    required this.loading,
   }) : super(child: child);
 
   /// Access current ScreenDataState anywhere from BuildContext
