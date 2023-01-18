@@ -1,3 +1,7 @@
+## [0.15.0] - 18.1.2023
+
+* **Warning:** ScreenMessagner changed to object from string
+
 ## [0.14.1] - 7.1.2023
 
 * Form & Widget utils

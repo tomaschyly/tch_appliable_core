@@ -4,7 +4,7 @@ import 'package:tch_appliable_core/src/ui/screens/AbstractScreen.dart';
 import 'package:tch_appliable_core/src/ui/widgets/AbstractStatefulWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
-typedef DisplayMessage = void Function(BuildContext context, String message);
+typedef DisplayMessage = void Function(BuildContext context, ScreenMessage message);
 
 class ScreenMessengerWidget extends AbstractStatefulWidget {
   final AbstractScreenOptions options;
@@ -32,7 +32,7 @@ class ScreenMessengerWidgetState extends AbstractStatefulWidgetState<ScreenMesse
 
     if (routingArguments.isCurrent) {
       final AbstractAppDataStateSnapshot? snapshot = AppDataState.of(context);
-      final String? message = snapshot?.getMessage(widget.options.screenName);
+      final ScreenMessage? message = snapshot?.getMessage(widget.options.screenName);
 
       if (message != null) {
         widget.displayMessage(context, message);
@@ -48,11 +48,33 @@ class ScreenMessengerWidgetState extends AbstractStatefulWidgetState<ScreenMesse
 
     if (routingArguments.isCurrent) {
       final AbstractAppDataStateSnapshot? snapshot = AppDataState.of(context);
-      final String? message = snapshot?.getMessage(widget.options.screenName);
+      final ScreenMessage? message = snapshot?.getMessage(widget.options.screenName);
 
       if (message != null) {
         widget.displayMessage(context, message);
       }
     }
   }
+}
+
+enum ScreenMessageType {
+  none,
+  success,
+  error,
+  info,
+  loading,
+}
+
+class ScreenMessage {
+  final ScreenMessageType type;
+  final String message;
+  final Duration duration;
+
+  /// ScreenMessage initialization
+  ScreenMessage({
+    ScreenMessageType? type,
+    required this.message,
+    Duration? duration,
+  })  : this.type = type ?? ScreenMessageType.none,
+        this.duration = duration ?? const Duration(milliseconds: 4000);
 }

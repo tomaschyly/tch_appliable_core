@@ -55,7 +55,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
 
   bool _isOSDarkMode = false;
   ResponsiveScreen _responsiveScreen = ResponsiveScreen.UnDetermined;
-  final Map<String, List<String>> _messages = Map();
+  final Map<String, List<ScreenMessage>> _messages = Map();
 
   /// State initialization
   @override
@@ -193,13 +193,24 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
   }
 
   /// Add message to be shown on certain screen
-  void addScreenMessage(String screenName, String message) {
+  void addScreenMessage(
+    String screenName,
+    String message, {
+    ScreenMessageType? type,
+    Duration? duration,
+  }) {
     if (_messages[screenName] == null) {
-      _messages[screenName] = List<String>.empty(growable: true);
+      _messages[screenName] = List<ScreenMessage>.empty(growable: true);
     }
 
     setStateNotDisposed(() {
-      _messages[screenName]!.add(message);
+      _messages[screenName]!.add(
+        ScreenMessage(
+          message: message,
+          type: type,
+          duration: duration,
+        ),
+      );
     });
   }
 
@@ -326,13 +337,13 @@ abstract class AbstractAppDataStateSnapshot {
   bool isDarkMode = false;
   late ResponsiveScreen responsiveScreen;
   late void Function(String screenName, String message) addScreenMessage;
-  late Map<String, List<String>> messages;
+  late Map<String, List<ScreenMessage>> messages;
 
   /// AbstractAppDataStateSnapshot initialization
   AbstractAppDataStateSnapshot();
 
   /// Get message for screen if available
-  String? getMessage(String? screenName) {
+  ScreenMessage? getMessage(String? screenName) {
     if (screenName == null) return null;
 
     final theMessage = messages[screenName];

@@ -150,14 +150,15 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
 
   /// If available show message for this screen
   @protected
-  void screenMessage(BuildContext context, String message) {
+  void screenMessage(BuildContext context, ScreenMessage message) {
     Future.delayed(kThemeAnimationDuration, () {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            message,
+            message.message,
             textAlign: TextAlign.center,
           ),
+          duration: message.duration,
         ),
       );
     });
