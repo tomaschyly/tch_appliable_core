@@ -332,11 +332,18 @@ class AppDataState extends InheritedWidget {
   bool updateShouldNotify(InheritedWidget oldWidget) => false;
 }
 
+typedef AddScreenMessage = void Function(
+  String screenName,
+  String message, {
+  ScreenMessageType? type,
+  Duration? duration,
+});
+
 abstract class AbstractAppDataStateSnapshot {
   bool isOSDarkMode = false;
   bool isDarkMode = false;
   late ResponsiveScreen responsiveScreen;
-  late void Function(String screenName, String message) addScreenMessage;
+  late AddScreenMessage addScreenMessage;
   late Map<String, List<ScreenMessage>> messages;
 
   /// AbstractAppDataStateSnapshot initialization

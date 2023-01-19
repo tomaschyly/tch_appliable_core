@@ -1,3 +1,7 @@
+## [0.15.1] - 19.1.2023
+
+* Fix wrong addScreenMessage typedef
+
 ## [0.15.0] - 18.1.2023
 
 * **Warning:** ScreenMessagner changed to object from string
