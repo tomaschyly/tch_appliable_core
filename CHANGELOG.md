@@ -1,4 +1,4 @@
-## [0.16.0] - 19.1.2023
+## [0.16.0] - 20.1.2023
 
 * Improvements to screen state options
 
