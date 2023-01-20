@@ -1,3 +1,7 @@
+## [0.16.0] - 19.1.2023
+
+* Improvements to screen state options
+
 ## [0.15.1] - 19.1.2023
 
 * Fix wrong addScreenMessage typedef

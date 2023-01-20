@@ -277,7 +277,8 @@ class AppBarOption {
 class BottomBarOption {
   final Function(BuildContext context) onSelect;
   final bool Function(BuildContext context) isSelected;
-  final Widget title;
+  final Widget? title;
+  final WidgetBuilder? titleBuilder;
   final Widget? icon;
   final String? svgAssetPath;
 
@@ -285,16 +286,18 @@ class BottomBarOption {
   BottomBarOption({
     required this.onSelect,
     required this.isSelected,
-    required this.title,
+    this.title,
+    this.titleBuilder,
     this.icon,
     this.svgAssetPath,
-  });
+  }) : assert(title != null || titleBuilder != null);
 }
 
 class DrawerOption {
   final Function(BuildContext context) onSelect;
   final bool Function(BuildContext context) isSelected;
-  final Widget title;
+  final Widget? title;
+  final WidgetBuilder? titleBuilder;
   final Widget? icon;
   final String? svgAssetPath;
 
@@ -302,8 +305,9 @@ class DrawerOption {
   DrawerOption({
     required this.onSelect,
     required this.isSelected,
-    required this.title,
+    this.title,
+    this.titleBuilder,
     this.icon,
     this.svgAssetPath,
-  });
+  }) : assert(title != null || titleBuilder != null);
 }
