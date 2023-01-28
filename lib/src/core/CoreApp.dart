@@ -53,6 +53,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
 
   static late CoreAppState _instance;
 
+  bool _isForeground = true;
   bool _isOSDarkMode = false;
   ResponsiveScreen _responsiveScreen = ResponsiveScreen.UnDetermined;
   final Map<String, List<ScreenMessage>> _messages = Map();
@@ -129,12 +130,29 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
         supportedLocales: theTranslatorOptions?.supportedLocales ?? const <Locale>[Locale('en', 'US')],
       ),
       snapshot: widget.snapshot
+        ..isForeground = _isForeground
         ..isOSDarkMode = _isOSDarkMode
         ..isDarkMode = darkMode
         ..responsiveScreen = _responsiveScreen
         ..addScreenMessage = addScreenMessage
         ..messages = _messages,
     );
+  }
+
+  /// Listen to change of app lifecycle
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.resumed && !_isForeground) {
+      _isForeground = true;
+
+      setStateNotDisposed(() {});
+    } else if (state != AppLifecycleState.resumed && _isForeground) {
+      _isForeground = false;
+
+      setStateNotDisposed(() {});
+    }
   }
 
   /// OS changed Theme mode, determine is OS Dark mode
@@ -340,6 +358,7 @@ typedef AddScreenMessage = void Function(
 });
 
 abstract class AbstractAppDataStateSnapshot {
+  bool isForeground = true;
   bool isOSDarkMode = false;
   bool isDarkMode = false;
   late ResponsiveScreen responsiveScreen;

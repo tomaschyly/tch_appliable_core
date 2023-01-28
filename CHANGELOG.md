@@ -1,3 +1,7 @@
+## [0.17.0] - 28.1.2023
+
+* Listen to AppLifecycleState changes
+
 ## [0.16.0] - 20.1.2023
 
 * Improvements to screen state options
