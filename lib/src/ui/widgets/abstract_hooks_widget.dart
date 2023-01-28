@@ -7,6 +7,11 @@ enum HookWidgetState {
 }
 
 abstract class AbstractHooksWidget extends HookWidget {
+  /// AbstractHooksWidget initialization
+  AbstractHooksWidget({
+    Key? key,
+  }) : super(key: key);
+
   /// Manually dispose of resources
   @protected
   void dispose() {}
