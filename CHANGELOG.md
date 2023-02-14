@@ -1,3 +1,7 @@
+## [0.18.0] - 14.2.2023
+
+* **Warning:** AbstractScreen safeArea option changed
+
 ## [0.17.1] - 28.1.2023
 
 * Tweaks

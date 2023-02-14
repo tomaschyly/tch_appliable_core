@@ -6,7 +6,7 @@ import 'package:tch_appliable_core/src/ui/widgets/ScreenMessengerWidget.dart';
 class AbstractScreenOptions {
   String screenName;
   String title;
-  bool safeArea;
+  SafeAreaOptions safeArea;
 
   /// Callback used to preProcess options at the start of each build
   /// May be used to change options based on some conditions
@@ -20,8 +20,28 @@ class AbstractScreenOptions {
   AbstractScreenOptions.basic({
     required this.screenName,
     required this.title,
-    this.safeArea = true,
+    this.safeArea = const SafeAreaOptions(
+      top: false,
+      left: true,
+      right: true,
+      bottom: true,
+    ),
     this.drawerIsPermanentlyVisible = false,
+  });
+}
+
+class SafeAreaOptions {
+  final bool top;
+  final bool left;
+  final bool right;
+  final bool bottom;
+
+  /// SafeAreaOptions initialization
+  const SafeAreaOptions({
+    required this.top,
+    required this.left,
+    required this.right,
+    required this.bottom,
   });
 }
 
@@ -71,9 +91,12 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
       valueListenable: isLoading,
       builder: (BuildContext context, bool value, Widget? child) {
         Widget theContent = buildContent(context);
-        if (options.safeArea) {
+        if (options.safeArea.top || options.safeArea.left || options.safeArea.right || options.safeArea.bottom) {
           theContent = SafeArea(
-            top: false,
+            top: options.safeArea.top,
+            left: options.safeArea.left,
+            right: options.safeArea.right,
+            bottom: options.safeArea.bottom,
             child: theContent,
           );
         }
