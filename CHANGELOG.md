@@ -1,3 +1,7 @@
+## [0.18.1] - 22.2.2023
+
+* AbstractScreenOptions added canPop var for use with AppBar
+
 ## [0.18.0] - 14.2.2023
 
 * **Warning:** AbstractScreen safeArea option changed

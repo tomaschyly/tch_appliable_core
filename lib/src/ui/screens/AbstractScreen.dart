@@ -5,6 +5,7 @@ import 'package:tch_appliable_core/src/ui/widgets/ScreenMessengerWidget.dart';
 
 class AbstractScreenOptions {
   String screenName;
+  bool canPop;
   String title;
   SafeAreaOptions safeArea;
 
@@ -19,6 +20,7 @@ class AbstractScreenOptions {
   /// AbstractScreenOptions initialization for default state
   AbstractScreenOptions.basic({
     required this.screenName,
+    this.canPop = false,
     required this.title,
     this.safeArea = const SafeAreaOptions(
       top: false,
