@@ -8,7 +8,7 @@ enum WidgetState {
 
 abstract class AbstractStatefulWidget extends StatefulWidget {
   /// AbstractStatefulWidget initialization
-  AbstractStatefulWidget({Key? key}) : super(key: key);
+  AbstractStatefulWidget({super.key});
 }
 
 abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> extends State<T> {

@@ -1,3 +1,7 @@
+## [0.18.2] - 13.3.2023
+
+* Utils for typedefs
+
 ## [0.18.1] - 22.2.2023
 
 * AbstractScreenOptions added canPop var for use with AppBar
