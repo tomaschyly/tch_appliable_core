@@ -1,3 +1,7 @@
+## [0.19.0] - 20.3.2023
+
+* Upgrade dependencies with some **breaking changes**
+
 ## [0.18.3] - 13.3.2023
 
 * Increase SDK versions

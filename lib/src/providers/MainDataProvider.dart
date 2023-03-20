@@ -886,7 +886,7 @@ class HTTPSource extends AbstractSource {
               final theHeaders = options.headers ?? Map<String, String>();
 
               theHeaders.addAll(
-                {"Content-Type": "application/json"},
+                {"Content-Type": "application/json; charset=utf-8"},
               );
 
               final dioResponse = await Dio().post<String>(
@@ -920,7 +920,7 @@ class HTTPSource extends AbstractSource {
               final theHeaders = options.headers ?? Map<String, String>();
 
               theHeaders.addAll(
-                {"Content-Type": "application/json"},
+                {"Content-Type": "application/json; charset=utf-8"},
               );
 
               final httpResponse = await post(
