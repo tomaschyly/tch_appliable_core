@@ -28,6 +28,10 @@ class AbstractScreenStateOptions {
 abstract class AbstractScreen extends AbstractStatefulWidget {}
 
 abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractStatefulWidgetState<T> with RouteAware {
+
+  @protected
+  Color? backgroundColor;
+
   @protected
   late AbstractScreenStateOptions options;
   @protected
@@ -97,7 +101,7 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
 
         return ScreenDataState(
           child: Scaffold(
-            backgroundColor: Theme.of(context).backgroundColor,
+            backgroundColor: backgroundColor ?? Theme.of(context).backgroundColor,
             appBar: createAppBar(context),
             body: Builder(
               builder: (BuildContext context) {
