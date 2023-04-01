@@ -1,3 +1,7 @@
+## [0.19.1] - 13.3.2023
+
+* Set custom backgroundColor for each screen
+
 ## [0.19.0] - 20.3.2023
 
 * Upgrade dependencies with some **breaking changes**
