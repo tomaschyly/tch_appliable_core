@@ -1,3 +1,7 @@
+## [0.20.0] - 7.4.2023
+
+* **Warning:** AbstractHooksWidget removed firstBuildOnly to avoid breaking code patterns
+
 ## [0.19.1] - 13.3.2023
 
 * Set custom backgroundColor for each screen
