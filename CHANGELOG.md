@@ -1,3 +1,7 @@
+## [0.20.1] - 10.4.2023
+
+* List mapUnique util
+
 ## [0.20.0] - 7.4.2023
 
 * **Warning:** AbstractHooksWidget removed firstBuildOnly to avoid breaking code patterns
