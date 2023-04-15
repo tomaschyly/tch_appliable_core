@@ -1,3 +1,7 @@
+## [0.21.0] - 15.4.2023
+
+* Change CoreApp initialization
+
 ## [0.20.1] - 10.4.2023
 
 * List mapUnique util

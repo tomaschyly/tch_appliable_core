@@ -1,5 +1,6 @@
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
+import 'package:tch_appliable_core/utils/widget.dart';
 
 class CoreApp extends AbstractStatefulWidget {
   final bool debugShowCheckedModeBanner;
@@ -53,6 +54,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
 
   static late CoreAppState _instance;
 
+  ValueNotifier<bool> _initializeOnce = ValueNotifier(true);
   bool _isForeground = true;
   bool _isOSDarkMode = false;
   ResponsiveScreen _responsiveScreen = ResponsiveScreen.UnDetermined;
@@ -95,6 +97,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
         debugShowCheckedModeBanner: widget.debugShowCheckedModeBanner,
         title: widget.title,
         home: _InitializationScreen(
+          initializeOnce: _initializeOnce,
           initializationUi: widget.initializationUi,
           initializationMinDurationInMilliseconds: widget.initializationMinDurationInMilliseconds,
           onAppInitStart: widget.onAppInitStart,
@@ -113,7 +116,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
         theme: darkMode ? (widget.darkTheme ?? widget.theme) : widget.theme,
         // darkTheme: widget.darkTheme,
         builder: (BuildContext context, Widget? child) {
-          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+          addPostFrameCallback((timeStamp) {
             determineOSThemeMode(context);
 
             determineScreen(context);
@@ -239,8 +242,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
 }
 
 class _InitializationScreen extends StatelessWidget {
-  static bool initializeOnce = false;
-
+  final ValueNotifier<bool> initializeOnce;
   final Widget initializationUi;
   final int initializationMinDurationInMilliseconds;
   final Future<void> Function(BuildContext context)? onAppInitStart;
@@ -253,6 +255,7 @@ class _InitializationScreen extends StatelessWidget {
 
   /// InitializationScreen initialization
   _InitializationScreen({
+    required this.initializeOnce,
     required this.initializationUi,
     required this.initializationMinDurationInMilliseconds,
     this.onAppInitStart,
@@ -267,7 +270,7 @@ class _InitializationScreen extends StatelessWidget {
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    addPostFrameCallback((timeStamp) {
       _appInit(context);
     });
 
@@ -279,10 +282,11 @@ class _InitializationScreen extends StatelessWidget {
 
   /// Initialize resources before app is started
   Future<void> _appInit(BuildContext context) async {
-    final bool wasInitialized = initializeOnce;
-    initializeOnce = true;
+    final bool initialize = initializeOnce.value;
 
-    if (!wasInitialized) {
+    initializeOnce.value = false;
+
+    if (initialize) {
       final start = DateTime.now();
 
       if (onAppInitStart != null) {
