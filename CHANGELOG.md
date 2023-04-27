@@ -1,3 +1,7 @@
+## [0.21.1] - 27.4.2023
+
+* Change intl to any to avoid issues with Flutter sdk
+
 ## [0.21.0] - 15.4.2023
 
 * Change CoreApp initialization
