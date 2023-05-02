@@ -58,8 +58,15 @@ class Translator {
     }
 
     final Locale? locale = Localizations.localeOf(context);
+    final String fullCode = '${locale?.languageCode}_${locale?.countryCode}';
 
-    _currentLanguage = langSupported(locale?.languageCode ?? '');
+    final hasCodeWithCountry = langSupportedStrict(fullCode);
+
+    if (hasCodeWithCountry) {
+      _currentLanguage = fullCode;
+    } else {
+      _currentLanguage = langSupported(locale?.languageCode ?? '');
+    }
 
     await initTranslations(context);
   }
@@ -67,6 +74,11 @@ class Translator {
   /// Check if language code is supported in options, fallback to first supported language
   String langSupported(String languageCode) {
     return languages.contains(languageCode) ? languageCode : languages.first;
+  }
+
+  /// Check if language code is supported in options, no fallback
+  bool langSupportedStrict(String languageCode) {
+    return languages.contains(languageCode);
   }
 
   /// Initialize translations for language from assets JSON file

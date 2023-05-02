@@ -1,3 +1,7 @@
+## [0.22.0] - 2.5.2023
+
+* Update Translator to support country code
+
 ## [0.21.1] - 27.4.2023
 
 * Change intl to any to avoid issues with Flutter sdk
