@@ -1,3 +1,7 @@
+## [0.24.0] - 16.6.2023
+
+* Change routes generation for V1
+
 ## [0.23.2] - 16.6.2023
 
 * RouterV1 tweaks

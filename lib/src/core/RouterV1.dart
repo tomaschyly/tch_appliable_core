@@ -9,7 +9,7 @@ import 'package:tch_appliable_core/utils/Boundary.dart';
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 /// Generate Route with Screen for RoutingArguments from Route name
-Route<Object> onGenerateRoute(RouteSettings settings) {
+Route<dynamic> onGenerateRoute(RouteSettings settings) {
   final arguments = settings.name?.routingArguments;
 
   if (arguments != null) {
@@ -25,25 +25,25 @@ Route<Object> onGenerateRoute(RouteSettings settings) {
 }
 
 /// Create Route depending on platform for different effects
-Route<Object> createRoute(WidgetBuilder builder, RouteSettings settings) {
+Route<T> createRoute<T extends Object>(WidgetBuilder builder, RouteSettings settings) {
   if (kIsWeb) {
-    return NoAnimationPageRoute(builder: builder, settings: settings);
+    return NoAnimationPageRoute<T>(builder: builder, settings: settings);
   } else {
     final arguments = settings.name?.routingArguments;
 
     if (arguments != null && Boundary.validateRoutingJson(arguments)) {
-      return BoundaryPageRoute<Object>(
+      return BoundaryPageRoute<T>(
         builder: builder,
         boundary: Boundary.fromRoutingJson(arguments),
         settings: settings,
         borderRadius: arguments['router-boundary-radius']?.toDouble(),
       );
     } else if (arguments?['router-no-animation'] != null) {
-      return NoAnimationPageRoute<Object>(builder: builder, settings: settings);
+      return NoAnimationPageRoute<T>(builder: builder, settings: settings);
     } else if (arguments?['router-fade-animation'] != null) {
-      return FadeAnimationPageRoute<Object>(builder: builder, settings: settings);
+      return FadeAnimationPageRoute<T>(builder: builder, settings: settings);
     } else {
-      return MaterialPageRoute<Object>(builder: builder, settings: settings);
+      return MaterialPageRoute<T>(builder: builder, settings: settings);
     }
   }
 }
