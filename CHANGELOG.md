@@ -1,3 +1,7 @@
+## [0.23.0] - 16.6.2023
+
+* **Warning:** Dependecies upgrade, some may have breaking changes
+
 ## [0.22.0] - 2.5.2023
 
 * Update Translator to support country code

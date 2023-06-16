@@ -216,7 +216,7 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
           },
         );
 
-        Overlay.of(context)!.insert(_transitionEntry!);
+        Overlay.of(context).insert(_transitionEntry!);
 
         _animationController.forward();
 
@@ -293,7 +293,7 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
       },
     );
 
-    Overlay.of(context)!.insert(_transitionEntry!);
+    Overlay.of(context).insert(_transitionEntry!);
 
     _animationController.reverse();
 
