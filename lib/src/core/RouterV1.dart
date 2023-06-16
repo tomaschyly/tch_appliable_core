@@ -90,7 +90,7 @@ extension StringExtension on String {
 }
 
 /// Push named route to stack
-Future<T?> pushNamed<T extends Object>(BuildContext context, String routeName, {Map<String, String>? arguments}) {
+Future<T?> pushNamed<T extends Object?>(BuildContext context, String routeName, {Map<String, String>? arguments}) {
   if (arguments != null) {
     routeName = Uri(path: routeName, queryParameters: arguments).toString();
   }
@@ -99,7 +99,7 @@ Future<T?> pushNamed<T extends Object>(BuildContext context, String routeName, {
 }
 
 /// Push named route to stack & clear all others
-Future<T?> pushNamedNewStack<T extends Object>(
+Future<T?> pushNamedNewStack<T extends Object?>(
   BuildContext context,
   String routeName, {
   Map<String, String>? arguments,
