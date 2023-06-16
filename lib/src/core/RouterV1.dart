@@ -95,7 +95,7 @@ Future<T?> pushNamed<T extends Object>(BuildContext context, String routeName, {
     routeName = Uri(path: routeName, queryParameters: arguments).toString();
   }
 
-  return Navigator.pushNamed(context, routeName);
+  return Navigator.pushNamed<T>(context, routeName);
 }
 
 /// Push named route to stack & clear all others
@@ -109,12 +109,12 @@ Future<T?> pushNamedNewStack<T extends Object>(
     routeName = Uri(path: routeName, queryParameters: arguments).toString();
   }
 
-  return Navigator.pushNamedAndRemoveUntil(context, routeName, predicate ?? (Route<dynamic> route) => false);
+  return Navigator.pushNamedAndRemoveUntil<T>(context, routeName, predicate ?? (Route<dynamic> route) => false);
 }
 
 /// Pop the route if not yet disposed
 void popNotDisposed<T extends Object?>(BuildContext context, bool mounted, [T? result]) {
   if (mounted) {
-    Navigator.pop(context, result);
+    Navigator.pop<T>(context, result);
   }
 }

@@ -1,3 +1,7 @@
+## [0.23.1] - 16.6.2023
+
+* RouterV1 tweaks
+
 ## [0.23.0] - 16.6.2023
 
 * **Warning:** Dependecies upgrade, some may have breaking changes
