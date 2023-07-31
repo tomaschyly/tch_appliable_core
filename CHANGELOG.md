@@ -1,3 +1,7 @@
+## [0.24.1] - 31.7..2023
+
+* Improve truncateText util
+
 ## [0.24.0] - 16.6.2023
 
 * Change routes generation for V1

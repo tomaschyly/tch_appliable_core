@@ -11,13 +11,15 @@ String truncateText(
   bool addSpaceDots = false,
 }) {
   if (text.length > limit) {
-    if (wholeWords) {
+    if (wholeWords && text.contains(' ')) {
       final String part = text.substring(0, limit);
       final int whitespace = part.lastIndexOf(' ');
 
-      return part.substring(0, whitespace) + (addDots ? (addSpaceDots ? ' ...' : '...') : '');
+      return part.substring(0, whitespace) +
+          (addDots ? (addSpaceDots ? ' ...' : '...') : '');
     } else {
-      return text.substring(0, limit) + (addDots ? (addSpaceDots ? ' ...' : '...') : '');
+      return text.substring(0, limit) +
+          (addDots ? (addSpaceDots ? ' ...' : '...') : '');
     }
   }
 
@@ -32,7 +34,8 @@ Widget textWithLinks(
   TextStyle? linkTextStyle,
   required void Function(String link) onTapLink,
 }) {
-  exp ??= RegExp(r'(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?');
+  exp ??= RegExp(
+      r'(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?');
 
   if (exp.hasMatch(text)) {
     List<TextSpan> spans = [];
@@ -83,8 +86,10 @@ Widget textWithLinks(
 /// Convert milliseconds since epoch to default formatted text, requires enabled Translator
 String millisToDefault(int millis, {bool time = true}) {
   if (time) {
-    return Translator.instance!.localizedDateTimeFormat.format(DateTime.fromMillisecondsSinceEpoch(millis));
+    return Translator.instance!.localizedDateTimeFormat
+        .format(DateTime.fromMillisecondsSinceEpoch(millis));
   } else {
-    return Translator.instance!.localizedDateFormat.format(DateTime.fromMillisecondsSinceEpoch(millis));
+    return Translator.instance!.localizedDateFormat
+        .format(DateTime.fromMillisecondsSinceEpoch(millis));
   }
 }
