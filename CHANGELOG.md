@@ -1,3 +1,7 @@
+## [0.24.2] - 23.8.2023
+
+* Additional typedefs
+
 ## [0.24.1] - 31.7..2023
 
 * Improve truncateText util
