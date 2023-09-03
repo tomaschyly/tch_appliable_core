@@ -1,3 +1,7 @@
+## [0.24.3] - 3.9.2023
+
+* Generic Debouncer utility
+
 ## [0.24.2] - 23.8.2023
 
 * Additional typedefs
