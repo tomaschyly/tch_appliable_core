@@ -1,3 +1,7 @@
+## [0.24.4] - 10.9.2023
+
+* Usefull date utils as extension for DateTime
+
 ## [0.24.3] - 3.9.2023
 
 * Generic Debouncer utility
