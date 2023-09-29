@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:tch_appliable_core/src/core/RouterV1.dart';
-import 'package:tch_appliable_core/src/ui/widgets/AbstractStatefulWidget.dart';
-import 'package:tch_appliable_core/utils/Boundary.dart';
+import 'package:tch_appliable_core/src/core/router_v1.dart';
+import 'package:tch_appliable_core/src/ui/widgets/abstract_stateful_widget.dart';
+import 'package:tch_appliable_core/utils/boundary.dart';
 
 const kBoundaryTransitionDuration = Duration(milliseconds: 300);
 

@@ -1,5 +1,5 @@
 import 'package:supercharged/supercharged.dart';
-import 'package:tch_appliable_core/src/core/RouterV1.dart';
+import 'package:tch_appliable_core/src/core/router_v1.dart';
 
 class Boundary {
   double width;

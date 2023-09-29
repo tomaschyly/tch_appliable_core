@@ -1,6 +1,7 @@
 # tch_appliable_core
 
-Flutter core package used by [Tomas Chyly](https://tomas-chyly.com/en/) & [appliable.eu](https://appliable.eu/). Contains common functionality to get started faster & consistently.
+Flutter core package used by [Tomas Chyly](https://tomas-chyly.com/en/) & partners/clients. Contains common functionality to get started faster & consistently.
+There are a number of useful utils for use in your projects.
 
 This package includes example, in this example you should be able to see basic usage of features provided by this package.
 If some instructions are not clear enough, then analyse usage inside the example.
@@ -26,7 +27,7 @@ If some instructions are not clear enough, then analyse usage inside the example
 In your project's `pubspec.yaml` add:
 ```yaml
 dependencies:
-  tch_appliable_core: ^0.24.4
+  tch_appliable_core: ^0.25.0
 ```
 
 ## App Create

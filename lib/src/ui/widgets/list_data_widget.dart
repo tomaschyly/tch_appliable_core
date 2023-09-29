@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:tch_appliable_core/src/model/DataModel.dart';
-import 'package:tch_appliable_core/src/providers/MainDataProvider.dart';
-import 'package:tch_appliable_core/src/providers/mainDataProvider/DataRequest.dart';
-import 'package:tch_appliable_core/src/ui/widgets/AbstractDataWidget.dart';
+import 'package:tch_appliable_core/src/model/data_model.dart';
+import 'package:tch_appliable_core/src/providers/main_data_provider.dart';
+import 'package:tch_appliable_core/src/providers/mainDataProvider/data_request.dart';
+import 'package:tch_appliable_core/src/ui/widgets/abstract_data_widget.dart';
 
 typedef ProcessResult<R extends DataRequest, I extends DataModel> = List<I>? Function(R dataRequest);
 

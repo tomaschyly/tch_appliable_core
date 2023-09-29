@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:tch_appliable_core/src/core/Translator.dart';
+import 'package:tch_appliable_core/src/core/translator.dart';
 
 /// Truncate text for limit, optionally find nearest whitespace for whole words
 String truncateText(

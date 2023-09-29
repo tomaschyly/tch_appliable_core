@@ -189,22 +189,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
   /// Determine correct screen by width for responsivity
   @protected
   determineScreen(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
-    ResponsiveScreen responsiveScreen = ResponsiveScreen.UnDetermined;
-
-    if (width >= 1500) {
-      responsiveScreen = ResponsiveScreen.ExtraLargeDesktop;
-    } else if (width > 1200) {
-      responsiveScreen = ResponsiveScreen.LargeDesktop;
-    } else if (width > 992) {
-      responsiveScreen = ResponsiveScreen.SmallDesktop;
-    } else if (width > 768) {
-      responsiveScreen = ResponsiveScreen.Tablet;
-    } else if (width > 576) {
-      responsiveScreen = ResponsiveScreen.LargePhone;
-    } else {
-      responsiveScreen = ResponsiveScreen.SmallPhone;
-    }
+    ResponsiveScreen responsiveScreen = determineResponsiveScreen(context);
 
     if (this._responsiveScreen != responsiveScreen) {
       this._responsiveScreen = responsiveScreen;
@@ -239,6 +224,28 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
   void _invalidateApp() {
     setStateNotDisposed(() {});
   }
+}
+
+/// Determine correct screen by width for responsivity
+determineResponsiveScreen(BuildContext context) {
+  final double width = MediaQuery.of(context).size.width;
+  ResponsiveScreen responsiveScreen = ResponsiveScreen.UnDetermined;
+
+  if (width >= 1500) {
+    responsiveScreen = ResponsiveScreen.ExtraLargeDesktop;
+  } else if (width > 1200) {
+    responsiveScreen = ResponsiveScreen.LargeDesktop;
+  } else if (width > 992) {
+    responsiveScreen = ResponsiveScreen.SmallDesktop;
+  } else if (width > 768) {
+    responsiveScreen = ResponsiveScreen.Tablet;
+  } else if (width > 576) {
+    responsiveScreen = ResponsiveScreen.LargePhone;
+  } else {
+    responsiveScreen = ResponsiveScreen.SmallPhone;
+  }
+
+  return responsiveScreen;
 }
 
 class _InitializationScreen extends StatelessWidget {

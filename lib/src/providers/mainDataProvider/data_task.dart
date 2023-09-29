@@ -1,6 +1,6 @@
-import 'package:tch_appliable_core/src/model/DataModel.dart';
-import 'package:tch_appliable_core/src/providers/MainDataProvider.dart';
-import 'package:tch_appliable_core/src/providers/mainDataProvider/DataRequest.dart';
+import 'package:tch_appliable_core/src/model/data_model.dart';
+import 'package:tch_appliable_core/src/providers/main_data_provider.dart';
+import 'package:tch_appliable_core/src/providers/mainDataProvider/data_request.dart';
 
 abstract class DataTaskOptions {
   /// DataTaskOptions initialization

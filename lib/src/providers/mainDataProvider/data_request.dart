@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:tch_appliable_core/src/model/DataModel.dart';
-import 'package:tch_appliable_core/src/providers/MainDataProvider.dart';
+import 'package:tch_appliable_core/src/model/data_model.dart';
+import 'package:tch_appliable_core/src/providers/main_data_provider.dart';
 
 class DataRequest<T extends DataModel> {
   String get identifier {

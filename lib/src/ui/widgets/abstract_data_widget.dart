@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tch_appliable_core/src/providers/MainDataProvider.dart';
-import 'package:tch_appliable_core/src/providers/mainDataProvider/DataRequest.dart';
-import 'package:tch_appliable_core/src/providers/mainDataProvider/MainDataSource.dart';
-import 'package:tch_appliable_core/src/ui/widgets/AbstractStatefulWidget.dart';
+import 'package:tch_appliable_core/src/providers/main_data_provider.dart';
+import 'package:tch_appliable_core/src/providers/mainDataProvider/data_request.dart';
+import 'package:tch_appliable_core/src/providers/mainDataProvider/main_data_source.dart';
+import 'package:tch_appliable_core/src/ui/widgets/abstract_stateful_widget.dart';
 
 abstract class AbstractDataWidget extends AbstractStatefulWidget {
   @protected

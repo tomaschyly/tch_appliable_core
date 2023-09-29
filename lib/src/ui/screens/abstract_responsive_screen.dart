@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:tch_appliable_core/src/core/CoreApp.dart';
-import 'package:tch_appliable_core/src/ui/screens/AbstractScreen.dart';
-import 'package:tch_appliable_core/src/ui/widgets/AbstractResponsiveWidget.dart';
+import 'package:tch_appliable_core/src/core/core_app.dart';
+import 'package:tch_appliable_core/src/ui/screens/abstract_screen.dart';
+import 'package:tch_appliable_core/src/ui/widgets/abstract_responsive_widget.dart';
 
-abstract class AbstractResposiveScreen extends AbstractScreen {}
+abstract class AbstractResponsiveScreen extends AbstractScreen {}
 
-abstract class AbstractResposiveScreenState<T extends AbstractResposiveScreen> extends AbstractScreenState<T> {
+abstract class AbstractResponsiveScreenState<T extends AbstractResponsiveScreen> extends AbstractScreenState<T> {
   /// Create view layout from widgets for phone screens (< 576px)
   @protected
   Widget smallPhoneScreen(BuildContext context);

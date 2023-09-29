@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tch_appliable_core/src/providers/MainDataProvider.dart';
-import 'package:tch_appliable_core/src/providers/mainDataProvider/DataRequest.dart';
-import 'package:tch_appliable_core/utils/List.dart';
+import 'package:tch_appliable_core/src/providers/main_data_provider.dart';
+import 'package:tch_appliable_core/src/providers/mainDataProvider/data_request.dart';
+import 'package:tch_appliable_core/utils/list.dart';
 
 class MainDataSource {
   bool get disposed => _disposed;

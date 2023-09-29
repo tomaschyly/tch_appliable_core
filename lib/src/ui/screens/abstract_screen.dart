@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tch_appliable_core/src/core/RouterV1.dart';
-import 'package:tch_appliable_core/src/ui/widgets/AbstractStatefulWidget.dart';
-import 'package:tch_appliable_core/src/ui/widgets/ScreenMessengerWidget.dart';
+import 'package:tch_appliable_core/src/core/router_v1.dart';
+import 'package:tch_appliable_core/src/ui/widgets/abstract_stateful_widget.dart';
+import 'package:tch_appliable_core/src/ui/widgets/screen_messenger_widget.dart';
 
 class AbstractScreenOptions {
   String screenName;
@@ -126,7 +126,7 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
 
         return ScreenDataState(
           child: Scaffold(
-            backgroundColor: backgroundColor ?? Theme.of(context).backgroundColor,
+            backgroundColor: backgroundColor ?? Theme.of(context).colorScheme.background,
             appBar: createAppBar(context),
             body: Builder(
               builder: (BuildContext context) {

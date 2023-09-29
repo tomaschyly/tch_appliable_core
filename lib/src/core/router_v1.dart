@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supercharged/supercharged.dart';
-import 'package:tch_appliable_core/src/core/router/BoundaryPageRoute.dart';
-import 'package:tch_appliable_core/src/core/router/FadeAnimationPageRoute.dart';
-import 'package:tch_appliable_core/src/core/router/NoAnimationPageRoute.dart';
-import 'package:tch_appliable_core/utils/Boundary.dart';
+import 'package:tch_appliable_core/src/core/router/boundary_page_route.dart';
+import 'package:tch_appliable_core/src/core/router/fade_animation_page_route.dart';
+import 'package:tch_appliable_core/src/core/router/no_animation_page_route.dart';
+import 'package:tch_appliable_core/utils/boundary.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 

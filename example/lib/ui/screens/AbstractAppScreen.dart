@@ -112,9 +112,9 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
   }
 }
 
-abstract class AbstractAppScreen extends AbstractResposiveScreen {}
+abstract class AbstractAppScreen extends AbstractResponsiveScreen {}
 
-abstract class AbstractAppScreenState<T extends AbstractAppScreen> extends AbstractResposiveScreenState<T> {
+abstract class AbstractAppScreenState<T extends AbstractAppScreen> extends AbstractResponsiveScreenState<T> {
   /// Create default AppBar
   @override
   AppBar? createAppBar(BuildContext context) {

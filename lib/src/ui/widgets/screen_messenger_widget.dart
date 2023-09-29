@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tch_appliable_core/src/core/CoreApp.dart';
-import 'package:tch_appliable_core/src/ui/screens/AbstractScreen.dart';
-import 'package:tch_appliable_core/src/ui/widgets/AbstractStatefulWidget.dart';
+import 'package:tch_appliable_core/src/core/core_app.dart';
+import 'package:tch_appliable_core/src/ui/screens/abstract_screen.dart';
+import 'package:tch_appliable_core/src/ui/widgets/abstract_stateful_widget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 typedef DisplayMessage = void Function(BuildContext context, ScreenMessage message);

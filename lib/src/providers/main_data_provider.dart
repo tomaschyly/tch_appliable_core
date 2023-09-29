@@ -9,10 +9,10 @@ import 'package:path/path.dart';
 import 'package:sembast/sembast.dart' as Sembast;
 import 'package:sembast/sembast_io.dart';
 import 'package:sqflite/sqflite.dart' as SQLite;
-import 'package:tch_appliable_core/src/providers/mainDataProvider/DataRequest.dart';
-import 'package:tch_appliable_core/src/providers/mainDataProvider/DataTask.dart';
-import 'package:tch_appliable_core/src/providers/mainDataProvider/MainDataSource.dart';
-import 'package:tch_appliable_core/utils/List.dart';
+import 'package:tch_appliable_core/src/providers/mainDataProvider/data_request.dart';
+import 'package:tch_appliable_core/src/providers/mainDataProvider/data_task.dart';
+import 'package:tch_appliable_core/src/providers/mainDataProvider/main_data_source.dart';
+import 'package:tch_appliable_core/utils/list.dart';
 
 enum MainDataProviderSource {
   None,
