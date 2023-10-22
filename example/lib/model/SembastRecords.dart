@@ -13,7 +13,7 @@ class SembastRecords extends DataModel {
     records = list.map((Map<String, dynamic> item) => SembastRecord.fromJson(item)).toList();
   }
 
-  /// Covert the object into JSON map
+  /// Convert the object into JSON map
   @override
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{

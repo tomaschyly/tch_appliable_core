@@ -7,6 +7,6 @@ abstract class DataModel {
   /// DataModel initialization from JSON map
   DataModel.fromJson(this.json);
 
-  /// Covert the object into JSON map
+  /// Convert the object into JSON map
   Map<String, dynamic> toJson();
 }

@@ -9,7 +9,7 @@ class SQLiteRecordQuery extends DataModel {
     name = json[SQLiteRecord.COL_NAME];
   }
 
-  /// Covert the object into JSON map
+  /// Convert the object into JSON map
   @override
   Map<String, dynamic> toJson() {
     final json = Map<String, dynamic>();

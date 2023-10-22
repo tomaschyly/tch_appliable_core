@@ -13,7 +13,7 @@ class HttpRecords extends DataModel {
     records = list.map((Map<String, dynamic> item) => HttpRecord.fromJson(item)).toList();
   }
 
-  /// Covert the object into JSON map
+  /// Convert the object into JSON map
   @override
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{

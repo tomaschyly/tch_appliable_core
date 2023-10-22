@@ -16,7 +16,7 @@ class HttpRecord extends DataModel {
     createdAt = json['createdAt'];
   }
 
-  /// Covert the object into JSON map
+  /// Convert the object into JSON map
   @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{

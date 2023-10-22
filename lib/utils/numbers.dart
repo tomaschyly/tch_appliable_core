@@ -14,7 +14,7 @@ double? stringToDouble(String? text) {
   return double.tryParse(text);
 }
 
-/// Covert double to string respecting decimal symbol by Locale
+/// Convert double to string respecting decimal symbol by Locale
 String doubleToString(double value) {
   try {
     return NumberFormat.decimalPattern(WidgetsBinding.instance.window.locale.languageCode).format(value);

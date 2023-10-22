@@ -10,7 +10,7 @@ class SQLiteResult extends DataModel {
     deleted = json['deleted'];
   }
 
-  /// Covert the object into JSON map
+  /// Convert the object into JSON map
   @override
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{

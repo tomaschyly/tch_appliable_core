@@ -74,7 +74,7 @@ class RoutingArguments {
 }
 
 extension StringExtension on String {
-  /// Covert String into RoutingArguments
+  /// Convert String into RoutingArguments
   RoutingArguments? get routingArguments {
     if (this.isEmpty) {
       return null;

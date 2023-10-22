@@ -33,7 +33,7 @@ class SQLiteRecord extends DataModel {
     created = json[COL_CREATED];
   }
 
-  /// Covert the object into JSON map
+  /// Convert the object into JSON map
   @override
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{
