@@ -1,3 +1,7 @@
+## [0.26.0] - 25.10.2023
+
+* **Warning:** Replaced deprecated use of Theme.of(context).backgroundColor
+
 ## [0.25.0] - 29.9.2023
 
 * **Warning:** Code refactor to support better current Flutter

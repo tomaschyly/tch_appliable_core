@@ -282,7 +282,7 @@ class _InitializationScreen extends StatelessWidget {
     });
 
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: initializationUi,
     );
   }
