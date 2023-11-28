@@ -8,6 +8,8 @@ If some instructions are not clear enough, then analyse usage inside the example
 
 **Platforms notice:** I have worked on projects that use Flutter on all platforms, but my focus is on **Mobile** and **Desktop**. Therefore some widgets and features may not work on **Web**, but should work on other platforms. Personally I do not consider Flutter ready for web dev.
 
+**Development notice:** This documentation is out of date for lack of time, but the package itself continues to be maintained and developed over time.
+
 ## Contents
 
 1. [Installation](#installation)
