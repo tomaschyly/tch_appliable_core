@@ -1,3 +1,7 @@
+## [0.27.0] - 30.11.2023
+
+* Newly improved and dedicated SembastApiClient/Provider, it is replacement for using general MainDataProvider
+
 ## [0.26.0] - 25.10.2023
 
 * **Warning:** Replaced deprecated use of Theme.of(context).backgroundColor
