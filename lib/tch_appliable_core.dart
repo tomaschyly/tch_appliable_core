@@ -15,6 +15,7 @@ export 'src/providers/main_data_provider.dart';
 export 'src/providers/mainDataProvider/data_request.dart';
 export 'src/providers/mainDataProvider/data_task.dart';
 export 'src/providers/mainDataProvider/main_data_source.dart';
+export 'src/providers/sembast_api_provider.dart';
 
 export 'package:flutter/material.dart';
 export 'src/ui/screens/abstract_screen.dart';
