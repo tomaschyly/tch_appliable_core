@@ -15,6 +15,12 @@ class ResponsiveWidget extends StatelessWidget {
   final Widget? largeDesktopScreen;
   // View layout from widgets for desktop screens (> 1500px)
   final Widget? extraLargeDesktopScreen;
+  // View layout from widgets for all mobile screen sizes
+  final Widget? mobileScreen;
+  // View layout from widgets for all desktop screen sizes
+  final Widget? desktopScreen;
+  // Breakpoint for mobile/desktop switch
+  final int mobileDesktopBreakpoint;
 
   /// ResponsiveWidget initialization
   ResponsiveWidget({
@@ -26,6 +32,9 @@ class ResponsiveWidget extends StatelessWidget {
     this.smallDesktopScreen,
     this.largeDesktopScreen,
     this.extraLargeDesktopScreen,
+    this.mobileScreen,
+    this.desktopScreen,
+    this.mobileDesktopBreakpoint = 576,
   }) : super(key: key);
 
   /// Create view layout from widgets
@@ -33,10 +42,19 @@ class ResponsiveWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final AbstractAppDataStateSnapshot? snapshot = AppDataState.of(context);
 
+    final double width = MediaQuery.of(context).size.width;
     ResponsiveScreen? responsiveScreen = snapshot?.responsiveScreen;
 
     if (responsiveScreen == null) {
       responsiveScreen = determineResponsiveScreen(context);
+    }
+
+    if (mobileScreen != null && width <= mobileDesktopBreakpoint) {
+      return mobileScreen!;
+    }
+
+    if (desktopScreen != null && width > mobileDesktopBreakpoint) {
+      return desktopScreen!;
     }
 
     switch (responsiveScreen) {
