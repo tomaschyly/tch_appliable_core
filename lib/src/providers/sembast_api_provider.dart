@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 import 'package:tch_appliable_core/src/model/data_model.dart';
+import 'package:tch_appliable_core/utils/debouncer.dart';
 
 class SembastApiClient {
   final SembastApiOptions options;
   Database? _database;
   final List<SembastApiSubscription> _subscriptions = [];
+  final Debouncer _brodcastDebouncer = Debouncer(milliseconds: kThemeAnimationDuration.inMilliseconds);
 
   Future<Database> get database async {
     if (_database == null) {
@@ -20,6 +22,14 @@ class SembastApiClient {
   SembastApiClient({
     required this.options,
   });
+
+  /// Manually dispose of resources
+  void dispose() {
+    _brodcastDebouncer.dispose();
+
+    _database?.close();
+    _database = null;
+  }
 
   /// Initialize database
   Future<void> _init() async {
@@ -107,7 +117,9 @@ class SembastApiClient {
       newKey = await store.add(await database, theData);
     }
 
-    await _sendDataToSubscriptions(storeName);
+    _brodcastDebouncer.run(() {
+      _sendDataToSubscriptions(storeName);
+    });
 
     return newKey;
   }
@@ -130,7 +142,9 @@ class SembastApiClient {
       }
     });
 
-    await _sendDataToSubscriptions(storeName);
+    _brodcastDebouncer.run(() {
+      _sendDataToSubscriptions(storeName);
+    });
   }
 
   /// Delete data from database
@@ -147,7 +161,9 @@ class SembastApiClient {
       await store.delete(await database, finder: Finder(filter: Filter.byKey(key)));
     }
 
-    await _sendDataToSubscriptions(storeName);
+    _brodcastDebouncer.run(() {
+      _sendDataToSubscriptions(storeName);
+    });
   }
 
   /// Delete data from database
@@ -166,7 +182,9 @@ class SembastApiClient {
       }
     });
 
-    await _sendDataToSubscriptions(storeName);
+    _brodcastDebouncer.run(() {
+      _sendDataToSubscriptions(storeName);
+    });
   }
 
   /// Create and save subscription
@@ -188,8 +206,8 @@ class SembastApiClient {
 
     _subscriptions.add(subscription);
 
-    Future.delayed(kThemeAnimationDuration, () async {
-      await _sendDataToSubscriptions(storeName);
+    _brodcastDebouncer.run(() {
+      _sendDataToSubscriptions(storeName);
     });
 
     return subscription;

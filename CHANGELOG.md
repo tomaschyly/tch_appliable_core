@@ -1,3 +1,7 @@
+## [0.27.1] - 1.12.2023
+
+* SembastApiClient improvements
+
 ## [0.27.0] - 30.11.2023
 
 * Newly improved and dedicated SembastApiClient/Provider, it is replacement for using general MainDataProvider
