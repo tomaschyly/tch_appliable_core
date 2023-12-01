@@ -8,7 +8,7 @@ class SembastApiClient {
   final SembastApiOptions options;
   Database? _database;
   final List<SembastApiSubscription> _subscriptions = [];
-  final Debouncer _brodcastDebouncer = Debouncer(milliseconds: kThemeAnimationDuration.inMilliseconds);
+  final Map<String, Debouncer> _brodcastDebouncers = {};
 
   Future<Database> get database async {
     if (_database == null) {
@@ -25,7 +25,7 @@ class SembastApiClient {
 
   /// Manually dispose of resources
   void dispose() {
-    _brodcastDebouncer.dispose();
+    _brodcastDebouncers.values.forEach((element) => element.dispose());
 
     _database?.close();
     _database = null;
@@ -117,7 +117,9 @@ class SembastApiClient {
       newKey = await store.add(await database, theData);
     }
 
-    _brodcastDebouncer.run(() {
+    final debouncer = _brodcastDebouncers[storeName] ??= Debouncer(milliseconds: kThemeAnimationDuration.inMilliseconds);
+
+    debouncer.run(() {
       _sendDataToSubscriptions(storeName);
     });
 
@@ -142,7 +144,9 @@ class SembastApiClient {
       }
     });
 
-    _brodcastDebouncer.run(() {
+    final debouncer = _brodcastDebouncers[storeName] ??= Debouncer(milliseconds: kThemeAnimationDuration.inMilliseconds);
+
+    debouncer.run(() {
       _sendDataToSubscriptions(storeName);
     });
   }
@@ -161,7 +165,9 @@ class SembastApiClient {
       await store.delete(await database, finder: Finder(filter: Filter.byKey(key)));
     }
 
-    _brodcastDebouncer.run(() {
+    final debouncer = _brodcastDebouncers[storeName] ??= Debouncer(milliseconds: kThemeAnimationDuration.inMilliseconds);
+
+    debouncer.run(() {
       _sendDataToSubscriptions(storeName);
     });
   }
@@ -182,7 +188,9 @@ class SembastApiClient {
       }
     });
 
-    _brodcastDebouncer.run(() {
+    final debouncer = _brodcastDebouncers[storeName] ??= Debouncer(milliseconds: kThemeAnimationDuration.inMilliseconds);
+
+    debouncer.run(() {
       _sendDataToSubscriptions(storeName);
     });
   }
@@ -206,7 +214,9 @@ class SembastApiClient {
 
     _subscriptions.add(subscription);
 
-    _brodcastDebouncer.run(() {
+    final debouncer = _brodcastDebouncers[storeName] ??= Debouncer(milliseconds: kThemeAnimationDuration.inMilliseconds);
+
+    debouncer.run(() {
       _sendDataToSubscriptions(storeName);
     });
 
