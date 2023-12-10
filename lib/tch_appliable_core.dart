@@ -20,6 +20,7 @@ export 'src/providers/sembast_api_provider.dart';
 export 'package:flutter/material.dart';
 export 'src/ui/screens/abstract_screen.dart';
 export 'src/ui/screens/abstract_responsive_screen.dart';
+export 'src/ui/widgets/responsive_widget.dart';
 
 export 'package:flutter_hooks/flutter_hooks.dart';
 export 'src/ui/widgets/abstract_stateful_widget.dart';
