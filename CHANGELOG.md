@@ -1,3 +1,7 @@
+## [0.28.0] - 23.1.2024
+
+* Dependecies update 
+
 ## [0.27.2] - 10.12.2023
 
 * Fix missing export for ResponsiveWidget

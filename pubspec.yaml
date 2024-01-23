@@ -1,6 +1,6 @@
 name: tch_appliable_core
 description: Flutter core package used by Tomas Chyly & partners/clients. Contains common functionality to get started faster & consistently.
-version: 0.27.2
+version: 0.28.0
 homepage: https://tomas-chyly.com/en/project/web-browser-detect-flutter/
 repository: https://github.com/tomaschyly/tch_appliable_core
 issue_tracker: https://github.com/tomaschyly/tch_appliable_core/issues
@@ -16,16 +16,16 @@ dependencies:
     sdk: flutter
 
   supercharged: ^2.1.1
-  flutter_hooks: ^0.20.1
+  flutter_hooks: ^0.20.4
 
   intl: ^0.18.1
   html_unescape: ^2.0.0
-  shared_preferences: ^2.2.1
+  shared_preferences: ^2.2.2
   path: ^1.8.3
-  path_provider: ^2.1.1
+  path_provider: ^2.1.2
 
-  http: ^1.1.0
-  dio: ^5.3.3
+  http: ^1.2.0
+  dio: ^5.4.0
   sqflite: ^2.3.0
   sembast: ^3.5.0+1
 
