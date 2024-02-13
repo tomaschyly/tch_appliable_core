@@ -1,3 +1,7 @@
+## [0.29.0] - 13.2.2024
+
+* Add onGenerateInitialRoute callback to customize initial Route
+
 ## [0.28.0] - 23.1.2024
 
 * Dependecies update 

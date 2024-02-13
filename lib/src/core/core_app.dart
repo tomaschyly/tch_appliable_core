@@ -11,6 +11,10 @@ class CoreApp extends AbstractStatefulWidget {
   final Future<void> Function(BuildContext context)? onAppInitEnd;
   final String initialScreenRoute;
   final Map<String, String>? initialScreenRouteArguments;
+  final Route<dynamic> Function({
+    required WidgetBuilder builder,
+    RouteSettings? settings,
+  })? onGenerateInitialRoute;
   final RouteFactory onGenerateRoute;
   final AbstractAppDataStateSnapshot snapshot;
   final List<NavigatorObserver>? navigatorObservers;
@@ -32,6 +36,7 @@ class CoreApp extends AbstractStatefulWidget {
     this.onAppInitEnd,
     required this.initialScreenRoute,
     this.initialScreenRouteArguments,
+    this.onGenerateInitialRoute,
     required this.onGenerateRoute,
     required this.snapshot,
     this.navigatorObservers,
@@ -96,18 +101,39 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
       child: MaterialApp(
         debugShowCheckedModeBanner: widget.debugShowCheckedModeBanner,
         title: widget.title,
-        home: _InitializationScreen(
-          initializeOnce: _initializeOnce,
-          initializationUi: widget.initializationUi,
-          initializationMinDurationInMilliseconds: widget.initializationMinDurationInMilliseconds,
-          onAppInitStart: widget.onAppInitStart,
-          onAppInitEnd: widget.onAppInitEnd,
-          initialScreenRoute: widget.initialScreenRoute,
-          initialScreenRouteArguments: widget.initialScreenRouteArguments,
-          translatorOptions: widget.translatorOptions,
-          preferencesOptions: widget.preferencesOptions,
-          mainDataProviderOptions: widget.mainDataProviderOptions,
-        ),
+        initialRoute: '/',
+        onGenerateInitialRoutes: (String initialRoute) {
+          final generate = widget.onGenerateInitialRoute;
+
+          final builder = (BuildContext context) {
+            return _InitializationScreen(
+              initializeOnce: _initializeOnce,
+              initializationUi: widget.initializationUi,
+              initializationMinDurationInMilliseconds: widget.initializationMinDurationInMilliseconds,
+              onAppInitStart: widget.onAppInitStart,
+              onAppInitEnd: widget.onAppInitEnd,
+              initialScreenRoute: widget.initialScreenRoute,
+              initialScreenRouteArguments: widget.initialScreenRouteArguments,
+              translatorOptions: widget.translatorOptions,
+              preferencesOptions: widget.preferencesOptions,
+              mainDataProviderOptions: widget.mainDataProviderOptions,
+            );
+          };
+
+          if (generate != null) {
+            return [
+              generate(
+                builder: builder,
+              ),
+            ];
+          } else {
+            return [
+              MaterialPageRoute(
+                builder: builder,
+              ),
+            ];
+          }
+        },
         onGenerateRoute: widget.onGenerateRoute,
         navigatorObservers: [
           routeObserver,
