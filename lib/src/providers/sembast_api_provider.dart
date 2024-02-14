@@ -225,7 +225,9 @@ class SembastApiClient {
 
   /// Send data to all subscriptions matching storeName
   Future<void> _sendDataToSubscriptions(String storeName) async {
-    for (final subscription in _subscriptions.where((element) => element.storeName == storeName)) {
+    final subscriptions = [..._subscriptions].where((element) => element.storeName == storeName);
+
+    for (final subscription in subscriptions) {
       final store = intMapStoreFactory.store(storeName);
 
       Finder? finder = subscription.finder;

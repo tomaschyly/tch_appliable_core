@@ -1,3 +1,7 @@
+## [0.29.1] - 14.2.2024
+
+* Fix concurrent list access issue
+
 ## [0.29.0] - 13.2.2024
 
 * Add onGenerateInitialRoute callback to customize initial Route
