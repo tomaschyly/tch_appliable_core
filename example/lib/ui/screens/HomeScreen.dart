@@ -12,7 +12,7 @@ class HomeScreen extends AbstractAppScreen {
 
 class _HomeScreenState extends AbstractAppScreenState<HomeScreen> {
   @override
-  AbstractScreenStateOptions options = AppScreenStateOptions.drawer(
+  AbstractScreenOptions options = AppScreenStateOptions.drawer(
     screenName: HomeScreen.ROUTE,
     title: tt('home.screen.title'),
   );

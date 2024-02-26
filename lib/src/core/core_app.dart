@@ -189,7 +189,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
   void didChangePlatformBrightness() {
     super.didChangePlatformBrightness();
 
-    final isOSDarkMode = WidgetsBinding.instance.window.platformBrightness == Brightness.dark;
+    final isOSDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
 
     if (isOSDarkMode != _isOSDarkMode) {
       _isOSDarkMode = isOSDarkMode;
@@ -232,7 +232,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
     Duration? duration,
   }) {
     if (_messages[screenName] == null) {
-      _messages[screenName] = List<ScreenMessage>.empty(growable: true);
+      _messages[screenName] = <ScreenMessage>[];
     }
 
     setStateNotDisposed(() {

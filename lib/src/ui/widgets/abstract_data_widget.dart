@@ -3,6 +3,7 @@ import 'package:tch_appliable_core/src/providers/main_data_provider.dart';
 import 'package:tch_appliable_core/src/providers/mainDataProvider/data_request.dart';
 import 'package:tch_appliable_core/src/providers/mainDataProvider/main_data_source.dart';
 import 'package:tch_appliable_core/src/ui/widgets/abstract_stateful_widget.dart';
+import 'package:tch_appliable_core/utils/widget.dart';
 
 abstract class AbstractDataWidget extends AbstractStatefulWidget {
   @protected
@@ -61,7 +62,7 @@ abstract class AbstractDataWidgetState<T extends AbstractDataWidget> extends Abs
       _dataSource = MainDataProvider.instance!.registerDataRequests(_dataRequests);
 
       if (isFirst) {
-        WidgetsBinding.instance.addPostFrameCallback((timeStamp) => setStateNotDisposed(() {}));
+        addPostFrameCallback((timeStamp) => setStateNotDisposed(() {}));
       }
     }
   }

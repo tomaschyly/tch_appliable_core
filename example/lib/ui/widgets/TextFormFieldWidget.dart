@@ -60,7 +60,6 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> with SingleTi
     );
 
     return AnimatedSize(
-      vsync: this,
       duration: kThemeAnimationDuration,
       child: Container(
         width: 576,

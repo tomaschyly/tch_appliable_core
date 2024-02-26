@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tch_appliable_core/src/core/router_v1.dart';
 import 'package:tch_appliable_core/src/ui/widgets/abstract_stateful_widget.dart';
 import 'package:tch_appliable_core/utils/boundary.dart';
+import 'package:tch_appliable_core/utils/widget.dart';
 
 const kBoundaryTransitionDuration = Duration(milliseconds: 300);
 
@@ -174,7 +175,7 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
     setStateNotDisposed(() {
       _isAnimated = true;
 
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      addPostFrameCallback((timeStamp) {
         _transitionEntry = OverlayEntry(
           builder: (BuildContext context) {
             final double diffWidth = _targetBoundary.width - _childBoundary.width;
@@ -268,7 +269,7 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
               theTransitionEntry.remove();
               _transitionEntry = null;
 
-              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+              addPostFrameCallback((timeStamp) {
                 setStateNotDisposed(() {
                   _isAnimated = false;
                 });
@@ -305,7 +306,7 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
           theTransitionEntry.remove();
           _transitionEntry = null;
 
-          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+          addPostFrameCallback((timeStamp) {
             setStateNotDisposed(() {
               _isAnimated = false;
             });

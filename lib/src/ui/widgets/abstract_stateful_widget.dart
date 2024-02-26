@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 enum WidgetState {
   NotInitialized,
@@ -49,7 +50,7 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
   /// Call setState only if it not disposed yet
   @protected
   void setStateNotDisposed(VoidCallback fn) {
-    if (_widgetState != WidgetState.Disposed) {
+    if (context.mounted && mounted && _widgetState != WidgetState.Disposed) {
       setState(fn);
     }
   }

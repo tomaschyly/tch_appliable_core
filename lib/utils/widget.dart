@@ -3,5 +3,5 @@ import 'package:flutter/scheduler.dart';
 
 /// Shorthand to run after Widget has rendered
 void addPostFrameCallback(FrameCallback callback) {
-  WidgetsBinding.instance.addPostFrameCallback(callback);
+  addPostFrameCallback(callback);
 }

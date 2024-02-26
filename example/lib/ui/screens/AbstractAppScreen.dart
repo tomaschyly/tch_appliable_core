@@ -6,7 +6,7 @@ import 'package:example/ui/screens/mdpSembast/MDPSembastScreen.dart';
 import 'package:example/ui/widgets/IconButtonWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
-class AppScreenStateOptions extends AbstractScreenStateOptions {
+class AppScreenStateOptions extends AbstractScreenOptions {
   /// AppScreenStateOptions initialization for default app state
   AppScreenStateOptions.basic({
     required String screenName,

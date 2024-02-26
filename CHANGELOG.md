@@ -1,3 +1,7 @@
+## [0.30.0] - 26.2.2024
+
+* Improve compatibility with latest Flutter
+
 ## [0.29.1] - 14.2.2024
 
 * Fix concurrent list access issue
