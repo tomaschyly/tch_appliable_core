@@ -130,6 +130,7 @@ class RestApiClient {
         params.setLoading?.call(false);
 
         debugPrint('RestApiClient.get: $error');
+        debugPrintStack(stackTrace: error.stackTrace ?? StackTrace.current);
 
         _setToCache(identifier, null);
         params.onData(null);
@@ -188,6 +189,7 @@ class RestApiClient {
         params.setLoading?.call(false);
 
         debugPrint('RestApiClient.post: $error');
+        debugPrintStack(stackTrace: error.stackTrace ?? StackTrace.current);
 
         _setToCache(identifier, null);
         params.onData(null);
@@ -246,6 +248,7 @@ class RestApiClient {
         params.setLoading?.call(false);
 
         debugPrint('RestApiClient.delete: $error');
+        debugPrintStack(stackTrace: error.stackTrace ?? StackTrace.current);
 
         _setToCache(identifier, null);
         params.onData(null);
