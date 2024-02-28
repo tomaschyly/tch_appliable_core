@@ -303,7 +303,7 @@ class RestApiClient {
         }
 
         if (fetchPolicyIn == FetchPolicy.cacheAndNetwork || fetchPolicyIn == FetchPolicy.networkOnly) {
-          final debouncer = _brodcastDebouncersByTopic[topic] ??= Debouncer(milliseconds: kThemeAnimationDuration.inMilliseconds);
+          final debouncer = _brodcastDebouncersByTopic[identifier] ??= Debouncer(milliseconds: kThemeAnimationDuration.inMilliseconds);
 
           debouncer.run(() {
             get(
