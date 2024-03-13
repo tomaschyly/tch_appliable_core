@@ -1,3 +1,7 @@
+## [0.30.1] - 13.3.2024
+
+* Improve setStateNotDisposed
+
 ## [0.30.0] - 26.2.2024
 
 * Improve compatibility with latest Flutter

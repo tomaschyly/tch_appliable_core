@@ -50,7 +50,7 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
   /// Call setState only if it not disposed yet
   @protected
   void setStateNotDisposed(VoidCallback fn) {
-    if (context.mounted && mounted && _widgetState != WidgetState.Disposed) {
+    if (mounted && context.mounted && _widgetState != WidgetState.Disposed) {
       setState(fn);
     }
   }
