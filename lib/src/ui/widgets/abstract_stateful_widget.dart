@@ -39,7 +39,7 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
 
   /// Run initializations of view on first build only
   @protected
-  firstBuildOnly(BuildContext context) {
+  void firstBuildOnly(BuildContext context) {
     _widgetState = WidgetState.Initialized;
   }
 

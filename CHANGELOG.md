@@ -1,3 +1,7 @@
+## [0.30.2] - 14.3.2024
+
+* Add missing return type
+
 ## [0.30.1] - 13.3.2024
 
 * Improve setStateNotDisposed
