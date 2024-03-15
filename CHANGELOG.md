@@ -1,3 +1,7 @@
+## [0.31.0] - 15.3.2024
+
+* Upgrade UUID package
+
 ## [0.30.2] - 14.3.2024
 
 * Add missing return type
