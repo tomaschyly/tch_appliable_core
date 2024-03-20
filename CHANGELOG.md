@@ -1,3 +1,7 @@
+## [0.32.0] - 20.3.2024
+
+* Replace deprecated use of global window for numbers
+
 ## [0.31.0] - 15.3.2024
 
 * Upgrade UUID package
