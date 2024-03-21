@@ -33,10 +33,11 @@ class RestApiClient {
   void dispose() {
     _pollSubscriptionsTimer?.cancel();
 
-    _subscriptions.forEach((subscription) {
+    final theSubscriptions = _subscriptions.toSet().toList();
+    _subscriptions.clear();
+    theSubscriptions.forEach((subscription) {
       subscription.cancel.call();
     });
-    _subscriptions.clear();
     options.onSubscriptionsChange?.call(_subscriptions);
 
     _brodcastDebouncersByTopic.forEach((key, value) {
@@ -62,7 +63,7 @@ class RestApiClient {
   }
 
   /// Create identifier from topic and parameters
-  String _createIdentifier(String type, String uri, Map<String, dynamic> params) {
+  String createIdentifier(String type, String uri, Map<String, dynamic> params) {
     final paramsString = jsonEncode(params);
 
     return '$type#$uri#$paramsString';
@@ -88,14 +89,14 @@ class RestApiClient {
   /// REST API GET request
   /// Using dio for better functionality
   Future<CancelToken?> get(RestApiParams params) async {
-    final identifier = _createIdentifier('GET', params.uri, params.params ?? {});
+    final identifier = createIdentifier('GET', params.uri, params.params ?? {});
     final fetchPolicy = params.fetchPolicy ?? options.fetchPolicy;
 
     if (fetchPolicy == FetchPolicy.cacheAndNetwork || fetchPolicy == FetchPolicy.cacheOnly) {
       final data = _getFromCache(identifier);
 
       if (data != null || fetchPolicy == FetchPolicy.cacheOnly) {
-        params.onData(data);
+        params.onData(data, FetchPolicy.cacheOnly);
       }
     }
 
@@ -114,7 +115,7 @@ class RestApiClient {
           },
         ),
         queryParameters: params.params,
-        cancelToken: cancelToken, //TODO verify paramsSerializer is needed?
+        cancelToken: cancelToken,
       )
           .then((response) {
         params.setLoading?.call(false);
@@ -125,7 +126,7 @@ class RestApiClient {
 
         _setToCache(identifier, response.data);
 
-        params.onData(response.data);
+        params.onData(response.data, FetchPolicy.networkOnly);
       }).catchError((error) {
         params.setLoading?.call(false);
 
@@ -133,7 +134,7 @@ class RestApiClient {
         debugPrintStack(stackTrace: error.stackTrace ?? StackTrace.current);
 
         _setToCache(identifier, null);
-        params.onData(null);
+        params.onData(null, FetchPolicy.networkOnly);
 
         params.onError?.call(error);
       });
@@ -147,14 +148,14 @@ class RestApiClient {
   /// REST API POST request
   /// Using dio for better functionality
   Future<CancelToken?> post(RestApiParams params) async {
-    final identifier = _createIdentifier('POST', params.uri, params.params ?? {});
+    final identifier = createIdentifier('POST', params.uri, params.params ?? {});
     final fetchPolicy = params.fetchPolicy ?? options.fetchPolicy;
 
     if (fetchPolicy == FetchPolicy.cacheAndNetwork || fetchPolicy == FetchPolicy.cacheOnly) {
       final data = _getFromCache(identifier);
 
       if (data != null || fetchPolicy == FetchPolicy.cacheOnly) {
-        params.onData(data);
+        params.onData(data, FetchPolicy.cacheOnly);
       }
     }
 
@@ -184,7 +185,7 @@ class RestApiClient {
 
         _setToCache(identifier, response.data);
 
-        params.onData(response.data);
+        params.onData(response.data, FetchPolicy.networkOnly);
       }).catchError((error) {
         params.setLoading?.call(false);
 
@@ -192,7 +193,7 @@ class RestApiClient {
         debugPrintStack(stackTrace: error.stackTrace ?? StackTrace.current);
 
         _setToCache(identifier, null);
-        params.onData(null);
+        params.onData(null, FetchPolicy.networkOnly);
 
         params.onError?.call(error);
       });
@@ -206,14 +207,14 @@ class RestApiClient {
   /// REST API DELETE request
   /// Using dio for better functionality
   Future<CancelToken?> delete(RestApiParams params) async {
-    final identifier = _createIdentifier('DELETE', params.uri, params.params ?? {});
+    final identifier = createIdentifier('DELETE', params.uri, params.params ?? {});
     final fetchPolicy = params.fetchPolicy ?? options.fetchPolicy;
 
     if (fetchPolicy == FetchPolicy.cacheAndNetwork || fetchPolicy == FetchPolicy.cacheOnly) {
       final data = _getFromCache(identifier);
 
       if (data != null || fetchPolicy == FetchPolicy.cacheOnly) {
-        params.onData(data);
+        params.onData(data, FetchPolicy.cacheOnly);
       }
     }
 
@@ -243,7 +244,7 @@ class RestApiClient {
 
         _setToCache(identifier, response.data);
 
-        params.onData(response.data);
+        params.onData(response.data, FetchPolicy.networkOnly);
       }).catchError((error) {
         params.setLoading?.call(false);
 
@@ -251,7 +252,7 @@ class RestApiClient {
         debugPrintStack(stackTrace: error.stackTrace ?? StackTrace.current);
 
         _setToCache(identifier, null);
-        params.onData(null);
+        params.onData(null, FetchPolicy.networkOnly);
 
         params.onError?.call(error);
       });
@@ -297,7 +298,7 @@ class RestApiClient {
 
           if (data != null || fetchPolicyIn == FetchPolicy.cacheOnly) {
             subscriptions[identifier]!.forEach((subscription) {
-              subscription.params.onData(data);
+              subscription.params.onData(data, FetchPolicy.cacheOnly);
             });
           }
         }
@@ -314,9 +315,9 @@ class RestApiClient {
                     subscription.params.setLoading?.call(loading);
                   });
                 },
-                onData: (data) {
+                onData: (data, fetchPolicy) {
                   subscriptions[identifier]!.forEach((subscription) {
-                    subscription.params.onData(data);
+                    subscription.params.onData(data, fetchPolicy);
                   });
                 },
                 onError: (error) {
@@ -336,7 +337,7 @@ class RestApiClient {
   /// Group by identifier
   /// Call getData on each group
   /// Send the data or error to subscriptions in group
-  void getDataForSubscriptionsByIdentifier(String identifier) {
+  void getDataForSubscriptionsByIdentifier(String identifier, [int? milliseconds]) {
     final subscriptionsByIdentifier = _subscriptions.where((subscription) => subscription.identifier == identifier).toList();
 
     final subscriptionsByFetchPolicy = <FetchPolicy, Map<String, List<RestApiSubscription>>>{
@@ -367,7 +368,7 @@ class RestApiClient {
 
           if (data != null || fetchPolicyIn == FetchPolicy.cacheOnly) {
             subscriptions[identifier]!.forEach((subscription) {
-              subscription.params.onData(data);
+              subscription.params.onData(data, FetchPolicy.cacheOnly);
             });
           }
         }
@@ -384,9 +385,9 @@ class RestApiClient {
                     subscription.params.setLoading?.call(loading);
                   });
                 },
-                onData: (data) {
+                onData: (data, fetchPolicy) {
                   subscriptions[identifier]!.forEach((subscription) {
-                    subscription.params.onData(data);
+                    subscription.params.onData(data, fetchPolicy);
                   });
                 },
                 onError: (error) {
@@ -396,7 +397,7 @@ class RestApiClient {
                 },
               ),
             );
-          });
+          }, milliseconds: milliseconds);
         }
       }
     }
@@ -416,9 +417,10 @@ class RestApiClient {
   RestApiSubscription subscribe(
     String topic,
     RestApiParams params,
-    bool Function(List<dynamic> notifications) validateEvent,
-  ) {
-    final identifier = _createIdentifier('GET', params.uri, params.params ?? {});
+    bool Function(List<dynamic> notifications) validateEvent, [
+    int? initialFetchMillis,
+  ]) {
+    final identifier = createIdentifier('GET', params.uri, params.params ?? {});
 
     final uuid = const Uuid().v4();
 
@@ -444,7 +446,7 @@ class RestApiClient {
     options.onSubscriptionsChange?.call(_subscriptions);
 
     Future.delayed(1.milliseconds, () {
-      getDataForSubscriptions(topic);
+      getDataForSubscriptionsByIdentifier(identifier, initialFetchMillis);
     });
 
     return subscription;
@@ -483,7 +485,7 @@ class RestApiParams {
   final Map<String, dynamic>? params;
   final FetchPolicy? fetchPolicy;
   final void Function(bool loading)? setLoading;
-  final void Function(dynamic data) onData;
+  final void Function(dynamic data, FetchPolicy fetchPolicy) onData;
   final void Function(dynamic error)? onError;
 
   /// RestApiParams initialization
@@ -504,7 +506,7 @@ class RestApiParams {
     Map<String, dynamic>? params,
     FetchPolicy? fetchPolicy,
     void Function(bool loading)? setLoading,
-    void Function(dynamic data)? onData,
+    void Function(dynamic data, FetchPolicy fetchPolicy)? onData,
     void Function(dynamic error)? onError,
   }) {
     return RestApiParams(
