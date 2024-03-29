@@ -23,6 +23,7 @@ class CoreApp extends AbstractStatefulWidget {
   final String? darkThemePrefsKey;
   final Widget Function(BuildContext context, Widget child)? builder;
   final TranslatorOptions? translatorOptions;
+  final List<LocalizationsDelegate<dynamic>>? localizationsDelegates;
   final PreferencesOptions? preferencesOptions;
   final MainDataProviderOptions? mainDataProviderOptions;
 
@@ -45,6 +46,7 @@ class CoreApp extends AbstractStatefulWidget {
     this.darkThemePrefsKey,
     this.builder,
     this.translatorOptions,
+    this.localizationsDelegates,
     this.preferencesOptions,
     this.mainDataProviderOptions,
   });
@@ -64,6 +66,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
   bool _isOSDarkMode = false;
   ResponsiveScreen _responsiveScreen = ResponsiveScreen.UnDetermined;
   final Map<String, List<ScreenMessage>> _messages = Map();
+  Locale? _selectedLocale;
 
   /// State initialization
   @override
@@ -88,6 +91,15 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
   Widget buildContent(BuildContext context) {
     final theNavigatorObservers = widget.navigatorObservers;
     final theTranslatorOptions = widget.translatorOptions;
+    final theLocalizationsDelegates = widget.localizationsDelegates;
+
+    if (theTranslatorOptions != null && theTranslatorOptions.onLanguageChange == null) {
+      theTranslatorOptions.onLanguageChange = (Locale locale) {
+        setStateNotDisposed(() {
+          _selectedLocale = locale;
+        });
+      };
+    }
 
     final theDarkThemePrefsKey = widget.darkThemePrefsKey;
     bool darkMode = _isOSDarkMode;
@@ -114,7 +126,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
               onAppInitEnd: widget.onAppInitEnd,
               initialScreenRoute: widget.initialScreenRoute,
               initialScreenRouteArguments: widget.initialScreenRouteArguments,
-              translatorOptions: widget.translatorOptions,
+              translatorOptions: theTranslatorOptions,
               preferencesOptions: widget.preferencesOptions,
               mainDataProviderOptions: widget.mainDataProviderOptions,
             );
@@ -155,7 +167,11 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
             return child ?? Container();
           }
         },
-        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        locale: _selectedLocale,
+        localizationsDelegates: [
+          ...GlobalMaterialLocalizations.delegates,
+          if (theLocalizationsDelegates != null) ...theLocalizationsDelegates,
+        ],
         supportedLocales: theTranslatorOptions?.supportedLocales ?? const <Locale>[Locale('en', 'US')],
       ),
       snapshot: widget.snapshot

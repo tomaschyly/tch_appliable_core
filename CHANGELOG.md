@@ -1,3 +1,7 @@
+## [0.32.1] - 29.3.2024
+
+* Translator improvements and tweaks
+
 ## [0.32.0] - 20.3.2024
 
 * Replace deprecated use of global window for numbers

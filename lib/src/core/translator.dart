@@ -9,12 +9,14 @@ class TranslatorOptions {
   final List<String> languages;
   final List<Locale> supportedLocales;
   final Future<String?> Function(BuildContext context)? getInitialLanguage;
+  ValueChanged<Locale>? onLanguageChange;
 
   /// TranslatorOptions initialization
   TranslatorOptions({
     required this.languages,
     required this.supportedLocales,
     this.getInitialLanguage,
+    this.onLanguageChange,
   })  : assert(languages.isNotEmpty),
         assert(languages.length == supportedLocales.length);
 }
@@ -43,7 +45,7 @@ class Translator {
   }
 
   /// Initialize correct Language and translations for it
-  Future init(BuildContext context) async {
+  Future<void> init(BuildContext context) async {
     final theGetInitialLanguage = _options.getInitialLanguage;
     if (theGetInitialLanguage != null) {
       final String? initialLanguage = await theGetInitialLanguage(context);
@@ -82,6 +84,7 @@ class Translator {
   }
 
   /// Initialize translations for language from assets JSON file
+  /// And change current Locale by Language
   Future<void> initTranslations(BuildContext context, [String? language]) async {
     final String theLanguage = language ?? _currentLanguage;
 
@@ -94,6 +97,8 @@ class Translator {
     Map<String, String> translations = Map<String, String>.from(jsonDecode(json));
 
     _currentTranslations = translations;
+
+    _options.onLanguageChange?.call(Locale(_currentLanguage));
   }
 
   /// Translate string to current Language
