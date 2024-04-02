@@ -1,3 +1,7 @@
+## [0.32.2] - 2.4.2024
+
+* Get first day of week for 1-7 range
+
 ## [0.32.1] - 29.3.2024
 
 * Translator improvements and tweaks

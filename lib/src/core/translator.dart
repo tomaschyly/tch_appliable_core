@@ -147,3 +147,10 @@ extension TranslationStringExtension on String {
     return translated;
   }
 }
+
+extension MaterialLocalizationsExtension on MaterialLocalizations {
+  /// Get firstDayOfWeekIndex, but in 1-7 range
+  int get firstDayOfWeekForOneToSeven {
+    return firstDayOfWeekIndex == 0 ? 7 : firstDayOfWeekIndex;
+  }
+}
