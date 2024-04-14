@@ -21,7 +21,7 @@ abstract class AbstractHooksWidget extends HookWidget {
     }, []);
 
     return buildContent(context, () {
-      invalidate.value = invalidate.value + 1;
+      invalidate.value = DateTime.now().microsecondsSinceEpoch;
     });
   }
 
