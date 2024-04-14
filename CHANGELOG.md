@@ -1,3 +1,7 @@
+## [0.32.3] - 14.4.2024
+
+* Change hooks invalidate to int
+
 ## [0.32.2] - 2.4.2024
 
 * Get first day of week for 1-7 range

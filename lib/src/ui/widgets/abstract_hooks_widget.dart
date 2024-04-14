@@ -14,14 +14,14 @@ abstract class AbstractHooksWidget extends HookWidget {
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
-    final invalidate = useState<bool>(false);
+    final invalidate = useState<int>(0);
 
     useEffect(() {
       return dispose;
     }, []);
 
     return buildContent(context, () {
-      invalidate.value = !invalidate.value;
+      invalidate.value = invalidate.value + 1;
     });
   }
 
