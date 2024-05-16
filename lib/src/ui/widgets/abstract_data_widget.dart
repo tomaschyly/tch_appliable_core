@@ -89,7 +89,7 @@ abstract class AbstractDataWidgetState<T extends AbstractDataWidget> extends Abs
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
-    if (widgetState == WidgetState.NotInitialized) {
+    if (widgetState == StatefulWidgetState.NotInitialized) {
       firstBuildOnly(context);
     }
 

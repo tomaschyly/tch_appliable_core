@@ -50,7 +50,6 @@ class SafeAreaOptions {
 abstract class AbstractScreen extends AbstractStatefulWidget {}
 
 abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractStatefulWidgetState<T> with RouteAware {
-
   @protected
   Color? backgroundColor;
 
@@ -89,7 +88,7 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
       theOptionsBuildPreProcessor(context);
     }
 
-    if (widgetState == WidgetState.NotInitialized) {
+    if (widgetState == StatefulWidgetState.NotInitialized) {
       firstBuildOnly(context);
     }
 

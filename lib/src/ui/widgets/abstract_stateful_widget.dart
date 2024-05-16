@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
-enum WidgetState {
+enum StatefulWidgetState {
   NotInitialized,
   Initialized,
   Disposed,
@@ -13,14 +13,14 @@ abstract class AbstractStatefulWidget extends StatefulWidget {
 }
 
 abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> extends State<T> {
-  WidgetState get widgetState => _widgetState;
+  StatefulWidgetState get widgetState => _widgetState;
 
-  WidgetState _widgetState = WidgetState.NotInitialized;
+  StatefulWidgetState _widgetState = StatefulWidgetState.NotInitialized;
 
   /// Manually dispose of resources
   @override
   void dispose() {
-    _widgetState = WidgetState.Disposed;
+    _widgetState = StatefulWidgetState.Disposed;
 
     super.dispose();
   }
@@ -28,7 +28,7 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
-    if (_widgetState == WidgetState.NotInitialized) {
+    if (_widgetState == StatefulWidgetState.NotInitialized) {
       firstBuildOnly(context);
     }
 
@@ -40,7 +40,7 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
   /// Run initializations of view on first build only
   @protected
   void firstBuildOnly(BuildContext context) {
-    _widgetState = WidgetState.Initialized;
+    _widgetState = StatefulWidgetState.Initialized;
   }
 
   /// Create view content from widgets
@@ -50,7 +50,7 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
   /// Call setState only if it not disposed yet
   @protected
   void setStateNotDisposed(VoidCallback fn) {
-    if (mounted && context.mounted && _widgetState != WidgetState.Disposed) {
+    if (mounted && context.mounted && _widgetState != StatefulWidgetState.Disposed) {
       setState(fn);
     }
   }

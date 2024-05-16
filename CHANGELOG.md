@@ -1,3 +1,7 @@
+## [0.33.0] - 16.5.2024
+
+* Updates for latest Flutter SDK
+
 ## [0.32.3] - 14.4.2024
 
 * Change hooks invalidate to int
