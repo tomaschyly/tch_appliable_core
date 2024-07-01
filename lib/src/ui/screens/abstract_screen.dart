@@ -8,6 +8,7 @@ class AbstractScreenOptions {
   bool canPop;
   String title;
   SafeAreaOptions safeArea;
+  bool extendBodyBehindAppBar;
 
   /// Callback used to preProcess options at the start of each build
   /// May be used to change options based on some conditions
@@ -28,6 +29,7 @@ class AbstractScreenOptions {
       right: true,
       bottom: true,
     ),
+    this.extendBodyBehindAppBar = false,
     this.drawerIsPermanentlyVisible = false,
   });
 }
@@ -125,6 +127,7 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
 
         return ScreenDataState(
           child: Scaffold(
+            extendBodyBehindAppBar: options.extendBodyBehindAppBar,
             backgroundColor: backgroundColor ?? Theme.of(context).colorScheme.background,
             appBar: createAppBar(context),
             body: Builder(

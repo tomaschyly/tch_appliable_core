@@ -1,3 +1,7 @@
+## [0.33.1] - 1.7.2024
+
+* Body extendBodyBehindAppBar
+
 ## [0.33.0] - 16.5.2024
 
 * Updates for latest Flutter SDK
