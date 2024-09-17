@@ -1,3 +1,8 @@
+## [0.33.2] - 17.9.2024
+
+* Tweaks 
+* Updates to dependencies
+
 ## [0.33.1] - 1.7.2024
 
 * Body extendBodyBehindAppBar
