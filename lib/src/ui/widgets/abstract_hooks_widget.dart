@@ -3,9 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 
 abstract class AbstractHooksWidget extends HookWidget {
   /// AbstractHooksWidget initialization
-  AbstractHooksWidget({
-    Key? key,
-  }) : super(key: key);
+  AbstractHooksWidget({super.key});
 
   /// Manually dispose of resources
   @protected

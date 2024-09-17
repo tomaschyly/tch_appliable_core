@@ -49,9 +49,14 @@ class SafeAreaOptions {
   });
 }
 
-abstract class AbstractScreen extends AbstractStatefulWidget {}
+abstract class AbstractScreen extends AbstractStatefulWidget {
+  /// AbstractScreen initialization
+  AbstractScreen({super.key});
+}
 
 abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractStatefulWidgetState<T> with RouteAware {
+  @protected
+  bool get isCurrent => _isCurrent;
   @protected
   Color? backgroundColor;
 
@@ -60,6 +65,7 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
   @protected
   ValueNotifier<bool> isLoading = ValueNotifier(false);
 
+  bool _isCurrent = false;
   final GlobalKey<ScreenMessengerWidgetState> _messengerKey = GlobalKey();
   final List<String> _loadingTags = [];
 
@@ -128,7 +134,7 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
         return ScreenDataState(
           child: Scaffold(
             extendBodyBehindAppBar: options.extendBodyBehindAppBar,
-            backgroundColor: backgroundColor ?? Theme.of(context).colorScheme.background,
+            backgroundColor: backgroundColor ?? Theme.of(context).colorScheme.surface,
             appBar: createAppBar(context),
             body: Builder(
               builder: (BuildContext context) {
@@ -200,6 +206,8 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
   void didPush() {
     super.didPush();
 
+    _isCurrent = true;
+
     onStartResume();
   }
 
@@ -207,6 +215,8 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
   @override
   void didPopNext() {
     super.didPopNext();
+
+    _isCurrent = true;
 
     onStartResume();
     onResume();
@@ -220,6 +230,14 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
   @protected
   void onResume() {
     _messengerKey.currentState?.onResume();
+  }
+
+  /// Called when a new route has been pushed, and the current route is no longer visible
+  @override
+  void didPushNext() {
+    super.didPushNext();
+
+    _isCurrent = false;
   }
 
   /// Execute any asynchronous Task that needs to display loading state
