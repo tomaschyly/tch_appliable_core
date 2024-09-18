@@ -1,3 +1,7 @@
+## [0.33.3] - 18.9.2024
+
+* Updates to dependencies
+
 ## [0.33.2] - 17.9.2024
 
 * Tweaks 
