@@ -381,9 +381,6 @@ class _InitializationScreen extends StatelessWidget {
   }
 }
 
-/// Shorthand to get AbstractAppDataStateSnapshot from context
-AbstractAppDataStateSnapshot getAbstractAppDataStateSnapshot(BuildContext context) => AppDataState.of<AbstractAppDataStateSnapshot>(context)!;
-
 class AppDataState extends InheritedWidget {
   final AbstractAppDataStateSnapshot snapshot;
 
@@ -401,6 +398,17 @@ class AppDataState extends InheritedWidget {
   /// Disable update notifications
   @override
   bool updateShouldNotify(InheritedWidget oldWidget) => false;
+}
+
+/// Shorthand to get AbstractAppDataStateSnapshot from context
+AbstractAppDataStateSnapshot getAbstractAppDataStateSnapshot(BuildContext context) => AppDataState.of<AbstractAppDataStateSnapshot>(context)!;
+
+extension AppDataStateExtension on BuildContext {
+  /// Shorthand to get AbstractAppDataStateSnapshot from context
+  AbstractAppDataStateSnapshot get appDataState => AppDataState.of<AbstractAppDataStateSnapshot>(this)!;
+
+  /// Shorthand to get nullable AbstractAppDataStateSnapshot from context
+  AbstractAppDataStateSnapshot? get appDataStateOrNull => AppDataState.of<AbstractAppDataStateSnapshot>(this);
 }
 
 typedef AddScreenMessage = void Function(
@@ -431,6 +439,12 @@ abstract class AbstractAppDataStateSnapshot {
     }
 
     return null;
+  }
+
+  /// Convert to String
+  @override
+  String toString() {
+    return 'AbstractAppDataStateSnapshot{responsiveScreen: $responsiveScreen, isForeground: $isForeground, isOSDarkMode: $isOSDarkMode, isDarkMode: $isDarkMode, messages: $messages}';
   }
 }
 

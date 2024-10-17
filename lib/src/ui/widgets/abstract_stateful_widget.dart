@@ -17,10 +17,17 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
 
   StatefulWidgetState _widgetState = StatefulWidgetState.NotInitialized;
 
+  final _dummyFocusNode = FocusNode();
+
+  @protected
+  bool wasBackground = false;
+
   /// Manually dispose of resources
   @override
   void dispose() {
     _widgetState = StatefulWidgetState.Disposed;
+
+    _dummyFocusNode.dispose();
 
     super.dispose();
   }
@@ -28,8 +35,22 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
+    final snapshot = context.appDataStateOrNull;
+
     if (_widgetState == StatefulWidgetState.NotInitialized) {
       firstBuildOnly(context);
+    }
+
+    if (snapshot != null) {
+      if (!snapshot.isForeground) {
+        wasBackground = true;
+
+        onBackground(context);
+      } else if (wasBackground) {
+        wasBackground = false;
+
+        onForeground(context);
+      }
     }
 
     return Builder(
@@ -43,9 +64,17 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
     _widgetState = StatefulWidgetState.Initialized;
   }
 
-  /// Create view content from widgets
+  /// Build content from widgets
   @protected
   Widget buildContent(BuildContext context);
+
+  /// Last build for actions before app goes to background from foreground
+  @protected
+  void onBackground(BuildContext context) {}
+
+  /// First build for actions after app goes to foreground from background
+  @protected
+  void onForeground(BuildContext context) {}
 
   /// Call setState only if it not disposed yet
   @protected
@@ -59,5 +88,12 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
   @protected
   void invalidate() {
     setStateNotDisposed(() {});
+  }
+
+  /// Clear current focus using dummy FocusNode
+  /// This should solve some situations on Android, where the focus jumps back to input when it should not do so
+  @protected
+  void clearFocusToDummy() {
+    _dummyFocusNode.requestFocus();
   }
 }

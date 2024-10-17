@@ -1,3 +1,7 @@
+## [0.33.4] - 17.10.2024
+
+* Improvements to AbstractStatefulWidgetState for some common patterns
+
 ## [0.33.3] - 18.9.2024
 
 * Updates to dependencies

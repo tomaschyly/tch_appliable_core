@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tch_appliable_core/src/core/router_v1.dart';
 import 'package:tch_appliable_core/src/ui/widgets/abstract_stateful_widget.dart';
 import 'package:tch_appliable_core/src/ui/widgets/screen_messenger_widget.dart';
+import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class AbstractScreenOptions {
   String screenName;
@@ -91,6 +92,8 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
+    final snapshot = context.appDataStateOrNull;
+
     final theOptionsBuildPreProcessor = options.optionsBuildPreProcessor;
     if (theOptionsBuildPreProcessor != null) {
       theOptionsBuildPreProcessor(context);
@@ -98,6 +101,18 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
 
     if (widgetState == StatefulWidgetState.NotInitialized) {
       firstBuildOnly(context);
+    }
+
+    if (snapshot != null) {
+      if (!snapshot.isForeground) {
+        wasBackground = true;
+
+        onBackground(context);
+      } else if (wasBackground) {
+        wasBackground = false;
+
+        onForeground(context);
+      }
     }
 
     return ValueListenableBuilder<bool>(
