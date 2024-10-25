@@ -1,3 +1,7 @@
+## [0.34.0] - 25.10.2024
+
+* Additional utils for working with DateTime, Jiffy
+
 ## [0.33.4] - 17.10.2024
 
 * Improvements to AbstractStatefulWidgetState for some common patterns
