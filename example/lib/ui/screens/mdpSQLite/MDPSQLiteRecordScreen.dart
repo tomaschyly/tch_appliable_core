@@ -15,7 +15,7 @@ class MDPSQLiteRecordScreen extends AbstractAppScreen {
 
 class _MDPSQLiteRecordScreenState extends AbstractAppScreenState<MDPSQLiteRecordScreen> {
   @override
-  AbstractScreenStateOptions options = AppScreenStateOptions.basic(
+  AbstractScreenOptions options = AppScreenStateOptions.basic(
     screenName: MDPSQLiteRecordScreen.ROUTE,
     title: tt('mdpsqliterecord.screen.title'),
   );

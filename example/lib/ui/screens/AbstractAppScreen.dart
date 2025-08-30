@@ -161,7 +161,7 @@ abstract class AbstractAppScreenState<T extends AbstractAppScreen> extends Abstr
                   return IconButtonWidget(
                     icon: (theComplexIcon != null ? theComplexIcon : theIcon) ?? Container(),
                     onPressed: () {
-                      option.onTap(context);
+                      option.onTap!(context);
                     },
                     iconWidth: option.complexIcon != null ? 48 : 24,
                     iconHeight: option.complexIcon != null ? 48 : 24,
@@ -212,7 +212,7 @@ abstract class AbstractAppScreenState<T extends AbstractAppScreen> extends Abstr
                                 ),
                               ),
                             ),
-                          option.title,
+                          option.title!,
                         ],
                       ),
                     ),

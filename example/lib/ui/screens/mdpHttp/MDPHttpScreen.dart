@@ -15,7 +15,7 @@ class MDPHttpScreen extends AbstractAppScreen {
 
 class _MDPHttpScreenState extends AbstractAppScreenState<MDPHttpScreen> {
   @override
-  AbstractScreenStateOptions options = AppScreenStateOptions.drawer(
+  AbstractScreenOptions options = AppScreenStateOptions.drawer(
     screenName: MDPHttpScreen.ROUTE,
     title: tt('mdphttp.screen.title'),
   )..appBarOptions = <AppBarOption>[

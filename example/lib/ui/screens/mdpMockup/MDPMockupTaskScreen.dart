@@ -13,7 +13,7 @@ class MDPMockupTaskScreen extends AbstractAppScreen {
 
 class _MDPMockupTaskScreenState extends AbstractAppScreenState<MDPMockupTaskScreen> {
   @override
-  AbstractScreenStateOptions options = AppScreenStateOptions.basic(
+  AbstractScreenOptions options = AppScreenStateOptions.basic(
     screenName: MDPMockupTaskScreen.ROUTE,
     title: tt('mdpmockuptask.screen.title'),
   );

@@ -1,3 +1,7 @@
+## [0.35.0] - 30.8.2025
+
+* Updates to latest Flutter and dependencies
+
 ## [0.34.0] - 25.10.2024
 
 * Additional utils for working with DateTime, Jiffy

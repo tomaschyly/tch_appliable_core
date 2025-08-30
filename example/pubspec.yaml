@@ -12,19 +12,19 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.1
-  flutter_svg: ^1.1.0
+  cupertino_icons: ^1.0.8
+  flutter_svg: ^2.2.0
 
   tch_appliable_core:
     path: ../
 
-  path: ^1.8.3
+  path: ^1.9.1
 
-  http: ^1.0.0
-  sqflite: ^2.2.8+4
+  http: ^1.5.0
+  sqflite: ^2.4.2
 
 dependency_overrides:
-  platform: ^3.1.0
+  # platform: ^3.1.0
 
 flutter:
   uses-material-design: true

@@ -18,7 +18,7 @@ class MDPSembastScreen extends AbstractAppScreen {
 
 class _MDPSembastScreenState extends AbstractAppScreenState<MDPSembastScreen> {
   @override
-  AbstractScreenStateOptions options = AppScreenStateOptions.drawer(
+  AbstractScreenOptions options = AppScreenStateOptions.drawer(
     screenName: MDPSembastScreen.ROUTE,
     title: tt('mdpsembast.screen.title'),
   )..appBarOptions = <AppBarOption>[

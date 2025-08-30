@@ -18,7 +18,7 @@ class MDPSQLiteScreen extends AbstractAppScreen {
 
 class _MDPSQLiteScreenState extends AbstractAppScreenState<MDPSQLiteScreen> {
   @override
-  AbstractScreenStateOptions options = AppScreenStateOptions.drawer(
+  AbstractScreenOptions options = AppScreenStateOptions.drawer(
     screenName: MDPSQLiteScreen.ROUTE,
     title: tt('mdpsqlite.screen.title'),
   )..appBarOptions = <AppBarOption>[

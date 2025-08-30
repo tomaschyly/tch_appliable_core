@@ -15,7 +15,7 @@ class MDPSembastRecordScreen extends AbstractAppScreen {
 
 class _MDPSembastRecordScreenState extends AbstractAppScreenState<MDPSembastRecordScreen> {
   @override
-  AbstractScreenStateOptions options = AppScreenStateOptions.basic(
+  AbstractScreenOptions options = AppScreenStateOptions.basic(
     screenName: MDPSembastRecordScreen.ROUTE,
     title: tt('mdpsembastrecord.screen.title'),
   );

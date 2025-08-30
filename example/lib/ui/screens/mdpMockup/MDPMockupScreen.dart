@@ -14,7 +14,7 @@ class MDPMockupScreen extends AbstractAppScreen {
 
 class _MDPMockupScreenState extends AbstractAppScreenState<MDPMockupScreen> {
   @override
-  AbstractScreenStateOptions options = AppScreenStateOptions.drawer(
+  AbstractScreenOptions options = AppScreenStateOptions.drawer(
     screenName: MDPMockupScreen.ROUTE,
     title: tt('mdpmockup.screen.title'),
   )..appBarOptions = <AppBarOption>[
