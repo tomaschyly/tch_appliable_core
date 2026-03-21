@@ -15,8 +15,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
+  collection: ^1.19.0
   supercharged: ^2.1.1
-  flutter_hooks: ^0.21.3+1
 
   intl: ^0.20.2
   jiffy: ^6.4.3

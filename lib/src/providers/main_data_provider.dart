@@ -12,7 +12,7 @@ import 'package:sqflite/sqflite.dart' as SQLite;
 import 'package:tch_appliable_core/src/providers/mainDataProvider/data_request.dart';
 import 'package:tch_appliable_core/src/providers/mainDataProvider/data_task.dart';
 import 'package:tch_appliable_core/src/providers/mainDataProvider/main_data_source.dart';
-import 'package:tch_appliable_core/utils/list.dart';
+import 'package:collection/collection.dart';
 
 enum MainDataProviderSource {
   None,

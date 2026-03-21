@@ -1,5 +1,4 @@
 import 'package:tch_appliable_core/tch_appliable_core.dart';
-import 'package:tch_appliable_core/utils/form.dart';
 
 enum StatefulWidgetState {
   NotInitialized,
@@ -94,6 +93,6 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
   /// This should solve some situations on Android, where the focus jumps back to input when it should not do so
   @protected
   void clearFocusToDummy(BuildContext context) {
-    requestFocus(context, _dummyFocusNode);
+    FocusScope.of(context).requestFocus(_dummyFocusNode);
   }
 }
