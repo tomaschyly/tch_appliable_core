@@ -6,6 +6,6 @@ class ColorExtensionDummy {}
 extension ColorExtension on Color {
   /// Convert the Color into hex string
   String toHex() {
-    return '#${this.value.toRadixString(16)}';
+    return '#${this.toARGB32().toRadixString(16)}';
   }
 }

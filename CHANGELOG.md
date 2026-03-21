@@ -1,3 +1,16 @@
+## [0.36.0] - 21.3.2026
+
+* **Warning:** Breaking changes — `Translator.changeLanguage` is now async and reloads translations internally (remove separate `initTranslations` call); `initTranslations` no longer takes a `BuildContext`; Preferences in-memory cache maps are now private (direct access to global `intPrefs`/`stringPrefs`/`doublePrefs`/`boolPrefs` removed)
+* **Warning:** Removed `flutter_hooks` dependency and `AbstractHooksWidget`; removed redundant utilities (`form.dart`, `AsyncVoidCallback`, `firstWhereOrNull`/`lastWhereOrNull` — use `package:collection` instead)
+* CoreApp: added missing MaterialApp parameters (`scrollBehavior`, `color`, `themeAnimationDuration`, `themeAnimationCurve`, `shortcuts`, `actions`, `localeResolutionCallback`, `restorationScopeId`)
+* CoreApp: fixed `AppDataState.updateShouldNotify` to return `true` so `const` widgets correctly rebuild on snapshot changes
+* Translator: fixed `changeLanguage` — now reloads translations and notifies locale change in one async call
+* Translator: fixed `initTranslations` not updating `currentLanguage` when language param was provided
+* Preferences: added `bool` support (`prefsBool`, `prefsSetBool`, `prefsRemoveBool`)
+* Router: `FadeAnimationPageRoute` now correctly fades out via `secondaryAnimation` when another route is pushed on top
+* Router: `BoundaryPageRoute` fixed race condition between overlay insertion and route push; fixed overlay removal happening inside `AnimatedBuilder` builder
+* DataModel: simplified to pure interface, removed stored `json` field
+
 ## [0.35.0] - 30.8.2025
 
 * Updates to latest Flutter and dependencies

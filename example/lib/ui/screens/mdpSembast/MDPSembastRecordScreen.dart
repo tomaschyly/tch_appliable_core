@@ -2,7 +2,6 @@ import 'package:example/model/SembastRecord.dart';
 import 'package:example/model/dataTasks/SaveSembastRecordDataTask.dart';
 import 'package:example/ui/screens/AbstractAppScreen.dart';
 import 'package:example/ui/widgets/TextFormFieldWidget.dart';
-import 'package:flutter/material.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class MDPSembastRecordScreen extends AbstractAppScreen {

@@ -1,11 +1,6 @@
-import 'package:flutter/material.dart';
-
 abstract class DataModel {
-  @protected
-  Map<String, dynamic> json;
-
   /// DataModel initialization from JSON map
-  DataModel.fromJson(this.json);
+  DataModel.fromJson(Map<String, dynamic> json);
 
   /// Convert the object into JSON map
   Map<String, dynamic> toJson();

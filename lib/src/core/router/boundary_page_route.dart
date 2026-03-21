@@ -58,7 +58,7 @@ class BoundaryPageRoute<T> extends MaterialPageRoute<T> {
                 borderRadius: BorderRadius.circular(actualBorderRadius),
                 child: Opacity(
                   opacity: firstCoefficient < 1 ? 0 : secondCoefficient,
-                  child: Container(
+                  child: SizedBox(
                     width: width,
                     height: height,
                     child: child,
@@ -82,6 +82,7 @@ class BoundaryPageRouteWidget extends AbstractStatefulWidget {
 
   /// BoundaryPageRouteWidget initialization
   BoundaryPageRouteWidget({
+    super.key,
     required this.child,
     required this.pushRoute,
     this.pushArguments,
@@ -138,12 +139,58 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        child: Container(
+        child: SizedBox(
           key: _containerKey,
           child: _isAnimated ? null : widget.child,
         ),
         onTap: () => pushAnimated(context),
       ),
+    );
+  }
+
+  /// Build overlay entry for Boundary transition animation
+  OverlayEntry _buildTransitionOverlay({
+    required bool Function(double opacity) isComplete,
+    required VoidCallback onComplete,
+  }) {
+    return OverlayEntry(
+      builder: (BuildContext context) {
+        final double diffWidth = _targetBoundary.width - _childBoundary.width;
+        final double diffHeight = _targetBoundary.height - _childBoundary.height;
+
+        return AnimatedBuilder(
+          animation: _animationController,
+          builder: (BuildContext context, Widget? child) {
+            final double coefficient = 1 - _animationController.value;
+            final double firstCoefficient = (_animationController.value / 0.3).clamp(0.0, 1.0);
+            final double opacity = 1 - firstCoefficient;
+
+            if (_transitionEntry != null && isComplete(opacity)) {
+              final theEntry = _transitionEntry!;
+              _transitionEntry = null;
+
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                theEntry.remove();
+                onComplete();
+              });
+            }
+
+            return Positioned(
+              left: _childBoundary.x * coefficient,
+              top: _childBoundary.y * coefficient,
+              child: SizedBox(
+                width: _childBoundary.width + diffWidth * _animationController.value,
+                height: _childBoundary.height + diffHeight * _animationController.value,
+                child: Opacity(
+                  opacity: opacity,
+                  child: child,
+                ),
+              ),
+            );
+          },
+          child: widget.child,
+        );
+      },
     );
   }
 
@@ -176,50 +223,16 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
       _isAnimated = true;
 
       addPostFrameCallback((timeStamp) {
-        _transitionEntry = OverlayEntry(
-          builder: (BuildContext context) {
-            final double diffWidth = _targetBoundary.width - _childBoundary.width;
-            final double diffHeight = _targetBoundary.height - _childBoundary.height;
-
-            return AnimatedBuilder(
-              animation: _animationController,
-              builder: (BuildContext context, Widget? child) {
-                final double coefficient = (1 - _animationController.value);
-                final double firstCoefficient = (_animationController.value / 0.3) < 1 ? _animationController.value / 0.3 : 1;
-
-                final double left = _childBoundary.x * coefficient;
-                final double top = _childBoundary.y * coefficient;
-
-                final double width = _childBoundary.width + (diffWidth * _animationController.value);
-                final double height = _childBoundary.height + (diffHeight * _animationController.value);
-
-                final theTransitionEntry = _transitionEntry;
-                if (theTransitionEntry != null && (1 - firstCoefficient) < 0.01) {
-                  theTransitionEntry.remove();
-                  _transitionEntry = null;
-                }
-
-                return Positioned(
-                  left: left,
-                  top: top,
-                  child: Container(
-                    width: width,
-                    height: height,
-                    child: Opacity(
-                      opacity: 1 - firstCoefficient,
-                      child: child,
-                    ),
-                  ),
-                );
-              },
-              child: widget.child,
-            );
-          },
+        _transitionEntry = _buildTransitionOverlay(
+          isComplete: (opacity) => opacity < 0.01,
+          onComplete: () {},
         );
 
         Overlay.of(context).insert(_transitionEntry!);
 
         _animationController.forward();
+
+        pushNamed(context, widget.pushRoute, arguments: arguments);
 
         _failSafeTimer = Timer(
           Duration(milliseconds: ((kBoundaryTransitionDuration.inMilliseconds / 3) * 1.25).toInt()),
@@ -233,8 +246,6 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
         );
       });
     });
-
-    pushNamed(context, widget.pushRoute, arguments: arguments);
   }
 
   /// This screen is now the top Route after return back to this Route from next ones
@@ -247,50 +258,12 @@ class _BoundaryPageRouteWidgetState extends AbstractStatefulWidgetState<Boundary
 
   /// Run Boundary transition in reverse to get back into original state
   void didPopNextAnimated() {
-    _transitionEntry = OverlayEntry(
-      builder: (BuildContext context) {
-        final double diffWidth = _targetBoundary.width - _childBoundary.width;
-        final double diffHeight = _targetBoundary.height - _childBoundary.height;
-
-        return AnimatedBuilder(
-          animation: _animationController,
-          builder: (BuildContext context, Widget? child) {
-            final double coefficient = (1 - _animationController.value);
-            final double firstCoefficient = (_animationController.value / 0.3) < 1 ? _animationController.value / 0.3 : 1;
-
-            final double left = _childBoundary.x * coefficient;
-            final double top = _childBoundary.y * coefficient;
-
-            final double width = _childBoundary.width + (diffWidth * _animationController.value);
-            final double height = _childBoundary.height + (diffHeight * _animationController.value);
-
-            final theTransitionEntry = _transitionEntry;
-            if (theTransitionEntry != null && (1 - firstCoefficient) > 0.99) {
-              theTransitionEntry.remove();
-              _transitionEntry = null;
-
-              addPostFrameCallback((timeStamp) {
-                setStateNotDisposed(() {
-                  _isAnimated = false;
-                });
-              });
-            }
-
-            return Positioned(
-              left: left,
-              top: top,
-              child: Container(
-                width: width,
-                height: height,
-                child: Opacity(
-                  opacity: 1 - firstCoefficient,
-                  child: child,
-                ),
-              ),
-            );
-          },
-          child: widget.child,
-        );
+    _transitionEntry = _buildTransitionOverlay(
+      isComplete: (opacity) => opacity > 0.99,
+      onComplete: () {
+        setStateNotDisposed(() {
+          _isAnimated = false;
+        });
       },
     );
 

@@ -29,7 +29,7 @@ If some instructions are not clear enough, then analyse usage inside the example
 In your project's `pubspec.yaml` add:
 ```yaml
 dependencies:
-  tch_appliable_core: ^0.35.0
+  tch_appliable_core: ^0.36.0
 ```
 
 ## App Create
@@ -146,7 +146,7 @@ The Translator uses your OS language automatically & if it is part of supportedL
 You can also change language during runtime.
 
 ```dart
-Translator.instance!.changeLanguage('sk');
+await Translator.instance!.changeLanguage('sk');
 ```
 
 Then to see your new language immediately you can invalidate CoreApp.

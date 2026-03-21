@@ -1,7 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:tch_appliable_core/src/core/router_v1.dart';
-import 'package:tch_appliable_core/src/ui/widgets/abstract_stateful_widget.dart';
-import 'package:tch_appliable_core/src/ui/widgets/screen_messenger_widget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class AbstractScreenOptions {

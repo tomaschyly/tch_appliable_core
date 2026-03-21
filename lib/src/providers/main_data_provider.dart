@@ -12,7 +12,7 @@ import 'package:sqflite/sqflite.dart' as SQLite;
 import 'package:tch_appliable_core/src/providers/mainDataProvider/data_request.dart';
 import 'package:tch_appliable_core/src/providers/mainDataProvider/data_task.dart';
 import 'package:tch_appliable_core/src/providers/mainDataProvider/main_data_source.dart';
-import 'package:tch_appliable_core/utils/list.dart';
+import 'package:collection/collection.dart';
 
 enum MainDataProviderSource {
   None,
@@ -44,13 +44,12 @@ class MainDataProvider {
 
   List<AbstractSource> get initializedSources => _initializedSources.toList(growable: false);
 
-  MainDataProviderOptions _options;
   List<AbstractSource> _initializedSources = <AbstractSource>[];
 
   /// MainDataProvider initialization
   MainDataProvider({
     required MainDataProviderOptions options,
-  }) : _options = options {
+  }) {
     _instance = this;
 
     _initSources(options);

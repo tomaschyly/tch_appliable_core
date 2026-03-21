@@ -22,9 +22,7 @@ export 'src/ui/screens/abstract_screen.dart';
 export 'src/ui/screens/abstract_responsive_screen.dart';
 export 'src/ui/widgets/responsive_widget.dart';
 
-export 'package:flutter_hooks/flutter_hooks.dart';
 export 'src/ui/widgets/abstract_stateful_widget.dart';
-export 'src/ui/widgets/abstract_hooks_widget.dart';
 export 'src/ui/widgets/abstract_responsive_widget.dart';
 export 'src/ui/widgets/abstract_data_widget.dart';
 export 'src/ui/widgets/list_data_widget.dart';

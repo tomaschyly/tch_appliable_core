@@ -5,7 +5,6 @@ import 'package:example/model/dataTasks/DeleteSQLiteRecordDataTask.dart';
 import 'package:example/model/dataTasks/DeleteSQLiteRecordsDataTask.dart';
 import 'package:example/ui/screens/AbstractAppScreen.dart';
 import 'package:example/ui/screens/mdpSQLite/MDPSQLiteRecordScreen.dart';
-import 'package:flutter/material.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class MDPSQLiteScreen extends AbstractAppScreen {
