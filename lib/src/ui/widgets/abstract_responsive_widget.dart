@@ -61,7 +61,6 @@ abstract class AbstractResponsiveWidgetState<T extends AbstractResponsiveWidget>
           return largePhoneScreen(context);
         case ResponsiveScreen.SmallPhone:
         case ResponsiveScreen.UnDetermined:
-        default:
           return smallPhoneScreen(context);
       }
     }

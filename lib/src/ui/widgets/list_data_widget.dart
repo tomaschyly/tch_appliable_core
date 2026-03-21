@@ -157,7 +157,7 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
               });
 
               addPostFrameCallback((timeStamp) {
-                Overlay.of(context)!.insert(_loadingItemEntry!);
+                Overlay.of(context).insert(_loadingItemEntry!);
               });
             }
           } else {

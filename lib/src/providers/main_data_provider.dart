@@ -44,13 +44,12 @@ class MainDataProvider {
 
   List<AbstractSource> get initializedSources => _initializedSources.toList(growable: false);
 
-  MainDataProviderOptions _options;
   List<AbstractSource> _initializedSources = <AbstractSource>[];
 
   /// MainDataProvider initialization
   MainDataProvider({
     required MainDataProviderOptions options,
-  }) : _options = options {
+  }) {
     _instance = this;
 
     _initSources(options);
