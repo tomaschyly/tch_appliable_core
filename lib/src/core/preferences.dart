@@ -9,6 +9,9 @@ final Map<String, double> doublePrefs = {};
 /// String values, it is for init, defaults and in memory storage
 final Map<String, String> stringPrefs = {};
 
+/// Bool values, it is for init, defaults and in memory storage
+final Map<String, bool> boolPrefs = {};
+
 /// Shorthand for int value from prefs
 int? prefsInt(String key) => Preferences.instance?.getInt(key);
 
@@ -33,6 +36,15 @@ Future<bool> prefsRemoveInt(String key) => Preferences.instance?.removeInt(key) 
 /// Shorthand to remove double value from prefs
 Future<bool> prefsRemoveDouble(String key) => Preferences.instance?.removeDouble(key) ?? Future.value(false);
 
+/// Shorthand for bool value from prefs
+bool? prefsBool(String key) => Preferences.instance?.getBool(key);
+
+/// Shorthand to save bool value to prefs
+Future<bool> prefsSetBool(String key, bool value) => Preferences.instance?.setBool(key, value) ?? Future.value(false);
+
+/// Shorthand to remove bool value from prefs
+Future<bool> prefsRemoveBool(String key) => Preferences.instance?.removeBool(key) ?? Future.value(false);
+
 /// Shorthand to remove string value from prefs
 Future<bool> prefsRemoveString(String key) => Preferences.instance?.removeString(key) ?? Future.value(false);
 
@@ -40,12 +52,14 @@ class PreferencesOptions {
   final Map<String, int>? intPrefs;
   final Map<String, double>? doublePrefs;
   final Map<String, String>? stringPrefs;
+  final Map<String, bool>? boolPrefs;
 
   /// PreferencesOptions initialization
   PreferencesOptions({
     this.intPrefs,
     this.doublePrefs,
     this.stringPrefs,
+    this.boolPrefs,
   });
 }
 
@@ -55,7 +69,7 @@ class Preferences {
   static Preferences? _instance;
 
   final PreferencesOptions _options;
-  SharedPreferences? _prefs;
+  late SharedPreferences _prefs;
 
   /// Preferences initialization
   Preferences({
@@ -65,91 +79,111 @@ class Preferences {
   }
 
   /// Initialize preferences from their storage
-  Future init() async {
+  Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
 
     final theOptionsIntPrefs = _options.intPrefs;
     if (theOptionsIntPrefs != null) {
       for (String key in theOptionsIntPrefs.keys) {
-        intPrefs[key] = _prefs?.getInt(key) ?? theOptionsIntPrefs[key]!;
+        intPrefs[key] = _prefs.getInt(key) ?? theOptionsIntPrefs[key]!;
       }
     }
 
     final theOptionsDoublePrefs = _options.doublePrefs;
     if (theOptionsDoublePrefs != null) {
       for (String key in theOptionsDoublePrefs.keys) {
-        doublePrefs[key] = _prefs?.getDouble(key) ?? theOptionsDoublePrefs[key]!;
+        doublePrefs[key] = _prefs.getDouble(key) ?? theOptionsDoublePrefs[key]!;
       }
     }
 
     final theOptionsStringPrefs = _options.stringPrefs;
     if (theOptionsStringPrefs != null) {
       for (String key in theOptionsStringPrefs.keys) {
-        stringPrefs[key] = _prefs?.getString(key) ?? theOptionsStringPrefs[key]!;
+        stringPrefs[key] = _prefs.getString(key) ?? theOptionsStringPrefs[key]!;
+      }
+    }
+
+    final theOptionsBoolPrefs = _options.boolPrefs;
+    if (theOptionsBoolPrefs != null) {
+      for (String key in theOptionsBoolPrefs.keys) {
+        boolPrefs[key] = _prefs.getBool(key) ?? theOptionsBoolPrefs[key]!;
       }
     }
   }
 
   /// Get int value for key from prefs
   int? getInt(String key) {
-    return intPrefs[key] ?? _prefs?.getInt(key);
+    return intPrefs[key] ?? _prefs.getInt(key);
   }
 
   /// Get double value for key from prefs
   double? getDouble(String key) {
-    return doublePrefs[key] ?? _prefs?.getDouble(key);
+    return doublePrefs[key] ?? _prefs.getDouble(key);
   }
 
   /// Get string value for key from prefs
   String? getString(String key) {
-    return stringPrefs[key] ?? _prefs?.getString(key);
+    return stringPrefs[key] ?? _prefs.getString(key);
+  }
+
+  /// Get bool value for key from prefs
+  bool? getBool(String key) {
+    return boolPrefs[key] ?? _prefs.getBool(key);
   }
 
   /// Set int value for key to prefs
   Future<bool> setInt(String key, int value) {
     intPrefs[key] = value;
 
-    return _prefs?.setInt(key, value) ?? Future.value(false);
+    return _prefs.setInt(key, value);
   }
 
   /// Set double value for key to prefs
   Future<bool> setDouble(String key, double value) {
     doublePrefs[key] = value;
 
-    return _prefs?.setDouble(key, value) ?? Future.value(false);
+    return _prefs.setDouble(key, value);
   }
 
   /// Set string value for key to prefs
   Future<bool> setString(String key, String value) {
     stringPrefs[key] = value;
 
-    return _prefs?.setString(key, value) ?? Future.value(false);
+    return _prefs.setString(key, value);
+  }
+
+  /// Set bool value for key to prefs
+  Future<bool> setBool(String key, bool value) {
+    boolPrefs[key] = value;
+
+    return _prefs.setBool(key, value);
   }
 
   /// Remove int value for key
   Future<bool> removeInt(String key) {
-    if (intPrefs.containsKey(key)) {
-      intPrefs.remove(key);
-    }
+    intPrefs.remove(key);
 
-    return _prefs?.remove(key) ?? Future.value(false);
+    return _prefs.remove(key);
   }
 
   /// Remove double value for key
   Future<bool> removeDouble(String key) {
-    if (doublePrefs.containsKey(key)) {
-      doublePrefs.remove(key);
-    }
+    doublePrefs.remove(key);
 
-    return _prefs?.remove(key) ?? Future.value(false);
+    return _prefs.remove(key);
   }
 
   /// Remove string value for key
   Future<bool> removeString(String key) {
-    if (stringPrefs.containsKey(key)) {
-      stringPrefs.remove(key);
-    }
+    stringPrefs.remove(key);
 
-    return _prefs?.remove(key) ?? Future.value(false);
+    return _prefs.remove(key);
+  }
+
+  /// Remove bool value for key
+  Future<bool> removeBool(String key) {
+    boolPrefs.remove(key);
+
+    return _prefs.remove(key);
   }
 }
