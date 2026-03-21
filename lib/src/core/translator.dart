@@ -35,7 +35,7 @@ class Translator {
   final HtmlUnescape _htmlUnescape = HtmlUnescape();
   final TranslatorOptions _options;
   String _currentLanguage = 'en';
-  Map<String, String> _currentTranslations = Map();
+  Map<String, String> _currentTranslations = {};
 
   /// Translator initialization
   Translator({
@@ -53,24 +53,24 @@ class Translator {
       if (initialLanguage != null) {
         _currentLanguage = langSupported(initialLanguage);
 
-        await initTranslations(context);
+        await initTranslations();
 
         return;
       }
     }
 
-    final Locale? locale = Localizations.localeOf(context);
-    final String fullCode = '${locale?.languageCode}_${locale?.countryCode}';
+    final Locale locale = Localizations.localeOf(context);
+    final String fullCode = '${locale.languageCode}_${locale.countryCode}';
 
     final hasCodeWithCountry = langSupportedStrict(fullCode);
 
     if (hasCodeWithCountry) {
       _currentLanguage = fullCode;
     } else {
-      _currentLanguage = langSupported(locale?.languageCode ?? '');
+      _currentLanguage = langSupported(locale.languageCode);
     }
 
-    await initTranslations(context);
+    await initTranslations();
   }
 
   /// Check if language code is supported in options, fallback to first supported language
@@ -83,20 +83,19 @@ class Translator {
     return languages.contains(languageCode);
   }
 
-  /// Initialize translations for language from assets JSON file
-  /// And change current Locale by Language
-  Future<void> initTranslations(BuildContext context, [String? language]) async {
-    final String theLanguage = language ?? _currentLanguage;
+  /// Initialize translations for current or given language from assets JSON file
+  Future<void> initTranslations([String? language]) async {
+    if (language != null) {
+      _currentLanguage = langSupported(language);
+    }
 
-    if (!languages.contains(theLanguage)) {
+    if (!languages.contains(_currentLanguage)) {
       throw Exception('Translator cannot initialize unsupported language');
     }
 
-    String json = await rootBundle.loadString('assets/translations/$theLanguage.json');
+    final String json = await rootBundle.loadString('assets/translations/$_currentLanguage.json');
 
-    Map<String, String> translations = Map<String, String>.from(jsonDecode(json));
-
-    _currentTranslations = translations;
+    _currentTranslations = Map<String, String>.from(jsonDecode(json));
 
     _options.onLanguageChange?.call(Locale(_currentLanguage));
   }
@@ -114,13 +113,13 @@ class Translator {
     return translated;
   }
 
-  /// Change current to new Language if supported in options
-  void changeLanguage(String language) {
-    if (languages.contains(language)) {
-      _currentLanguage = language;
-    } else {
-      _currentLanguage = languages.first;
-    }
+  /// Change to new Language, reload translations and notify locale change.
+  /// This replaces the old two-step pattern of calling changeLanguage() + initTranslations(context).
+  /// Migration: remove the initTranslations() call that followed changeLanguage() — it is now done internally.
+  Future<void> changeLanguage(String language) async {
+    _currentLanguage = langSupported(language);
+
+    await initTranslations();
   }
 
   /// Default DateFormat localized to current Language

@@ -26,6 +26,14 @@ class CoreApp extends AbstractStatefulWidget {
   final List<LocalizationsDelegate<dynamic>>? localizationsDelegates;
   final PreferencesOptions? preferencesOptions;
   final MainDataProviderOptions? mainDataProviderOptions;
+  final Color? color;
+  final ScrollBehavior? scrollBehavior;
+  final Duration? themeAnimationDuration;
+  final Curve? themeAnimationCurve;
+  final Map<ShortcutActivator, Intent>? shortcuts;
+  final Map<Type, Action<Intent>>? actions;
+  final Locale? Function(Locale?, Iterable<Locale>)? localeResolutionCallback;
+  final String? restorationScopeId;
 
   /// CoreApp initialization
   CoreApp({
@@ -49,6 +57,14 @@ class CoreApp extends AbstractStatefulWidget {
     this.localizationsDelegates,
     this.preferencesOptions,
     this.mainDataProviderOptions,
+    this.color,
+    this.scrollBehavior,
+    this.themeAnimationDuration,
+    this.themeAnimationCurve,
+    this.shortcuts,
+    this.actions,
+    this.localeResolutionCallback,
+    this.restorationScopeId,
   });
 
   /// Create state for widget
@@ -61,11 +77,11 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
 
   static late CoreAppState _instance;
 
-  ValueNotifier<bool> _initializeOnce = ValueNotifier(true);
+  final ValueNotifier<bool> _initializeOnce = ValueNotifier(true);
   bool _isForeground = true;
   bool _isOSDarkMode = false;
   ResponsiveScreen _responsiveScreen = ResponsiveScreen.UnDetermined;
-  final Map<String, List<ScreenMessage>> _messages = Map();
+  final Map<String, List<ScreenMessage>> _messages = {};
   Locale? _selectedLocale;
 
   /// State initialization
@@ -152,7 +168,13 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
           if (theNavigatorObservers != null) ...theNavigatorObservers,
         ],
         theme: darkMode ? (widget.darkTheme ?? widget.theme) : widget.theme,
-        // darkTheme: widget.darkTheme,
+        color: widget.color,
+        scrollBehavior: widget.scrollBehavior,
+        themeAnimationDuration: widget.themeAnimationDuration ?? kThemeAnimationDuration,
+        themeAnimationCurve: widget.themeAnimationCurve ?? Curves.linear,
+        shortcuts: widget.shortcuts,
+        actions: widget.actions,
+        restorationScopeId: widget.restorationScopeId,
         builder: (BuildContext context, Widget? child) {
           addPostFrameCallback((timeStamp) {
             determineOSThemeMode(context);
@@ -168,6 +190,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
           }
         },
         locale: _selectedLocale,
+        localeResolutionCallback: widget.localeResolutionCallback,
         localizationsDelegates: [
           ...GlobalMaterialLocalizations.delegates,
           if (theLocalizationsDelegates != null) ...theLocalizationsDelegates,
@@ -205,13 +228,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
   void didChangePlatformBrightness() {
     super.didChangePlatformBrightness();
 
-    final isOSDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
-
-    if (isOSDarkMode != _isOSDarkMode) {
-      _isOSDarkMode = isOSDarkMode;
-
-      setStateNotDisposed(() {});
-    }
+    determineOSThemeMode(context);
   }
 
   /// Determine if is OS Dark mode enabled
@@ -233,8 +250,8 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
   determineScreen(BuildContext context) {
     ResponsiveScreen responsiveScreen = determineResponsiveScreen(context);
 
-    if (this._responsiveScreen != responsiveScreen) {
-      this._responsiveScreen = responsiveScreen;
+    if (_responsiveScreen != responsiveScreen) {
+      _responsiveScreen = responsiveScreen;
 
       setStateNotDisposed(() {});
     }
@@ -395,9 +412,9 @@ class AppDataState extends InheritedWidget {
     return context.dependOnInheritedWidgetOfExactType<AppDataState>()?.snapshot as T?;
   }
 
-  /// Disable update notifications
+  /// Notify dependents to rebuild when snapshot changes
   @override
-  bool updateShouldNotify(InheritedWidget oldWidget) => false;
+  bool updateShouldNotify(InheritedWidget oldWidget) => true;
 }
 
 /// Shorthand to get AbstractAppDataStateSnapshot from context
