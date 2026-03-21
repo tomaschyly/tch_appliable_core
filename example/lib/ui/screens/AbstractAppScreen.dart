@@ -240,5 +240,7 @@ abstract class AbstractAppScreenState<T extends AbstractAppScreen> extends Abstr
         );
       }
     }
+
+    return null;
   }
 }

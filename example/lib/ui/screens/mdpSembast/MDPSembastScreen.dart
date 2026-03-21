@@ -5,7 +5,6 @@ import 'package:example/model/dataTasks/DeleteSembastRecordDataTask.dart';
 import 'package:example/model/dataTasks/DeleteSembastRecordsDataTask.dart';
 import 'package:example/ui/screens/AbstractAppScreen.dart';
 import 'package:example/ui/screens/mdpSembast/MDPSembastRecordScreen.dart';
-import 'package:flutter/material.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class MDPSembastScreen extends AbstractAppScreen {

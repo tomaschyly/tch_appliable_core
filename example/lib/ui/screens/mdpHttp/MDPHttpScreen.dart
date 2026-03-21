@@ -26,7 +26,7 @@ class _MDPHttpScreenState extends AbstractAppScreenState<MDPHttpScreen> {
             methods: [HttpRecords.METHOD],
           );
         },
-        icon: SvgPicture.asset('images/arrows-rotate-solid.svg', color: Colors.black),
+        icon: SvgPicture.asset('images/arrows-rotate-solid.svg', colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn)),
       ),
     ];
 
