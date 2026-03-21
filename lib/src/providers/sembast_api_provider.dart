@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 import 'package:tch_appliable_core/src/model/data_model.dart';
 import 'package:tch_appliable_core/utils/debouncer.dart';
