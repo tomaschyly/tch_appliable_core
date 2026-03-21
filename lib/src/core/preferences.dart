@@ -1,17 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Int values, it is for init, defaults and in memory storage
-final Map<String, int> intPrefs = {};
-
-/// Double values, it is for init, defaults and in memory storage
-final Map<String, double> doublePrefs = {};
-
-/// String values, it is for init, defaults and in memory storage
-final Map<String, String> stringPrefs = {};
-
-/// Bool values, it is for init, defaults and in memory storage
-final Map<String, bool> boolPrefs = {};
-
 /// Shorthand for int value from prefs
 int? prefsInt(String key) => Preferences.instance?.getInt(key);
 
@@ -70,6 +58,10 @@ class Preferences {
 
   final PreferencesOptions _options;
   late SharedPreferences _prefs;
+  final Map<String, int> _intPrefs = {};
+  final Map<String, double> _doublePrefs = {};
+  final Map<String, String> _stringPrefs = {};
+  final Map<String, bool> _boolPrefs = {};
 
   /// Preferences initialization
   Preferences({
@@ -85,104 +77,104 @@ class Preferences {
     final theOptionsIntPrefs = _options.intPrefs;
     if (theOptionsIntPrefs != null) {
       for (String key in theOptionsIntPrefs.keys) {
-        intPrefs[key] = _prefs.getInt(key) ?? theOptionsIntPrefs[key]!;
+        _intPrefs[key] = _prefs.getInt(key) ?? theOptionsIntPrefs[key]!;
       }
     }
 
     final theOptionsDoublePrefs = _options.doublePrefs;
     if (theOptionsDoublePrefs != null) {
       for (String key in theOptionsDoublePrefs.keys) {
-        doublePrefs[key] = _prefs.getDouble(key) ?? theOptionsDoublePrefs[key]!;
+        _doublePrefs[key] = _prefs.getDouble(key) ?? theOptionsDoublePrefs[key]!;
       }
     }
 
     final theOptionsStringPrefs = _options.stringPrefs;
     if (theOptionsStringPrefs != null) {
       for (String key in theOptionsStringPrefs.keys) {
-        stringPrefs[key] = _prefs.getString(key) ?? theOptionsStringPrefs[key]!;
+        _stringPrefs[key] = _prefs.getString(key) ?? theOptionsStringPrefs[key]!;
       }
     }
 
     final theOptionsBoolPrefs = _options.boolPrefs;
     if (theOptionsBoolPrefs != null) {
       for (String key in theOptionsBoolPrefs.keys) {
-        boolPrefs[key] = _prefs.getBool(key) ?? theOptionsBoolPrefs[key]!;
+        _boolPrefs[key] = _prefs.getBool(key) ?? theOptionsBoolPrefs[key]!;
       }
     }
   }
 
   /// Get int value for key from prefs
   int? getInt(String key) {
-    return intPrefs[key] ?? _prefs.getInt(key);
+    return _intPrefs[key] ?? _prefs.getInt(key);
   }
 
   /// Get double value for key from prefs
   double? getDouble(String key) {
-    return doublePrefs[key] ?? _prefs.getDouble(key);
+    return _doublePrefs[key] ?? _prefs.getDouble(key);
   }
 
   /// Get string value for key from prefs
   String? getString(String key) {
-    return stringPrefs[key] ?? _prefs.getString(key);
+    return _stringPrefs[key] ?? _prefs.getString(key);
   }
 
   /// Get bool value for key from prefs
   bool? getBool(String key) {
-    return boolPrefs[key] ?? _prefs.getBool(key);
+    return _boolPrefs[key] ?? _prefs.getBool(key);
   }
 
   /// Set int value for key to prefs
   Future<bool> setInt(String key, int value) {
-    intPrefs[key] = value;
+    _intPrefs[key] = value;
 
     return _prefs.setInt(key, value);
   }
 
   /// Set double value for key to prefs
   Future<bool> setDouble(String key, double value) {
-    doublePrefs[key] = value;
+    _doublePrefs[key] = value;
 
     return _prefs.setDouble(key, value);
   }
 
   /// Set string value for key to prefs
   Future<bool> setString(String key, String value) {
-    stringPrefs[key] = value;
+    _stringPrefs[key] = value;
 
     return _prefs.setString(key, value);
   }
 
   /// Set bool value for key to prefs
   Future<bool> setBool(String key, bool value) {
-    boolPrefs[key] = value;
+    _boolPrefs[key] = value;
 
     return _prefs.setBool(key, value);
   }
 
   /// Remove int value for key
   Future<bool> removeInt(String key) {
-    intPrefs.remove(key);
+    _intPrefs.remove(key);
 
     return _prefs.remove(key);
   }
 
   /// Remove double value for key
   Future<bool> removeDouble(String key) {
-    doublePrefs.remove(key);
+    _doublePrefs.remove(key);
 
     return _prefs.remove(key);
   }
 
   /// Remove string value for key
   Future<bool> removeString(String key) {
-    stringPrefs.remove(key);
+    _stringPrefs.remove(key);
 
     return _prefs.remove(key);
   }
 
   /// Remove bool value for key
   Future<bool> removeBool(String key) {
-    boolPrefs.remove(key);
+    _boolPrefs.remove(key);
 
     return _prefs.remove(key);
   }
