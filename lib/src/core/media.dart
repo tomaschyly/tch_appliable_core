@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -32,6 +32,7 @@ class ImagesDirectoryImageWidget extends StatelessWidget {
 
   /// ImagesDirectoryImageWidget initialization
   ImagesDirectoryImageWidget({
+    super.key,
     required this.image,
     this.fit,
   });
@@ -58,7 +59,7 @@ class ImagesDirectoryImageWidget extends StatelessWidget {
           );
         }
 
-        return Container();
+        return const SizedBox.shrink();
       },
     );
   }
