@@ -9,34 +9,26 @@ import 'package:tch_appliable_core/tch_appliable_core.dart';
 class AppScreenStateOptions extends AbstractScreenOptions {
   /// AppScreenStateOptions initialization for default app state
   AppScreenStateOptions.basic({
-    required String screenName,
-    required String title,
-  }) : super.basic(
-          screenName: screenName,
-          title: title,
-        ) {
+    required super.screenName,
+    required super.title,
+  }) : super.basic() {
     optionsBuildPreProcessor = optionsBuildPreProcess;
   }
 
   /// AppScreenStateOptions initialization for state with Drawer
   AppScreenStateOptions.drawer({
-    required String screenName,
-    required String title,
-  }) : super.basic(
-          screenName: screenName,
-          title: title,
-        ) {
+    required super.screenName,
+    required super.title,
+  }) : super.basic() {
     optionsBuildPreProcessor = optionsBuildPreProcess;
 
     drawerOptions = <DrawerOption>[
       DrawerOption(
         onSelect: (BuildContext context) {
-          pushNamedNewStack(context, HomeScreen.ROUTE, arguments: <String, String>{'router-fade-animation': '1'});
+          goNamedV2(context, HomeScreen.ROUTE);
         },
         isSelected: (BuildContext context) {
-          final RoutingArguments? arguments = RoutingArguments.of(context);
-
-          return arguments?.route == HomeScreen.ROUTE;
+          return context.routingArgumentsV2?.route == HomeScreen.ROUTE;
         },
         title: Text(
           tt('home.screen.title'),
@@ -44,12 +36,10 @@ class AppScreenStateOptions extends AbstractScreenOptions {
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
-          pushNamedNewStack(context, MDPSQLiteScreen.ROUTE, arguments: <String, String>{'router-fade-animation': '1'});
+          goNamedV2(context, MDPSQLiteScreen.ROUTE);
         },
         isSelected: (BuildContext context) {
-          final RoutingArguments? arguments = RoutingArguments.of(context);
-
-          return arguments?.route == MDPSQLiteScreen.ROUTE;
+          return context.routingArgumentsV2?.route == MDPSQLiteScreen.ROUTE;
         },
         title: Text(
           tt('mdpsqlite.screen.title'),
@@ -57,12 +47,10 @@ class AppScreenStateOptions extends AbstractScreenOptions {
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
-          pushNamedNewStack(context, MDPHttpScreen.ROUTE, arguments: <String, String>{'router-fade-animation': '1'});
+          goNamedV2(context, MDPHttpScreen.ROUTE);
         },
         isSelected: (BuildContext context) {
-          final RoutingArguments? arguments = RoutingArguments.of(context);
-
-          return arguments?.route == MDPHttpScreen.ROUTE;
+          return context.routingArgumentsV2?.route == MDPHttpScreen.ROUTE;
         },
         title: Text(
           tt('mdphttp.screen.title'),
@@ -70,12 +58,10 @@ class AppScreenStateOptions extends AbstractScreenOptions {
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
-          pushNamedNewStack(context, MDPSembastScreen.ROUTE, arguments: <String, String>{'router-fade-animation': '1'});
+          goNamedV2(context, MDPSembastScreen.ROUTE);
         },
         isSelected: (BuildContext context) {
-          final RoutingArguments? arguments = RoutingArguments.of(context);
-
-          return arguments?.route == MDPSembastScreen.ROUTE;
+          return context.routingArgumentsV2?.route == MDPSembastScreen.ROUTE;
         },
         title: Text(
           tt('mdpsembast.screen.title'),
@@ -83,12 +69,10 @@ class AppScreenStateOptions extends AbstractScreenOptions {
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
-          pushNamedNewStack(context, MDPMockupScreen.ROUTE, arguments: <String, String>{'router-fade-animation': '1'});
+          goNamedV2(context, MDPMockupScreen.ROUTE);
         },
         isSelected: (BuildContext context) {
-          final RoutingArguments? arguments = RoutingArguments.of(context);
-
-          return arguments?.route == MDPMockupScreen.ROUTE;
+          return context.routingArgumentsV2?.route == MDPMockupScreen.ROUTE;
         },
         title: Text(
           tt('mdpmockup.screen.title'),
@@ -112,7 +96,9 @@ class AppScreenStateOptions extends AbstractScreenOptions {
   }
 }
 
-abstract class AbstractAppScreen extends AbstractResponsiveScreen {}
+abstract class AbstractAppScreen extends AbstractResponsiveScreen {
+  AbstractAppScreen({super.key});
+}
 
 abstract class AbstractAppScreenState<T extends AbstractAppScreen> extends AbstractResponsiveScreenState<T> {
   /// Create default AppBar
@@ -159,7 +145,7 @@ abstract class AbstractAppScreenState<T extends AbstractAppScreen> extends Abstr
                   final theComplexIcon = option.complexIcon;
 
                   return IconButtonWidget(
-                    icon: (theComplexIcon != null ? theComplexIcon : theIcon) ?? Container(),
+                    icon: (theComplexIcon ?? theIcon) ?? const SizedBox.shrink(),
                     onPressed: () {
                       option.onTap!(context);
                     },
@@ -173,10 +159,12 @@ abstract class AbstractAppScreenState<T extends AbstractAppScreen> extends Abstr
   }
 
   /// Create default BottomNavigationBar
+  @override
   @protected
   BottomNavigationBar? createBottomBar(BuildContext context) => null;
 
   /// Create default Drawer
+  @override
   @protected
   Widget? createDrawer(BuildContext context) {
     final theDrawerOptions = options.drawerOptions;
@@ -184,38 +172,17 @@ abstract class AbstractAppScreenState<T extends AbstractAppScreen> extends Abstr
     if (theDrawerOptions != null && theDrawerOptions.isNotEmpty) {
       final theme = Theme.of(context);
 
-      final drawerList = Container(
+      final drawerList = SizedBox(
         width: options.drawerIsPermanentlyVisible ? 304 : null,
-        color: theme.primaryColorDark,
-        child: ListView(padding: EdgeInsets.zero, children: [
-          Container(height: MediaQuery.of(context).padding.top),
+        child: ColoredBox(
+          color: theme.primaryColorDark,
+          child: ListView(padding: EdgeInsets.zero, children: [
+            SizedBox(height: MediaQuery.of(context).padding.top),
           ...theDrawerOptions
               .map(
                 (DrawerOption option) => Material(
                   color: option.isSelected(context) ? theme.primaryColor : theme.primaryColorDark,
                   child: InkWell(
-                    child: Container(
-                      height: 48,
-                      padding: option.icon != null ? const EdgeInsets.only(right: 16) : const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          if (option.icon != null)
-                            Container(
-                              width: 48,
-                              height: 48,
-                              child: Center(
-                                child: Container(
-                                  width: 24,
-                                  height: 24,
-                                  child: option.icon,
-                                ),
-                              ),
-                            ),
-                          option.title!,
-                        ],
-                      ),
-                    ),
                     onTap: !option.isSelected(context)
                         ? () {
                             if (!options.drawerIsPermanentlyVisible) {
@@ -225,11 +192,35 @@ abstract class AbstractAppScreenState<T extends AbstractAppScreen> extends Abstr
                             option.onSelect(context);
                           }
                         : null,
+                    child: SizedBox(
+                      height: 48,
+                      child: Padding(
+                        padding: option.icon != null ? const EdgeInsets.only(right: 16) : const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            if (option.icon != null)
+                              SizedBox(
+                                width: 48,
+                                height: 48,
+                                child: Center(
+                                  child: SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: option.icon,
+                                  ),
+                                ),
+                              ),
+                            option.title!,
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               )
-              .toList(),
-        ]),
+          ]),
+        ),
       );
 
       if (options.drawerIsPermanentlyVisible) {

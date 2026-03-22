@@ -17,8 +17,8 @@ class TextFormFieldWidget extends StatefulWidget {
   final FormFieldValidator<String>? validator;
 
   /// TextFormFieldWidget initialization
-  TextFormFieldWidget({
-    Key? key,
+  const TextFormFieldWidget({
+    super.key,
     required this.controller,
     this.autofocus = false,
     this.focusNode,
@@ -31,7 +31,7 @@ class TextFormFieldWidget extends StatefulWidget {
     this.label,
     this.lines = 1,
     this.validator,
-  }) : super(key: key);
+  });
 
   /// Create state for widget
   @override
@@ -61,7 +61,7 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> with SingleTi
 
     return AnimatedSize(
       duration: kThemeAnimationDuration,
-      child: Container(
+      child: SizedBox(
         width: 576,
         child: TextFormField(
           autofocus: widget.autofocus,
