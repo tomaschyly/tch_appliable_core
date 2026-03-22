@@ -16,6 +16,7 @@
 * `super.key` added to remaining widget/provider constructors (`AppDataState`, `ScreenDataState`, `RestApiProvider`, `SembastApiProvider`, `LoadingItemWidget`, `LoadingItemFullScreenWidget`)
 * `.forEach` lambdas replaced with `for` loops throughout `RestApiClient` and `SembastApiClient`
 * `ScreenMessage` initializer list: removed redundant `this.` prefix
+* `CoreApp` V2 mode: fixed `Translator` not initialized before first screen build — initialization overlay now renders without GoRouter child, preventing route `State` creation until after `translator.init()` completes
 
 ## [0.36.0] - 21.3.2026
 
