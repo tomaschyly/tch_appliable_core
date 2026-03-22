@@ -8,7 +8,7 @@ import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:sembast/sembast.dart' as Sembast;
 import 'package:sembast/sembast_io.dart';
-import 'package:sqflite/sqflite.dart' as SQLite;
+import 'package:sqflite_common_ffi/sqflite_ffi.dart' as SQLite;
 import 'package:tch_appliable_core/src/providers/mainDataProvider/data_request.dart';
 import 'package:tch_appliable_core/src/providers/mainDataProvider/data_task.dart';
 import 'package:tch_appliable_core/src/providers/mainDataProvider/main_data_source.dart';
@@ -1110,6 +1110,9 @@ class SQLiteSource extends AbstractSource {
     required SQLiteOptions options,
   }) : _options = options {
     state = ValueNotifier(MainDataProviderSourceState.Ready);
+
+    SQLite.sqfliteFfiInit();
+    SQLite.databaseFactory = SQLite.databaseFactoryFfi;
   }
 
   /// Create Database connection and init tables structure
