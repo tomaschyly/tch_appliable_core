@@ -40,5 +40,6 @@ class Boundary {
       arguments['router-boundary-y'] != null;
 
   /// Convert the object into string
+  @override
   String toString() => 'Boundary: $width $height $x $y';
 }

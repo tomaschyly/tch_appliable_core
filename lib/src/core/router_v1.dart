@@ -81,7 +81,7 @@ extension BuildContextRoutingExtension on BuildContext {
 extension StringExtension on String {
   /// Convert String into RoutingArguments
   RoutingArguments? get routingArguments {
-    if (this.isEmpty) {
+    if (isEmpty) {
       return null;
     }
 

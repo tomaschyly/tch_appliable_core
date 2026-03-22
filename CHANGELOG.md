@@ -1,3 +1,7 @@
+## [0.37.0+1] - 22.3.2026
+
+* Pub.dev score improvements: fixed lint issues across core and provider files — `@override` annotations added, router constructors use `super` parameters, `ImagesDirectoryImageWidget` constructor corrected, `translator.dart` mounted-check log added, `_HTTPSourceResponse` made private, `AppDataState` snapshot positioning corrected
+
 ## [0.37.0] - 22.3.2026
 
 * **Warning:** Breaking changes — `StatefulWidgetState`, `ResponsiveScreen`, and `MainDataProviderSourceState` enum values renamed to `lowerCamelCase` (e.g. `NotInitialized` → `notInitialized`, `UnDetermined` → `unDetermined`, `UnAvailable` → `unAvailable`)

@@ -17,14 +17,11 @@ class BoundaryPageRoute<T> extends MaterialPageRoute<T> {
 
   /// BoundaryPageRoute initialization
   BoundaryPageRoute({
-    required WidgetBuilder builder,
+    required super.builder,
     required this.boundary,
-    RouteSettings? settings,
+    super.settings,
     this.borderRadius,
-  }) : super(
-          builder: builder,
-          settings: settings,
-        );
+  });
 
   /// Build transitions to and from this Route
   @override

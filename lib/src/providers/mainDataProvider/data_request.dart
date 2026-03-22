@@ -44,8 +44,8 @@ class DataRequest<T extends DataModel> {
     Map<String, dynamic>? parameters,
     required this.processResult,
     RequestPagination? pagination,
-  })  : this.parameters = parameters ?? Map(),
-        this.pagination = pagination ?? RequestPagination();
+  })  : parameters = parameters ?? {},
+        pagination = pagination ?? RequestPagination();
 }
 
 class HTTPRequestOptions {

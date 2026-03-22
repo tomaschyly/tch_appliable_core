@@ -6,12 +6,9 @@ class NoAnimationPageRoute<T> extends MaterialPageRoute<T> {
 
   /// NoAnimationPageRoute initialization
   NoAnimationPageRoute({
-    required WidgetBuilder builder,
-    RouteSettings? settings,
-  }) : super(
-          builder: builder,
-          settings: settings,
-        );
+    required super.builder,
+    super.settings,
+  });
 
   /// Build transitions to and from this Route
   @override

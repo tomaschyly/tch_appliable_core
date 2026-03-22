@@ -31,7 +31,7 @@ class ImagesDirectoryImageWidget extends StatelessWidget {
   final BoxFit? fit;
 
   /// ImagesDirectoryImageWidget initialization
-  ImagesDirectoryImageWidget({
+  const ImagesDirectoryImageWidget({
     super.key,
     required this.image,
     this.fit,

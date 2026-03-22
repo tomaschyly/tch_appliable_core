@@ -59,6 +59,11 @@ class Translator {
       }
     }
 
+    if (!context.mounted) {
+      debugPrint('Translator - init - Context is not mounted');
+      return;
+    }
+
     final Locale locale = Localizations.localeOf(context);
     final String fullCode = '${locale.languageCode}_${locale.countryCode}';
 

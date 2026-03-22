@@ -3,12 +3,9 @@ import 'package:flutter/material.dart';
 class FadeAnimationPageRoute<T> extends MaterialPageRoute<T> {
   /// FadeAnimationPageRoute initialization
   FadeAnimationPageRoute({
-    required WidgetBuilder builder,
-    RouteSettings? settings,
-  }) : super(
-          builder: builder,
-          settings: settings,
-        );
+    required super.builder,
+    super.settings,
+  });
 
   /// Build transitions to and from this Route
   @override

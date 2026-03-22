@@ -42,13 +42,13 @@ class MainDataSource {
   int get mockupMinDelayMilliseconds {
     int minDelayMilliseconds = 0;
 
-    _dataRequests.forEach((dataRequest) {
+    for (final dataRequest in _dataRequests) {
       final theMockUpRequestOptions = dataRequest.mockUpRequestOptions;
 
       if (theMockUpRequestOptions != null) {
         minDelayMilliseconds += theMockUpRequestOptions.minDelayMilliseconds;
       }
-    });
+    }
 
     return minDelayMilliseconds;
   }
@@ -57,13 +57,13 @@ class MainDataSource {
   int get mockupMaxDelayMilliseconds {
     int maxDelayMilliseconds = 0;
 
-    _dataRequests.forEach((dataRequest) {
+    for (final dataRequest in _dataRequests) {
       final theMockUpRequestOptions = dataRequest.mockUpRequestOptions;
 
       if (theMockUpRequestOptions != null) {
         maxDelayMilliseconds += theMockUpRequestOptions.maxDelayMilliseconds;
       }
-    });
+    }
 
     return maxDelayMilliseconds;
   }
@@ -97,7 +97,7 @@ class MainDataSource {
     dynamic results, {
     bool lastHasNext = false,
   }) {
-    _dataRequests.forEach((dataRequest) {
+    for (final dataRequest in _dataRequests) {
       if (dataRequest.identifier == identifier) {
         if (lastHasNext) {
           dataRequest.lastHasNextPageRawResults = results;
@@ -105,14 +105,14 @@ class MainDataSource {
           dataRequest.rawResults = results;
         }
       }
-    });
+    }
   }
 
   /// Set response or already processed result from source as result
   void setResult(String identifier, Map<String, dynamic>? result, SourceException? exception) {
     final List<DataRequest> dataRequests = List.from(_dataRequests);
 
-    dataRequests.forEach((dataRequest) {
+    for (final dataRequest in dataRequests) {
       if (dataRequest.identifier == identifier) {
         SourceException? resultException = exception;
 
@@ -129,7 +129,7 @@ class MainDataSource {
 
         dataRequest.error = resultException;
       }
-    });
+    }
 
     results.value = dataRequests;
   }
@@ -166,7 +166,7 @@ class MainDataSource {
 
   /// Request DataProvider to load next page of DataRequest
   /// ListDataWidget & pagination work with single DataRequest per MainDataSource
-  requestNextPageOfRequest<R>() {
+  void requestNextPageOfRequest<R>() {
     final List<DataRequest> dataRequests = List.from(_dataRequests);
 
     for (DataRequest dataRequest in dataRequests) {
