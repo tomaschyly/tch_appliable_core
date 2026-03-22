@@ -1,4 +1,5 @@
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_appliable_core/utils/widget.dart';
 
@@ -15,7 +16,8 @@ class CoreApp extends AbstractStatefulWidget {
     required WidgetBuilder builder,
     RouteSettings? settings,
   })? onGenerateInitialRoute;
-  final RouteFactory onGenerateRoute;
+  final RouteFactory? onGenerateRoute;
+  final GoRouter? router;
   final AbstractAppDataStateSnapshot snapshot;
   final List<NavigatorObserver>? navigatorObservers;
   final ThemeData? theme;
@@ -46,7 +48,8 @@ class CoreApp extends AbstractStatefulWidget {
     required this.initialScreenRoute,
     this.initialScreenRouteArguments,
     this.onGenerateInitialRoute,
-    required this.onGenerateRoute,
+    this.onGenerateRoute,
+    this.router,
     required this.snapshot,
     this.navigatorObservers,
     this.theme,
@@ -65,7 +68,10 @@ class CoreApp extends AbstractStatefulWidget {
     this.actions,
     this.localeResolutionCallback,
     this.restorationScopeId,
-  });
+  }) : assert(
+          (onGenerateRoute != null) != (router != null),
+          'Provide either onGenerateRoute (V1) or router (GoRouter V2), not both or neither.',
+        );
 
   /// Create state for widget
   @override
@@ -78,6 +84,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
   static late CoreAppState _instance;
 
   final ValueNotifier<bool> _initializeOnce = ValueNotifier(true);
+  final ValueNotifier<bool> _v2InitComplete = ValueNotifier(false);
   bool _isForeground = true;
   bool _isOSDarkMode = false;
   ResponsiveScreen _responsiveScreen = ResponsiveScreen.unDetermined;
@@ -108,6 +115,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
     final theNavigatorObservers = widget.navigatorObservers;
     final theTranslatorOptions = widget.translatorOptions;
     final theLocalizationsDelegates = widget.localizationsDelegates;
+    final theRouter = widget.router;
 
     if (theTranslatorOptions != null && theTranslatorOptions.onLanguageChange == null) {
       theTranslatorOptions.onLanguageChange = (Locale locale) {
@@ -123,6 +131,84 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
       final darkModeType = prefsInt(theDarkThemePrefsKey) == null ? DarkMode.Automatic : DarkMode.values[prefsInt(theDarkThemePrefsKey)!];
 
       darkMode = darkModeType == DarkMode.Automatic ? darkMode : darkModeType == DarkMode.Enabled;
+    }
+
+    final snapshot = widget.snapshot
+      ..isForeground = _isForeground
+      ..isOSDarkMode = _isOSDarkMode
+      ..isDarkMode = darkMode
+      ..responsiveScreen = _responsiveScreen
+      ..addScreenMessage = addScreenMessage
+      ..messages = _messages;
+
+    if (theRouter != null) {
+      return AppDataState(
+        child: MaterialApp.router(
+          debugShowCheckedModeBanner: widget.debugShowCheckedModeBanner,
+          title: widget.title,
+          routerConfig: theRouter,
+          theme: darkMode ? (widget.darkTheme ?? widget.theme) : widget.theme,
+          color: widget.color,
+          scrollBehavior: widget.scrollBehavior,
+          themeAnimationDuration: widget.themeAnimationDuration ?? kThemeAnimationDuration,
+          themeAnimationCurve: widget.themeAnimationCurve ?? Curves.linear,
+          shortcuts: widget.shortcuts,
+          actions: widget.actions,
+          restorationScopeId: widget.restorationScopeId,
+          builder: (BuildContext context, Widget? child) {
+            addPostFrameCallback((timeStamp) {
+              determineOSThemeMode(context);
+              determineScreen(context);
+            });
+
+            Widget routerChild = child ?? SizedBox.shrink();
+
+            final theBuilder = widget.builder;
+            if (theBuilder != null) {
+              routerChild = theBuilder(context, routerChild);
+            }
+
+            return ValueListenableBuilder<bool>(
+              valueListenable: _v2InitComplete,
+              builder: (context, initComplete, _) {
+                if (!initComplete) {
+                  return Stack(
+                    children: [
+                      routerChild,
+                      Positioned.fill(
+                        child: _V2InitializationWidget(
+                          initializeOnce: _initializeOnce,
+                          initializationUi: widget.initializationUi,
+                          initializationMinDurationInMilliseconds: widget.initializationMinDurationInMilliseconds,
+                          onAppInitStart: widget.onAppInitStart,
+                          onAppInitEnd: widget.onAppInitEnd,
+                          initialScreenRoute: widget.initialScreenRoute,
+                          initialScreenRouteArguments: widget.initialScreenRouteArguments,
+                          translatorOptions: theTranslatorOptions,
+                          preferencesOptions: widget.preferencesOptions,
+                          mainDataProviderOptions: widget.mainDataProviderOptions,
+                          router: theRouter,
+                          v2InitComplete: _v2InitComplete,
+                        ),
+                      ),
+                    ],
+                  );
+                }
+
+                return routerChild;
+              },
+            );
+          },
+          locale: _selectedLocale,
+          localeResolutionCallback: widget.localeResolutionCallback,
+          localizationsDelegates: [
+            ...GlobalMaterialLocalizations.delegates,
+            if (theLocalizationsDelegates != null) ...theLocalizationsDelegates,
+          ],
+          supportedLocales: theTranslatorOptions?.supportedLocales ?? const <Locale>[Locale('en', 'US')],
+        ),
+        snapshot: snapshot,
+      );
     }
 
     return AppDataState(
@@ -178,7 +264,6 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
         builder: (BuildContext context, Widget? child) {
           addPostFrameCallback((timeStamp) {
             determineOSThemeMode(context);
-
             determineScreen(context);
           });
 
@@ -197,13 +282,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
         ],
         supportedLocales: theTranslatorOptions?.supportedLocales ?? const <Locale>[Locale('en', 'US')],
       ),
-      snapshot: widget.snapshot
-        ..isForeground = _isForeground
-        ..isOSDarkMode = _isOSDarkMode
-        ..isDarkMode = darkMode
-        ..responsiveScreen = _responsiveScreen
-        ..addScreenMessage = addScreenMessage
-        ..messages = _messages,
+      snapshot: snapshot,
     );
   }
 
@@ -393,6 +472,111 @@ class _InitializationScreen extends StatelessWidget {
         );
       } else {
         pushNamedNewStack(context, initialScreenRoute, arguments: initialScreenRouteArguments);
+      }
+    }
+  }
+}
+
+class _V2InitializationWidget extends StatelessWidget {
+  final ValueNotifier<bool> initializeOnce;
+  final Widget initializationUi;
+  final int initializationMinDurationInMilliseconds;
+  final Future<void> Function(BuildContext context)? onAppInitStart;
+  final Future<void> Function(BuildContext context)? onAppInitEnd;
+  final String initialScreenRoute;
+  final Map<String, String>? initialScreenRouteArguments;
+  final TranslatorOptions? translatorOptions;
+  final PreferencesOptions? preferencesOptions;
+  final MainDataProviderOptions? mainDataProviderOptions;
+  final GoRouter router;
+  final ValueNotifier<bool> v2InitComplete;
+
+  /// _V2InitializationWidget initialization
+  _V2InitializationWidget({
+    required this.initializeOnce,
+    required this.initializationUi,
+    required this.initializationMinDurationInMilliseconds,
+    this.onAppInitStart,
+    this.onAppInitEnd,
+    required this.initialScreenRoute,
+    this.initialScreenRouteArguments,
+    this.translatorOptions,
+    this.preferencesOptions,
+    this.mainDataProviderOptions,
+    required this.router,
+    required this.v2InitComplete,
+  });
+
+  /// Create view layout from widgets
+  @override
+  Widget build(BuildContext context) {
+    addPostFrameCallback((timeStamp) {
+      _appInit(context);
+    });
+
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      body: initializationUi,
+    );
+  }
+
+  /// Initialize resources before app is started
+  Future<void> _appInit(BuildContext context) async {
+    final bool initialize = initializeOnce.value;
+
+    initializeOnce.value = false;
+
+    if (initialize) {
+      final start = DateTime.now();
+
+      if (onAppInitStart != null) {
+        await onAppInitStart!(context);
+      }
+
+      final thePreferencesOptions = preferencesOptions;
+      if (thePreferencesOptions != null) {
+        final preferences = Preferences(options: thePreferencesOptions);
+
+        await preferences.init();
+      }
+
+      final theTranslatorOptions = translatorOptions;
+      if (theTranslatorOptions != null) {
+        final translator = Translator(options: theTranslatorOptions);
+
+        await translator.init(context);
+      }
+
+      final theMainDataProviderOptions = mainDataProviderOptions;
+      if (theMainDataProviderOptions != null) {
+        MainDataProvider(options: theMainDataProviderOptions);
+      }
+
+      if (onAppInitEnd != null) {
+        await onAppInitEnd!(context);
+      }
+
+      CoreAppState.instance._invalidateApp();
+
+      final diff = DateTime.now().difference(start);
+
+      void navigate() {
+        final args = initialScreenRouteArguments;
+        final location = args != null && args.isNotEmpty
+            ? Uri(path: initialScreenRoute, queryParameters: args).toString()
+            : initialScreenRoute;
+
+        router.go(location);
+        v2InitComplete.value = true;
+      }
+
+      if (diff.inMilliseconds < initializationMinDurationInMilliseconds) {
+        Future.delayed(
+          Duration(milliseconds: initializationMinDurationInMilliseconds - diff.inMilliseconds),
+          navigate,
+        );
+      } else {
+        navigate();
       }
     }
   }

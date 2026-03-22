@@ -73,6 +73,11 @@ class RoutingArguments {
   String? operator [](String key) => _query?[key];
 }
 
+extension BuildContextRoutingExtension on BuildContext {
+  /// Shorthand to get RoutingArguments from context
+  RoutingArguments? get routingArguments => RoutingArguments.of(this);
+}
+
 extension StringExtension on String {
   /// Convert String into RoutingArguments
   RoutingArguments? get routingArguments {
