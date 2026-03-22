@@ -114,8 +114,20 @@ class MainDataSource {
 
     dataRequests.forEach((dataRequest) {
       if (dataRequest.identifier == identifier) {
-        dataRequest.result = result != null ? dataRequest.processResult(result) : null;
-        dataRequest.error = exception;
+        SourceException? resultException = exception;
+
+        if (resultException == null && result != null) {
+          try {
+            dataRequest.result = dataRequest.processResult(result);
+          } catch (e) {
+            dataRequest.result = null;
+            resultException = SourceException(originalException: e);
+          }
+        } else {
+          dataRequest.result = null;
+        }
+
+        dataRequest.error = resultException;
       }
     });
 

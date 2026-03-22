@@ -1,5 +1,5 @@
 {
-    "record": [
+    "record_limit=20_page=1": [
         {
             "id": 1,
             "name": "John Doe",

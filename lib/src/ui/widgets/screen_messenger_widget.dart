@@ -24,9 +24,7 @@ class ScreenMessengerWidgetState extends AbstractStatefulWidgetState<ScreenMesse
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
-    final routingArguments = RoutingArguments.of(context)!;
-
-    if (routingArguments.isCurrent) {
+    if (_isCurrent(context)) {
       final AbstractAppDataStateSnapshot? snapshot = AppDataState.of(context);
       final ScreenMessage? message = snapshot?.getMessage(widget.options.screenName);
 
@@ -40,9 +38,7 @@ class ScreenMessengerWidgetState extends AbstractStatefulWidgetState<ScreenMesse
 
   /// Display message when already on current screen
   void onResume() {
-    final routingArguments = RoutingArguments.of(context)!;
-
-    if (routingArguments.isCurrent) {
+    if (_isCurrent(context)) {
       final AbstractAppDataStateSnapshot? snapshot = AppDataState.of(context);
       final ScreenMessage? message = snapshot?.getMessage(widget.options.screenName);
 
@@ -50,6 +46,11 @@ class ScreenMessengerWidgetState extends AbstractStatefulWidgetState<ScreenMesse
         widget.displayMessage(context, message);
       }
     }
+  }
+
+  /// Resolve isCurrent from V2 routing args, then V1 fallback, then true
+  bool _isCurrent(BuildContext context) {
+    return RoutingArgumentsV2.of(context)?.isCurrent ?? RoutingArguments.of(context)?.isCurrent ?? true;
   }
 }
 

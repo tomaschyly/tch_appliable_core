@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as p;
 import 'package:sembast/sembast.dart' as Sembast;
 import 'package:sembast/sembast_io.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart' as SQLite;
@@ -348,6 +348,9 @@ class MockUpSource extends AbstractSource {
     state = ValueNotifier(MainDataProviderSourceState.ready);
   }
 
+  /// Normalize flutter asset key to POSIX separators required by AssetBundle.
+  String _normalizeAssetKey(String value) => value.replaceAll('\\', '/');
+
   /// Get mockUp data for MainDataProviderSource, if not exists try to load from assets
   Future<Map<String, dynamic>> _sourceMockUpData(MainDataProviderSource source) async {
     Map<String, dynamic>? data = _mockUpData[source];
@@ -357,19 +360,20 @@ class MockUpSource extends AbstractSource {
 
       switch (source) {
         case MainDataProviderSource.HTTPClient:
-          assetPath = join(assetPath, 'HTTPClient.json');
+          assetPath = p.posix.join(assetPath, 'HTTPClient.json');
           break;
         case MainDataProviderSource.SQLite:
-          assetPath = join(assetPath, 'SQLite.json');
+          assetPath = p.posix.join(assetPath, 'SQLite.json');
           break;
         case MainDataProviderSource.Sembast:
-          assetPath = join(assetPath, 'Sembast.json');
+          assetPath = p.posix.join(assetPath, 'Sembast.json');
           break;
         default:
           throw Exception('Cannot init mockUp data for source $source');
       }
+      final String assetKey = _normalizeAssetKey(assetPath);
 
-      String assetData = await rootBundle.loadString(assetPath);
+      String assetData = await rootBundle.loadString(assetKey);
 
       _mockUpData[source] = jsonDecode(assetData);
 
@@ -382,7 +386,8 @@ class MockUpSource extends AbstractSource {
   /// Query data from mockup in memory data
   Future<dynamic> _query(MainDataProviderSource source, String identifier, [String? assetDataPath]) async {
     if (assetDataPath != null) {
-      String assetData = await rootBundle.loadString(assetDataPath);
+      final String assetKey = _normalizeAssetKey(assetDataPath);
+      String assetData = await rootBundle.loadString(assetKey);
 
       return jsonDecode(assetData);
     } else {
@@ -423,9 +428,11 @@ class MockUpSource extends AbstractSource {
         if (dataSource.identifiers.contains(dataRequest.identifier)) {
           dataSource.setResult(
             dataRequest.identifier,
-            <String, dynamic>{
-              'response': json,
-            },
+            exception == null
+                ? <String, dynamic>{
+                    'response': json,
+                  }
+                : null,
             exception,
           );
         }
@@ -443,9 +450,11 @@ class MockUpSource extends AbstractSource {
         if (dataSource.identifiers.contains(dataRequest.identifier)) {
           dataSource.setResult(
             dataRequest.identifier,
-            <String, dynamic>{
-              'list': results,
-            },
+            exception == null
+                ? <String, dynamic>{
+                    'list': results,
+                  }
+                : null,
             exception,
           );
         }
