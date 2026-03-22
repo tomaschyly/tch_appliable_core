@@ -81,7 +81,7 @@ class MainDataProvider {
   }
 
   /// Get source if it was initialized
-  AbstractSource? _initialitedSource(MainDataProviderSource source, [MockUpRequestOptions? mockUpOptions]) {
+  AbstractSource? _initializedSource(MainDataProviderSource source, [MockUpRequestOptions? mockUpOptions]) {
     AbstractSource? theSource;
 
     if (mockUpOptions != null) {
@@ -117,7 +117,7 @@ class MainDataProvider {
     final MainDataSource dataSource = MainDataSource(dataRequests);
 
     for (DataRequest dataRequest in dataRequests) {
-      AbstractSource? theSource = _initialitedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
+      AbstractSource? theSource = _initializedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
 
       if (theSource is MockUpSource) {
         dataRequest.sourceRegisteredTo = MainDataProviderSource.MockUp;
@@ -136,7 +136,7 @@ class MainDataProvider {
   /// UnRegister the DataSource from source/s
   void unRegisterDataRequests(MainDataSource dataSource) {
     for (MainDataProviderSource source in dataSource.sourcesRegisteredTo) {
-      AbstractSource? theSource = _initialitedSource(source);
+      AbstractSource? theSource = _initializedSource(source);
 
       if (theSource == null) {
         throw Exception('Cannot unRegister for not initialized source $source');
@@ -148,7 +148,7 @@ class MainDataProvider {
 
   /// Check if DataRequest has next page
   Future<bool> dataRequestHasNextPage(DataRequest dataRequest) async {
-    AbstractSource? theSource = _initialitedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
+    AbstractSource? theSource = _initializedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
 
     if (theSource == null) {
       throw Exception('Cannot check nextPage for not initialized source ${dataRequest.source}');
@@ -159,7 +159,7 @@ class MainDataProvider {
 
   /// Request to load next page of DataRequest
   dataRequestLoadNextPage(DataRequest dataRequest) {
-    AbstractSource? theSource = _initialitedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
+    AbstractSource? theSource = _initializedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
 
     if (theSource == null) {
       throw Exception('Cannot load nextPage for not initialized source ${dataRequest.source}');
@@ -201,7 +201,7 @@ class MainDataProvider {
 
   /// ReFetch data for DataRequest of initialized source based on methods or identifiers
   Future<void> reFetchData(MainDataProviderSource source, {List<String>? methods, List<String>? identifiers}) {
-    AbstractSource? theSource = _initialitedSource(source);
+    AbstractSource? theSource = _initializedSource(source);
 
     if (theSource == null) {
       throw Exception('Cannot reFetchData for not initialized source $source');
@@ -215,34 +215,34 @@ class MainDataProvider {
     final List<MainDataProviderSourceState> states = [];
 
     mainDataSource.sourcesRegisteredTo.forEach((MainDataProviderSource source) {
-      AbstractSource? theSource = _initialitedSource(source);
+      AbstractSource? theSource = _initializedSource(source);
 
       if (theSource == null) {
-        states.add(MainDataProviderSourceState.UnAvailable);
+        states.add(MainDataProviderSourceState.unAvailable);
       } else {
         states.add(theSource.state.value);
       }
     });
 
-    if (states.contains(MainDataProviderSourceState.UnAvailable)) {
-      mainDataSource.state.value = MainDataProviderSourceState.UnAvailable;
-    } else if (states.contains(MainDataProviderSourceState.Connecting)) {
-      mainDataSource.state.value = MainDataProviderSourceState.Connecting;
+    if (states.contains(MainDataProviderSourceState.unAvailable)) {
+      mainDataSource.state.value = MainDataProviderSourceState.unAvailable;
+    } else if (states.contains(MainDataProviderSourceState.connecting)) {
+      mainDataSource.state.value = MainDataProviderSourceState.connecting;
     } else {
-      mainDataSource.state.value = MainDataProviderSourceState.Ready;
+      mainDataSource.state.value = MainDataProviderSourceState.ready;
     }
   }
 }
 
 enum MainDataProviderSourceState {
-  UnAvailable,
-  Ready,
-  Connecting,
+  unAvailable,
+  ready,
+  connecting,
 }
 
 abstract class AbstractSource {
   MainDataProviderSource get isSource;
-  ValueNotifier<MainDataProviderSourceState> state = ValueNotifier(MainDataProviderSourceState.UnAvailable);
+  ValueNotifier<MainDataProviderSourceState> state = ValueNotifier(MainDataProviderSourceState.unAvailable);
 
   final List<MainDataSource> _dataSources = <MainDataSource>[];
   final List<String> _identifiers = <String>[];
@@ -345,7 +345,7 @@ class MockUpSource extends AbstractSource {
   MockUpSource({
     required MockUpOptions options,
   }) : _options = options {
-    state = ValueNotifier(MainDataProviderSourceState.Ready);
+    state = ValueNotifier(MainDataProviderSourceState.ready);
   }
 
   /// Get mockUp data for MainDataProviderSource, if not exists try to load from assets
@@ -615,7 +615,7 @@ class HTTPSource extends AbstractSource {
   HTTPSource({
     required HTTPClientOptions options,
   }) : _options = options {
-    state = ValueNotifier(MainDataProviderSourceState.Ready);
+    state = ValueNotifier(MainDataProviderSourceState.ready);
   }
 
   /// Query data from remote API
@@ -1109,7 +1109,7 @@ class SQLiteSource extends AbstractSource {
   SQLiteSource({
     required SQLiteOptions options,
   }) : _options = options {
-    state = ValueNotifier(MainDataProviderSourceState.Ready);
+    state = ValueNotifier(MainDataProviderSourceState.ready);
 
     SQLite.sqfliteFfiInit();
     SQLite.databaseFactory = SQLite.databaseFactoryFfi;
@@ -1535,7 +1535,7 @@ class SembastSource extends AbstractSource {
   SembastSource({
     required SembastOptions options,
   }) : _options = options {
-    state = ValueNotifier(MainDataProviderSourceState.Ready);
+    state = ValueNotifier(MainDataProviderSourceState.ready);
   }
 
   /// Create Database connection

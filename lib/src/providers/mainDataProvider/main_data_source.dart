@@ -5,7 +5,7 @@ import 'package:collection/collection.dart';
 
 class MainDataSource {
   bool get disposed => _disposed;
-  ValueNotifier<MainDataProviderSourceState> state = ValueNotifier(MainDataProviderSourceState.UnAvailable);
+  ValueNotifier<MainDataProviderSourceState> state = ValueNotifier(MainDataProviderSourceState.unAvailable);
   ValueNotifier<List<DataRequest>> results;
 
   bool _disposed = false;

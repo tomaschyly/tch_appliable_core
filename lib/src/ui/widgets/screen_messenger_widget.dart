@@ -9,11 +9,11 @@ class ScreenMessengerWidget extends AbstractStatefulWidget {
 
   /// ScreenMessengerWidget initialization
   ScreenMessengerWidget({
-    Key? key,
+    super.key,
     required this.options,
     required this.displayMessage,
     required this.child,
-  }) : super(key: key);
+  });
 
   /// Create state for widget
   @override

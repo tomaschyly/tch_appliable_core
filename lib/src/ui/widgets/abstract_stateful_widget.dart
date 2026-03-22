@@ -1,9 +1,9 @@
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 enum StatefulWidgetState {
-  NotInitialized,
-  Initialized,
-  Disposed,
+  notInitialized,
+  initialized,
+  disposed,
 }
 
 abstract class AbstractStatefulWidget extends StatefulWidget {
@@ -14,7 +14,7 @@ abstract class AbstractStatefulWidget extends StatefulWidget {
 abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> extends State<T> {
   StatefulWidgetState get widgetState => _widgetState;
 
-  StatefulWidgetState _widgetState = StatefulWidgetState.NotInitialized;
+  StatefulWidgetState _widgetState = StatefulWidgetState.notInitialized;
 
   final _dummyFocusNode = FocusNode();
 
@@ -24,7 +24,7 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
   /// Manually dispose of resources
   @override
   void dispose() {
-    _widgetState = StatefulWidgetState.Disposed;
+    _widgetState = StatefulWidgetState.disposed;
 
     _dummyFocusNode.dispose();
 
@@ -36,7 +36,7 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
   Widget build(BuildContext context) {
     final snapshot = context.appDataStateOrNull;
 
-    if (_widgetState == StatefulWidgetState.NotInitialized) {
+    if (_widgetState == StatefulWidgetState.notInitialized) {
       firstBuildOnly(context);
     }
 
@@ -60,7 +60,7 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
   /// Run initializations of view on first build only
   @protected
   void firstBuildOnly(BuildContext context) {
-    _widgetState = StatefulWidgetState.Initialized;
+    _widgetState = StatefulWidgetState.initialized;
   }
 
   /// Build content from widgets
@@ -78,7 +78,7 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
   /// Call setState only if it not disposed yet
   @protected
   void setStateNotDisposed(VoidCallback fn) {
-    if (mounted && context.mounted && _widgetState != StatefulWidgetState.Disposed) {
+    if (mounted && context.mounted && _widgetState != StatefulWidgetState.disposed) {
       setState(fn);
     }
   }

@@ -24,7 +24,7 @@ class ResponsiveWidget extends StatelessWidget {
 
   /// ResponsiveWidget initialization
   ResponsiveWidget({
-    Key? key,
+    super.key,
     required this.child,
     this.smallPhoneScreen,
     this.largePhoneScreen,
@@ -35,7 +35,7 @@ class ResponsiveWidget extends StatelessWidget {
     this.mobileScreen,
     this.desktopScreen,
     this.mobileDesktopBreakpoint = 576,
-  }) : super(key: key);
+  });
 
   /// Create view layout from widgets
   @override
@@ -58,19 +58,19 @@ class ResponsiveWidget extends StatelessWidget {
     }
 
     switch (responsiveScreen) {
-      case ResponsiveScreen.ExtraLargeDesktop:
+      case ResponsiveScreen.extraLargeDesktop:
         return extraLargeDesktopScreen ?? largeDesktopScreen ?? smallDesktopScreen ?? tabletScreen ?? largePhoneScreen ?? smallPhoneScreen ?? child;
-      case ResponsiveScreen.LargeDesktop:
+      case ResponsiveScreen.largeDesktop:
         return largeDesktopScreen ?? smallDesktopScreen ?? tabletScreen ?? largePhoneScreen ?? smallPhoneScreen ?? child;
-      case ResponsiveScreen.SmallDesktop:
+      case ResponsiveScreen.smallDesktop:
         return smallDesktopScreen ?? tabletScreen ?? largePhoneScreen ?? smallPhoneScreen ?? child;
-      case ResponsiveScreen.Tablet:
+      case ResponsiveScreen.tablet:
         return tabletScreen ?? largePhoneScreen ?? smallPhoneScreen ?? child;
-      case ResponsiveScreen.LargePhone:
+      case ResponsiveScreen.largePhone:
         return largePhoneScreen ?? smallPhoneScreen ?? child;
-      case ResponsiveScreen.SmallPhone:
+      case ResponsiveScreen.smallPhone:
         return smallPhoneScreen ?? child;
-      case ResponsiveScreen.UnDetermined:
+      case ResponsiveScreen.unDetermined:
       default:
         return child;
     }

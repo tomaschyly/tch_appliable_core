@@ -37,22 +37,22 @@ abstract class AbstractResponsiveScreenState<T extends AbstractResponsiveScreen>
 
     if (snapshot != null) {
       switch (snapshot.responsiveScreen) {
-        case ResponsiveScreen.ExtraLargeDesktop:
+        case ResponsiveScreen.extraLargeDesktop:
           return extraLargeDesktopScreen(context);
-        case ResponsiveScreen.LargeDesktop:
+        case ResponsiveScreen.largeDesktop:
           return largeDesktopScreen(context);
-        case ResponsiveScreen.SmallDesktop:
+        case ResponsiveScreen.smallDesktop:
           return smallDesktopScreen(context);
-        case ResponsiveScreen.Tablet:
+        case ResponsiveScreen.tablet:
           return tabletScreen(context);
-        case ResponsiveScreen.LargePhone:
+        case ResponsiveScreen.largePhone:
           return largePhoneScreen(context);
-        case ResponsiveScreen.SmallPhone:
-        case ResponsiveScreen.UnDetermined:
+        case ResponsiveScreen.smallPhone:
+        case ResponsiveScreen.unDetermined:
           return smallPhoneScreen(context);
       }
     }
 
-    throw Exception('Snapshot not available');
+    return smallPhoneScreen(context);
   }
 }

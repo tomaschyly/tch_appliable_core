@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tch_appliable_core/src/model/data_model.dart';
 import 'package:tch_appliable_core/src/providers/main_data_provider.dart';
 import 'package:tch_appliable_core/src/providers/mainDataProvider/data_request.dart';
@@ -30,7 +29,7 @@ class ListDataWidget<R extends DataRequest, I extends DataModel> extends Abstrac
 
   /// ListDataWidget initialization
   ListDataWidget({
-    Key? key,
+    super.key,
     this.scrollController,
     required R? dataRequest,
     required this.processResult,
@@ -42,7 +41,7 @@ class ListDataWidget<R extends DataRequest, I extends DataModel> extends Abstrac
     required this.emptyState,
     this.childAfterList,
     this.pullToRefreshOptions = const PullToRefreshOptions(),
-  }) : super(key: key, dataRequests: <DataRequest>[if (dataRequest != null) dataRequest]);
+  }) : super(dataRequests: <DataRequest>[if (dataRequest != null) dataRequest]);
 
   /// Create state for widget
   @override
@@ -51,7 +50,6 @@ class ListDataWidget<R extends DataRequest, I extends DataModel> extends Abstrac
 
 class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends AbstractDataWidgetState<ListDataWidget<R, I>> {
   late ScrollController _scrollController;
-  final RefreshController _refreshController = RefreshController();
   GlobalKey _loadingItemKey = GlobalKey();
   OverlayEntry? _loadingItemEntry;
   double _loadingItemHeight = 0;
@@ -75,8 +73,6 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
     if (widget.scrollController == null) {
       _scrollController.dispose();
     }
-
-    _refreshController.dispose();
 
     super.dispose();
   }
@@ -179,10 +175,7 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
         );
 
         if (widget.pullToRefreshOptions.enabled) {
-          list = SmartRefresher(
-            controller: _refreshController,
-            enablePullDown: true,
-            header: widget.pullToRefreshOptions.header,
+          list = RefreshIndicator(
             onRefresh: () => _refresh(),
             child: list,
           );
@@ -219,8 +212,6 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
     if (widget.pullToRefreshOptions.refetchData && theDataSource != null) {
       await theDataSource.refetchData();
     }
-
-    Future.delayed(kThemeAnimationDuration, () => _refreshController.refreshCompleted());
   }
 
   /// Reload data from the DataSource
@@ -290,16 +281,14 @@ class LoadingItemWidget extends StatelessWidget {
   /// Create view from widgets
   @override
   Widget build(BuildContext context) {
-    return SliverList(
-      delegate: SliverChildListDelegate([
-        Container(
-          key: containerKey,
-          height: 48,
-          child: Center(
-            child: text,
-          ),
+    return SliverToBoxAdapter(
+      child: SizedBox(
+        key: containerKey,
+        height: 48,
+        child: Center(
+          child: text,
         ),
-      ]),
+      ),
     );
   }
 }
@@ -308,13 +297,11 @@ class LoadingItemFullScreenWidget extends StatelessWidget {
   /// Create view from widgets
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: Container(
-          width: 24,
-          height: 24,
-          child: CircularProgressIndicator(),
-        ),
+    return Center(
+      child: SizedBox(
+        width: 24,
+        height: 24,
+        child: CircularProgressIndicator(),
       ),
     );
   }
@@ -324,13 +311,11 @@ class PullToRefreshOptions {
   final bool enabled;
   final bool refetchData;
   final Future<void> Function()? callback;
-  final Widget? header;
 
   /// PullToRefreshOptions initialization
   const PullToRefreshOptions({
     this.enabled = false,
     this.refetchData = true,
     this.callback,
-    this.header,
   });
 }

@@ -80,7 +80,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
   final ValueNotifier<bool> _initializeOnce = ValueNotifier(true);
   bool _isForeground = true;
   bool _isOSDarkMode = false;
-  ResponsiveScreen _responsiveScreen = ResponsiveScreen.UnDetermined;
+  ResponsiveScreen _responsiveScreen = ResponsiveScreen.unDetermined;
   final Map<String, List<ScreenMessage>> _messages = {};
   Locale? _selectedLocale;
 
@@ -288,20 +288,20 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
 /// Determine correct screen by width for responsivity
 determineResponsiveScreen(BuildContext context) {
   final double width = MediaQuery.of(context).size.width;
-  ResponsiveScreen responsiveScreen = ResponsiveScreen.UnDetermined;
+  ResponsiveScreen responsiveScreen = ResponsiveScreen.unDetermined;
 
   if (width >= 1500) {
-    responsiveScreen = ResponsiveScreen.ExtraLargeDesktop;
+    responsiveScreen = ResponsiveScreen.extraLargeDesktop;
   } else if (width > 1200) {
-    responsiveScreen = ResponsiveScreen.LargeDesktop;
+    responsiveScreen = ResponsiveScreen.largeDesktop;
   } else if (width > 992) {
-    responsiveScreen = ResponsiveScreen.SmallDesktop;
+    responsiveScreen = ResponsiveScreen.smallDesktop;
   } else if (width > 768) {
-    responsiveScreen = ResponsiveScreen.Tablet;
+    responsiveScreen = ResponsiveScreen.tablet;
   } else if (width > 576) {
-    responsiveScreen = ResponsiveScreen.LargePhone;
+    responsiveScreen = ResponsiveScreen.largePhone;
   } else {
-    responsiveScreen = ResponsiveScreen.SmallPhone;
+    responsiveScreen = ResponsiveScreen.smallPhone;
   }
 
   return responsiveScreen;

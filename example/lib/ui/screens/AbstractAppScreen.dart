@@ -103,9 +103,9 @@ class AppScreenStateOptions extends AbstractScreenOptions {
     final AbstractAppDataStateSnapshot snapshot = AppDataState.of(context)!;
 
     final permanentlyVisibleDrawerScreens = [
-      ResponsiveScreen.ExtraLargeDesktop,
-      ResponsiveScreen.LargeDesktop,
-      ResponsiveScreen.SmallDesktop,
+      ResponsiveScreen.extraLargeDesktop,
+      ResponsiveScreen.largeDesktop,
+      ResponsiveScreen.smallDesktop,
     ];
 
     drawerIsPermanentlyVisible = permanentlyVisibleDrawerScreens.contains(snapshot.responsiveScreen);

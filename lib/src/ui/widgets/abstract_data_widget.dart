@@ -11,9 +11,9 @@ abstract class AbstractDataWidget extends AbstractStatefulWidget {
 
   /// AbstractDataWidget initialization
   AbstractDataWidget({
-    Key? key,
+    super.key,
     required this.dataRequests,
-  }) : super(key: key);
+  });
 }
 
 abstract class AbstractDataWidgetState<T extends AbstractDataWidget> extends AbstractStatefulWidgetState<T> {
@@ -89,7 +89,7 @@ abstract class AbstractDataWidgetState<T extends AbstractDataWidget> extends Abs
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
-    if (widgetState == StatefulWidgetState.NotInitialized) {
+    if (widgetState == StatefulWidgetState.notInitialized) {
       firstBuildOnly(context);
     }
 
@@ -105,11 +105,11 @@ abstract class AbstractDataWidgetState<T extends AbstractDataWidget> extends Abs
       valueListenable: theDataSource.state,
       builder: (BuildContext context, MainDataProviderSourceState state, Widget? child) {
         switch (state) {
-          case MainDataProviderSourceState.UnAvailable:
+          case MainDataProviderSourceState.unAvailable:
             return buildContentUnAvailable(context);
-          case MainDataProviderSourceState.Ready:
+          case MainDataProviderSourceState.ready:
             return buildContent(context);
-          case MainDataProviderSourceState.Connecting:
+          case MainDataProviderSourceState.connecting:
             return buildContentConnecting(context);
         }
       },
@@ -119,7 +119,7 @@ abstract class AbstractDataWidgetState<T extends AbstractDataWidget> extends Abs
   /// Create screen content from widgets when at least one Request Source is unAvailable
   @protected
   Widget buildContentUnAvailable(BuildContext context) {
-    return Container(
+    return Padding(
       padding: const EdgeInsets.all(16),
       child: Center(
         child: Text('MainDataSource or provider source unAvailable'),
@@ -130,7 +130,7 @@ abstract class AbstractDataWidgetState<T extends AbstractDataWidget> extends Abs
   /// Create screen content from widgets when at least one Request Source is Connecting
   @protected
   Widget buildContentConnecting(BuildContext context) {
-    return Container(
+    return Padding(
       padding: const EdgeInsets.all(16),
       child: Center(
         child: Text('Provider source is connecting'),
