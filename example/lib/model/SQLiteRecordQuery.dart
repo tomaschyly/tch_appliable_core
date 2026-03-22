@@ -12,7 +12,7 @@ class SQLiteRecordQuery extends DataModel {
   /// Convert the object into JSON map
   @override
   Map<String, dynamic> toJson() {
-    final json = Map<String, dynamic>();
+    final json = <String, dynamic>{};
 
     if (name != null) {
       json['${SQLiteRecord.COL_NAME} LIKE ?'] = '%$name%';

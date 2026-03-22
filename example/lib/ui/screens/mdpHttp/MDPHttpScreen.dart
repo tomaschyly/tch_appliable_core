@@ -6,7 +6,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class MDPHttpScreen extends AbstractAppScreen {
-  static const String ROUTE = "/mdphttp";
+  static const String ROUTE = '/mdphttp';
+
+  MDPHttpScreen({super.key});
 
   /// Create state for widget
   @override
@@ -50,9 +52,6 @@ class _MDPHttpScreenState extends AbstractAppScreenState<MDPHttpScreen> {
 }
 
 class _BodyWidget extends AbstractStatefulWidget {
-  /// BodyWidget initialization
-  _BodyWidget({Key? key}) : super(key: key);
-
   /// Create state for widget
   @override
   State<StatefulWidget> createState() => _BodyWidgetState();
@@ -70,17 +69,19 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
         return dataRequest.result?.records;
       },
       buildItem: (BuildContext context, int position, HttpRecord item) {
-        return Container(
+        return SizedBox(
           height: 48,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Flexible(child: Text(item.name)),
-              Spacer(),
-              Text(item.createdAt),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Flexible(child: Text(item.name)),
+                Spacer(),
+                Text(item.createdAt),
+              ],
+            ),
           ),
         );
       },
@@ -90,10 +91,12 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
           text: Text(tt('list.item.loading')),
         );
       },
-      emptyState: Container(
+      emptyState: SizedBox(
         width: 576,
-        padding: const EdgeInsets.all(16),
-        child: Text(tt('list.empty')),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Text(tt('list.empty')),
+        ),
       ),
     );
   }

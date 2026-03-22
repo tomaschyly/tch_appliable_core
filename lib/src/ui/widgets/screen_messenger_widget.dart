@@ -9,11 +9,11 @@ class ScreenMessengerWidget extends AbstractStatefulWidget {
 
   /// ScreenMessengerWidget initialization
   ScreenMessengerWidget({
-    Key? key,
+    super.key,
     required this.options,
     required this.displayMessage,
     required this.child,
-  }) : super(key: key);
+  });
 
   /// Create state for widget
   @override
@@ -24,9 +24,7 @@ class ScreenMessengerWidgetState extends AbstractStatefulWidgetState<ScreenMesse
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
-    final routingArguments = RoutingArguments.of(context)!;
-
-    if (routingArguments.isCurrent) {
+    if (_isCurrent(context)) {
       final AbstractAppDataStateSnapshot? snapshot = AppDataState.of(context);
       final ScreenMessage? message = snapshot?.getMessage(widget.options.screenName);
 
@@ -40,9 +38,7 @@ class ScreenMessengerWidgetState extends AbstractStatefulWidgetState<ScreenMesse
 
   /// Display message when already on current screen
   void onResume() {
-    final routingArguments = RoutingArguments.of(context)!;
-
-    if (routingArguments.isCurrent) {
+    if (_isCurrent(context)) {
       final AbstractAppDataStateSnapshot? snapshot = AppDataState.of(context);
       final ScreenMessage? message = snapshot?.getMessage(widget.options.screenName);
 
@@ -50,6 +46,11 @@ class ScreenMessengerWidgetState extends AbstractStatefulWidgetState<ScreenMesse
         widget.displayMessage(context, message);
       }
     }
+  }
+
+  /// Resolve isCurrent from V2 routing args, then V1 fallback, then true
+  bool _isCurrent(BuildContext context) {
+    return RoutingArgumentsV2.of(context)?.isCurrent ?? RoutingArguments.of(context)?.isCurrent ?? true;
   }
 }
 
@@ -71,6 +72,6 @@ class ScreenMessage {
     ScreenMessageType? type,
     required this.message,
     Duration? duration,
-  })  : this.type = type ?? ScreenMessageType.none,
-        this.duration = duration ?? const Duration(milliseconds: 4000);
+  })  : type = type ?? ScreenMessageType.none,
+        duration = duration ?? const Duration(milliseconds: 4000);
 }

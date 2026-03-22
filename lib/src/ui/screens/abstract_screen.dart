@@ -95,7 +95,7 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
       theOptionsBuildPreProcessor(context);
     }
 
-    if (widgetState == StatefulWidgetState.NotInitialized) {
+    if (widgetState == StatefulWidgetState.notInitialized) {
       firstBuildOnly(context);
     }
 
@@ -127,9 +127,7 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
 
         final Widget? theDrawer = createDrawer(context);
         if (options.drawerIsPermanentlyVisible && theDrawer != null) {
-          theContent = Container(
-            width: double.infinity,
-            height: double.infinity,
+          theContent = SizedBox.expand(
             child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -300,6 +298,7 @@ class ScreenDataState extends InheritedWidget {
 
   /// ScreenDataState initialization
   ScreenDataState({
+    super.key,
     required Widget child,
     required this.isLoading,
     required this.loadingTags,

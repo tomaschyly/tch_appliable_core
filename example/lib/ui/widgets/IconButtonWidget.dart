@@ -11,7 +11,8 @@ class IconButtonWidget extends StatelessWidget {
   final Color? borderColor;
 
   /// IconButtonWidget initialization
-  IconButtonWidget({
+  const IconButtonWidget({
+    super.key,
     required this.icon,
     this.onPressed,
     this.width = 48,
@@ -32,27 +33,29 @@ class IconButtonWidget extends StatelessWidget {
       child: Material(
         color: backgroundColor ?? Colors.transparent,
         child: InkWell(
-          child: Container(
+          splashColor: theme.primaryColor,
+          onTap: onPressed,
+          child: SizedBox(
             width: width,
             height: height,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              border: Border.all(
-                color: borderColor ?? theme.primaryColor,
-                width: 1,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                border: Border.all(
+                  color: borderColor ?? theme.primaryColor,
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(8),
               ),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Center(
-              child: Container(
-                width: iconWidth,
-                height: iconHeight,
-                child: icon,
+              child: Center(
+                child: SizedBox(
+                  width: iconWidth,
+                  height: iconHeight,
+                  child: icon,
+                ),
               ),
             ),
           ),
-          splashColor: theme.primaryColor,
-          onTap: onPressed,
         ),
       ),
     );

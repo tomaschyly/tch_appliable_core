@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class RouterScreen extends StatelessWidget {
-  static const String ROUTE = "/route";
+  static const String ROUTE = '/route';
+
+  const RouterScreen({super.key});
 
   /// Create view layout from widgets
   @override

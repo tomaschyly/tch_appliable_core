@@ -5,7 +5,7 @@ import 'package:collection/collection.dart';
 
 class MainDataSource {
   bool get disposed => _disposed;
-  ValueNotifier<MainDataProviderSourceState> state = ValueNotifier(MainDataProviderSourceState.UnAvailable);
+  ValueNotifier<MainDataProviderSourceState> state = ValueNotifier(MainDataProviderSourceState.unAvailable);
   ValueNotifier<List<DataRequest>> results;
 
   bool _disposed = false;
@@ -114,8 +114,20 @@ class MainDataSource {
 
     dataRequests.forEach((dataRequest) {
       if (dataRequest.identifier == identifier) {
-        dataRequest.result = result != null ? dataRequest.processResult(result) : null;
-        dataRequest.error = exception;
+        SourceException? resultException = exception;
+
+        if (resultException == null && result != null) {
+          try {
+            dataRequest.result = dataRequest.processResult(result);
+          } catch (e) {
+            dataRequest.result = null;
+            resultException = SourceException(originalException: e);
+          }
+        } else {
+          dataRequest.result = null;
+        }
+
+        dataRequest.error = resultException;
       }
     });
 

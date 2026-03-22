@@ -24,7 +24,9 @@ class SembastApiClient {
 
   /// Manually dispose of resources
   void dispose() {
-    _brodcastDebouncers.values.forEach((element) => element.dispose());
+    for (final element in _brodcastDebouncers.values) {
+      element.dispose();
+    }
 
     _database?.close();
     _database = null;
@@ -291,6 +293,7 @@ class SembastApiProvider extends InheritedWidget {
 
   /// SembastApiProvider
   SembastApiProvider({
+    super.key,
     required Widget child,
     required this.apiClient,
   }) : super(child: child);

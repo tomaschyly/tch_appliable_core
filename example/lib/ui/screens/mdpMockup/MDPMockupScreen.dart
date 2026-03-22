@@ -5,7 +5,9 @@ import 'package:example/ui/screens/mdpMockup/MDPMockupTaskScreen.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class MDPMockupScreen extends AbstractAppScreen {
-  static const String ROUTE = "/mdpmockup";
+  static const String ROUTE = '/mdpmockup';
+
+  MDPMockupScreen({super.key});
 
   /// Create state for widget
   @override
@@ -20,7 +22,7 @@ class _MDPMockupScreenState extends AbstractAppScreenState<MDPMockupScreen> {
   )..appBarOptions = <AppBarOption>[
       AppBarOption(
         onTap: (BuildContext context) {
-          pushNamed(context, MDPMockupTaskScreen.ROUTE);
+          pushNamedV2(context, MDPMockupTaskScreen.ROUTE);
         },
         icon: Icon(
           Icons.login,
@@ -49,9 +51,6 @@ class _MDPMockupScreenState extends AbstractAppScreenState<MDPMockupScreen> {
 }
 
 class _BodyWidget extends AbstractStatefulWidget {
-  /// BodyWidget initialization
-  _BodyWidget({Key? key}) : super(key: key);
-
   /// Create state for widget
   @override
   State<StatefulWidget> createState() => _BodyWidgetState();
@@ -80,15 +79,17 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
               return Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  child: Container(
+                  child: SizedBox(
                     height: 48,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Flexible(child: Text(item.name)),
-                      ],
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Flexible(child: Text(item.name)),
+                        ],
+                      ),
                     ),
                   ),
                   onLongPress: () {
@@ -103,10 +104,12 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
                 text: Text(tt('list.item.loading')),
               );
             },
-            emptyState: Container(
+            emptyState: SizedBox(
               width: 576,
-              padding: const EdgeInsets.all(16),
-              child: Text(tt('list.empty')),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(tt('list.empty')),
+              ),
             ),
           ),
         ),

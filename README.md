@@ -14,22 +14,23 @@ If some instructions are not clear enough, then analyse usage inside the example
 
 1. [Installation](#installation)
 2. [App Create](#app-create)
-3. [Router (Navigator 1.0)](#router-navigator-10)
-4. [Translator](#translator)
-5. [Preferences](#preferences)
-6. [Screens, Widgets & Responsivity](#screens-widgets--responsivity)
-7. [MainDataProvider & DataWidgets](#maindataprovider--datawidgets)
-8. [Hooks](#hooks)
-9. [Media](#media)
-10. [Utils](#utils)
-11. [Roadmap](#roadmap)
+3. [Router V1 (Navigator 1.0)](#router-v1-navigator-10)
+4. [Router V2 (go_router)](#router-v2-go_router)
+5. [Translator](#translator)
+6. [Preferences](#preferences)
+7. [Screens, Widgets & Responsivity](#screens-widgets--responsivity)
+8. [MainDataProvider & DataWidgets](#maindataprovider--datawidgets)
+9. [Hooks](#hooks)
+10. [Media](#media)
+11. [Utils](#utils)
+12. [Roadmap](#roadmap)
 
 ## Installation
 
 In your project's `pubspec.yaml` add:
 ```yaml
 dependencies:
-  tch_appliable_core: ^0.36.0
+  tch_appliable_core: ^0.37.0
 ```
 
 ## App Create
@@ -66,10 +67,9 @@ Widget build(BuildContext context) {
 
 Now your app will run as MaterialApp, but with included features from this package.
 
-## Router (Navigator 1.0)
+## Router V1 (Navigator 1.0)
 
-Currently usage of this router is required by CoreApp. To use it you need to provide `RouteFactory onGenerateRoute` to CoreApp.
-`initialScreenRoute` is route name to be launched as initial screen of your app.
+V1 uses Flutter's built-in `Navigator`. Choose this over V2 if you do not need web deep linking or URL-based navigation. Pass a `RouteFactory` via `onGenerateRoute` to `CoreApp`. `initialScreenRoute` is the route path launched after app initialisation.
 
 ```dart
 ...
@@ -77,7 +77,7 @@ Currently usage of this router is required by CoreApp. To use it you need to pro
 Widget build(BuildContext context) {
   return CoreApp(
     ...
-    initialScreenRoute: HomeScreen.ROUTE,
+    initialScreenRoute: HomeScreen.kRoute,
     onGenerateRoute: AppRouter.onGenerateRoute,
     ...
   );
@@ -85,7 +85,7 @@ Widget build(BuildContext context) {
 ...
 ```
 
-To create your own RouteFactory, create new lib/core/Router.dart or use other place that you see fit. Then create the generator which you reference to the CoreApp.
+Create your route factory in `lib/core/app_router.dart`:
 
 ```dart
 Route<dynamic> onGenerateRoute(RouteSettings settings) {
@@ -93,10 +93,10 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
 
   if (arguments != null) {
     switch (arguments.route) {
-      case HomeScreen.ROUTE:
+      case HomeScreen.kRoute:
         return createRoute((BuildContext context) => HomeScreen(), settings);
       default:
-        throw Exception('Implement OnGenerateRoute in app');
+        throw Exception('Implement onGenerateRoute in app');
     }
   }
 
@@ -104,19 +104,83 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
 }
 ```
 
-Then to navigate around your app, do not use `Navigator`, but instead functions provided by this package.
+Navigate using the provided functions — do not use `Navigator` directly:
 
 ```dart
-Future<T?> pushNamed<T extends Object>(BuildContext context, String routeName, {Map<String, String>? arguments})
-
-Future<T?> pushNamedNewStack<T extends Object>
-
-void popNotDisposed<T extends Object?>(BuildContext context, bool mounted, [T? result])
+Future<T?> pushNamed<T>(context, routeName, {Map<String, String>? arguments})
+Future<T?> pushNamedNewStack<T>(context, routeName, {Map<String, String>? arguments})
+void popNotDisposed<T>(context, mounted, [result])
 ```
 
-To transfer parameters between screens, use `RoutingArguments`.
+Read route arguments in a screen via the `BuildContext` extension:
 
-*RoutingArguments info coming soon...*
+```dart
+final args = context.routingArguments;
+final id = args?['id'];
+```
+
+## Router V2 (go_router)
+
+V2 uses the [`go_router`](https://pub.dev/packages/go_router) package. It works better on web (proper URL handling) and supports deep linking out of the box. Both V1 and V2 support named routes only.
+
+Instead of `onGenerateRoute`, pass a `GoRouter` instance to `CoreApp`:
+
+```dart
+...
+@override
+Widget build(BuildContext context) {
+  return CoreApp(
+    ...
+    initialScreenRoute: HomeScreen.kRoute,
+    router: AppRouter.router,
+    ...
+  );
+}
+...
+```
+
+Create your router in `lib/core/app_router.dart`:
+
+```dart
+final GoRouter router = GoRouter(
+  initialLocation: '/',
+  routes: [
+    GoRoute(
+      name: HomeScreen.kRoute,
+      path: HomeScreen.kRoute,
+      pageBuilder: (context, state) => createGoPage(state, HomeScreen()),
+    ),
+    GoRoute(
+      name: SettingsScreen.kRoute,
+      path: SettingsScreen.kRoute,
+      pageBuilder: (context, state) => createGoPage(state, SettingsScreen()),
+    ),
+  ],
+);
+```
+
+Use `pageBuilder` with the provided helpers to match V1 transition behaviour:
+
+```dart
+createGoPage(state, child)            // standard platform animation
+createGoPageFade(state, child)        // fade (equivalent of FadeAnimationPageRoute)
+createGoPageNoAnimation(state, child) // no animation (equivalent of NoAnimationPageRoute)
+```
+
+Navigate using the V2 functions:
+
+```dart
+Future<T?> pushNamedV2<T>(context, routeName, {Map<String, String>? arguments})
+void goNamedV2(context, routeName, {Map<String, String>? arguments})
+void popNotDisposedV2(context, mounted, [result])
+```
+
+Read route arguments in a screen via the `BuildContext` extension:
+
+```dart
+final args = context.routingArgumentsV2;
+final id = args?['id'];
+```
 
 ## Translator
 
@@ -149,11 +213,7 @@ You can also change language during runtime.
 await Translator.instance!.changeLanguage('sk');
 ```
 
-Then to see your new language immediately you can invalidate CoreApp.
-
-```dart
-CoreAppState.instance.invalidateApp();
-``` 
+`changeLanguage` reloads the translations and notifies the locale change automatically — no additional call needed.
 
 To use the Translator for string translations, you just write text with short `tt` function.
 

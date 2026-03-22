@@ -1,30 +1,31 @@
 name: example
-description: An example project for demonstraction of basic usage of tch_appliable_core.
+description: An example project for demonstration of basic usage of tch_appliable_core.
 
 publish_to: 'none'
 
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.18.6 <4.0.0'
+  sdk: '>=3.6.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
-  flutter_svg: ^2.2.0
+  flutter_svg: ^2.2.4
 
   tch_appliable_core:
     path: ../
 
+  path_provider: ^2.1.5
   path: ^1.9.1
+  go_router: ^17.1.0
 
-  http: ^1.5.0
-  sqflite: ^2.4.2
+  sqflite_common_ffi: ^2.4.0
 
-dependency_overrides:
-  # platform: ^3.1.0
+dev_dependencies:
+  flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true

@@ -1,3 +1,23 @@
+## [0.37.0] - 22.3.2026
+
+* **Warning:** Breaking changes — `StatefulWidgetState`, `ResponsiveScreen`, and `MainDataProviderSourceState` enum values renamed to `lowerCamelCase` (e.g. `NotInitialized` → `notInitialized`, `UnDetermined` → `unDetermined`, `UnAvailable` → `unAvailable`)
+* **Warning:** `pull_to_refresh` dependency removed; `ListDataWidget` pull-to-refresh now uses Flutter's built-in `RefreshIndicator` — `PullToRefreshOptions.header` field removed
+* Replaced `sqflite` with `sqflite_common_ffi` enabling Windows and Linux platform support; FFI initialization is handled automatically inside `SQLiteSource`
+* `AbstractResponsiveScreenState` and `AbstractResponsiveWidgetState`: replaced crash on null snapshot with safe fallback to `smallPhoneScreen`
+* `super.key` syntax adopted across all widget constructors (`AbstractDataWidget`, `AbstractResponsiveWidget`, `ScreenMessengerWidget`, `ResponsiveWidget`, `ListDataWidget`)
+* `Container` replaced with `SizedBox`/`Padding` where only sizing or padding was needed
+* `LoadingItemWidget`: replaced `SliverList(SliverChildListDelegate([...]))` with `SliverToBoxAdapter` for single-child case
+* Added `go_router` dependency and Router V2 support
+* `CoreApp`: `onGenerateRoute` is now optional; new `router` parameter accepts a `GoRouter` for V2 mode — exactly one must be provided
+* `CoreApp` V2 mode uses `MaterialApp.router`; initialization overlay handled internally, navigates to `initialScreenRoute` via `GoRouter.go()` after init completes
+* New `router_v2.dart`: `RoutingArgumentsV2`, `pushNamedV2`, `goNamedV2`, `popNotDisposedV2`, `createGoPage`, `createGoPageFade`, `createGoPageNoAnimation`; `BuildContext` extensions `context.routingArguments` (V1) and `context.routingArgumentsV2` (V2)
+* V1 (`router_v1.dart`, `onGenerateRoute`, `RoutingArguments`, `pushNamed`, `pushNamedNewStack`, `popNotDisposed`) fully preserved — zero breaking changes for existing projects
+* **Warning:** `DarkMode` enum values renamed to `lowerCamelCase` (`Automatic` → `automatic`, `Enabled` → `enabled`, `Disabled` → `disabled`)
+* `super.key` added to remaining widget/provider constructors (`AppDataState`, `ScreenDataState`, `RestApiProvider`, `SembastApiProvider`, `LoadingItemWidget`, `LoadingItemFullScreenWidget`)
+* `.forEach` lambdas replaced with `for` loops throughout `RestApiClient` and `SembastApiClient`
+* `ScreenMessage` initializer list: removed redundant `this.` prefix
+* `CoreApp` V2 mode: fixed `Translator` not initialized before first screen build — initialization overlay now renders without GoRouter child, preventing route `State` creation until after `translator.init()` completes
+
 ## [0.36.0] - 21.3.2026
 
 * **Warning:** Breaking changes — `Translator.changeLanguage` is now async and reloads translations internally (remove separate `initTranslations` call); `initTranslations` no longer takes a `BuildContext`; Preferences in-memory cache maps are now private (direct access to global `intPrefs`/`stringPrefs`/`doublePrefs`/`boolPrefs` removed)

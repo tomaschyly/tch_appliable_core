@@ -6,34 +6,51 @@ import 'package:example/ui/screens/mdpSQLite/MDPSQLiteRecordScreen.dart';
 import 'package:example/ui/screens/mdpSQLite/MDPSQLiteScreen.dart';
 import 'package:example/ui/screens/mdpSembast/MDPSembastRecordScreen.dart';
 import 'package:example/ui/screens/mdpSembast/MDPSembastScreen.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
-/// Generate Route with Screen for RoutingArguments from Route name
-Route<Object> onGenerateRoute(RouteSettings settings) {
-  final arguments = settings.name?.routingArguments;
-
-  if (arguments != null) {
-    switch (arguments.route) {
-      case HomeScreen.ROUTE:
-        return createRoute((BuildContext context) => HomeScreen(), settings);
-      case MDPSQLiteScreen.ROUTE:
-        return createRoute((BuildContext context) => MDPSQLiteScreen(), settings);
-      case MDPSQLiteRecordScreen.ROUTE:
-        return createRoute((BuildContext context) => MDPSQLiteRecordScreen(), settings);
-      case MDPHttpScreen.ROUTE:
-        return createRoute((BuildContext context) => MDPHttpScreen(), settings);
-      case MDPSembastScreen.ROUTE:
-        return createRoute((BuildContext context) => MDPSembastScreen(), settings);
-      case MDPSembastRecordScreen.ROUTE:
-        return createRoute((BuildContext context) => MDPSembastRecordScreen(), settings);
-      case MDPMockupScreen.ROUTE:
-        return createRoute((BuildContext context) => MDPMockupScreen(), settings);
-      case MDPMockupTaskScreen.ROUTE:
-        return createRoute((BuildContext context) => MDPMockupTaskScreen(), settings);
-      default:
-        throw Exception('Implement OnGenerateRoute in app');
-    }
-  }
-
-  throw Exception('Arguments not available');
-}
+final GoRouter router = GoRouter(
+  initialLocation: HomeScreen.ROUTE,
+  routes: [
+    GoRoute(
+      name: HomeScreen.ROUTE,
+      path: HomeScreen.ROUTE,
+      pageBuilder: (context, state) => createGoPageFade(state, HomeScreen()),
+    ),
+    GoRoute(
+      name: MDPSQLiteScreen.ROUTE,
+      path: MDPSQLiteScreen.ROUTE,
+      pageBuilder: (context, state) => createGoPageFade(state, MDPSQLiteScreen()),
+    ),
+    GoRoute(
+      name: MDPSQLiteRecordScreen.ROUTE,
+      path: MDPSQLiteRecordScreen.ROUTE,
+      pageBuilder: (context, state) => createGoPage(state, MDPSQLiteRecordScreen()),
+    ),
+    GoRoute(
+      name: MDPHttpScreen.ROUTE,
+      path: MDPHttpScreen.ROUTE,
+      pageBuilder: (context, state) => createGoPageFade(state, MDPHttpScreen()),
+    ),
+    GoRoute(
+      name: MDPSembastScreen.ROUTE,
+      path: MDPSembastScreen.ROUTE,
+      pageBuilder: (context, state) => createGoPageFade(state, MDPSembastScreen()),
+    ),
+    GoRoute(
+      name: MDPSembastRecordScreen.ROUTE,
+      path: MDPSembastRecordScreen.ROUTE,
+      pageBuilder: (context, state) => createGoPage(state, MDPSembastRecordScreen()),
+    ),
+    GoRoute(
+      name: MDPMockupScreen.ROUTE,
+      path: MDPMockupScreen.ROUTE,
+      pageBuilder: (context, state) => createGoPageFade(state, MDPMockupScreen()),
+    ),
+    GoRoute(
+      name: MDPMockupTaskScreen.ROUTE,
+      path: MDPMockupTaskScreen.ROUTE,
+      pageBuilder: (context, state) => createGoPage(state, MDPMockupTaskScreen()),
+    ),
+  ],
+);

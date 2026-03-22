@@ -3,18 +3,18 @@ import 'package:tch_appliable_core/src/core/core_app.dart';
 import 'package:tch_appliable_core/src/ui/widgets/abstract_stateful_widget.dart';
 
 enum ResponsiveScreen {
-  UnDetermined,
-  SmallPhone,
-  LargePhone,
-  Tablet,
-  SmallDesktop,
-  LargeDesktop,
-  ExtraLargeDesktop,
+  unDetermined,
+  smallPhone,
+  largePhone,
+  tablet,
+  smallDesktop,
+  largeDesktop,
+  extraLargeDesktop,
 }
 
 abstract class AbstractResponsiveWidget extends AbstractStatefulWidget {
   /// AbstractResponsiveWidget initialization
-  AbstractResponsiveWidget({Key? key}) : super(key: key);
+  AbstractResponsiveWidget({super.key});
 }
 
 abstract class AbstractResponsiveWidgetState<T extends AbstractResponsiveWidget> extends AbstractStatefulWidgetState<T> {
@@ -49,22 +49,22 @@ abstract class AbstractResponsiveWidgetState<T extends AbstractResponsiveWidget>
 
     if (snapshot != null) {
       switch (snapshot.responsiveScreen) {
-        case ResponsiveScreen.ExtraLargeDesktop:
+        case ResponsiveScreen.extraLargeDesktop:
           return extraLargeDesktopScreen(context);
-        case ResponsiveScreen.LargeDesktop:
+        case ResponsiveScreen.largeDesktop:
           return largeDesktopScreen(context);
-        case ResponsiveScreen.SmallDesktop:
+        case ResponsiveScreen.smallDesktop:
           return smallDesktopScreen(context);
-        case ResponsiveScreen.Tablet:
+        case ResponsiveScreen.tablet:
           return tabletScreen(context);
-        case ResponsiveScreen.LargePhone:
+        case ResponsiveScreen.largePhone:
           return largePhoneScreen(context);
-        case ResponsiveScreen.SmallPhone:
-        case ResponsiveScreen.UnDetermined:
+        case ResponsiveScreen.smallPhone:
+        case ResponsiveScreen.unDetermined:
           return smallPhoneScreen(context);
       }
     }
 
-    throw Exception('Snapshot not available');
+    return smallPhoneScreen(context);
   }
 }

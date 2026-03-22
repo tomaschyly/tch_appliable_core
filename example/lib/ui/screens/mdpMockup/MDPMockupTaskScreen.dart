@@ -4,7 +4,9 @@ import 'package:example/ui/screens/AbstractAppScreen.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class MDPMockupTaskScreen extends AbstractAppScreen {
-  static const String ROUTE = "/mdpmockup/task";
+  static const String ROUTE = '/mdpmockup/task';
+
+  MDPMockupTaskScreen({super.key});
 
   /// Create state for widget
   @override
@@ -38,9 +40,6 @@ class _MDPMockupTaskScreenState extends AbstractAppScreenState<MDPMockupTaskScre
 }
 
 class _BodyWidget extends AbstractStatefulWidget {
-  /// BodyWidget initialization
-  _BodyWidget({Key? key}) : super(key: key);
-
   /// Create state for widget
   @override
   State<StatefulWidget> createState() => _BodyWidgetState();
@@ -56,12 +55,13 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
 
     return Scrollbar(
       child: SingleChildScrollView(
-        child: Container(
-          width: double.infinity,
+        child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
+          child: SizedBox(
+            width: double.infinity,
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
               Material(
                 color: Colors.transparent,
                 child: InkWell(
@@ -83,11 +83,12 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
                   },
                 ),
               ),
-              if (theMockupdata != null) ...[
-                Container(height: 16),
-                Text(theMockupdata),
+                if (theMockupdata != null) ...[
+                  const SizedBox(height: 16),
+                  Text(theMockupdata),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),

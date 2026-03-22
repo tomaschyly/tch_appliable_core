@@ -5,7 +5,9 @@ import 'package:example/ui/widgets/TextFormFieldWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class MDPSQLiteRecordScreen extends AbstractAppScreen {
-  static const String ROUTE = "/mdpsqlite/record";
+  static const String ROUTE = '/mdpsqlite/record';
+
+  MDPSQLiteRecordScreen({super.key});
 
   /// Create state for widget
   @override
@@ -60,7 +62,7 @@ class _MDPSQLiteRecordScreenState extends AbstractAppScreenState<MDPSQLiteRecord
 
 class _BodyWidget extends AbstractStatefulWidget {
   /// BodyWidget initialization
-  _BodyWidget({Key? key}) : super(key: key);
+  _BodyWidget({super.key});
 
   /// Create state for widget
   @override
@@ -90,10 +92,11 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
   Widget buildContent(BuildContext context) {
     return Scrollbar(
       child: SingleChildScrollView(
-        child: Container(
-          width: double.infinity,
+        child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Form(
+          child: SizedBox(
+            width: double.infinity,
+            child: Form(
             key: _formKey,
             child: Column(
               mainAxisSize: MainAxisSize.max,
@@ -114,7 +117,7 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
                     return text?.isEmpty == true ? tt('mdpsqliterecord.screen.name.error') : null;
                   },
                 ),
-                Container(height: 16),
+                const SizedBox(height: 16),
                 TextFormFieldWidget(
                   controller: _descriptionController,
                   focusNode: _descriptionFocus,
@@ -123,6 +126,7 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
                   lines: 3,
                 ),
               ],
+            ),
             ),
           ),
         ),
@@ -149,8 +153,10 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
         ),
       );
 
+      if (!context.mounted) return;
+
       if (result.result?.id != null) {
-        popNotDisposed(context, mounted);
+        popNotDisposedV2(context, mounted);
       }
     }
   }

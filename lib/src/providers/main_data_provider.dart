@@ -5,10 +5,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as path;
 import 'package:sembast/sembast.dart' as Sembast;
 import 'package:sembast/sembast_io.dart';
-import 'package:sqflite/sqflite.dart' as SQLite;
+import 'package:sqflite_common_ffi/sqflite_ffi.dart' as SQLite;
 import 'package:tch_appliable_core/src/providers/mainDataProvider/data_request.dart';
 import 'package:tch_appliable_core/src/providers/mainDataProvider/data_task.dart';
 import 'package:tch_appliable_core/src/providers/mainDataProvider/main_data_source.dart';
@@ -81,7 +81,7 @@ class MainDataProvider {
   }
 
   /// Get source if it was initialized
-  AbstractSource? _initialitedSource(MainDataProviderSource source, [MockUpRequestOptions? mockUpOptions]) {
+  AbstractSource? _initializedSource(MainDataProviderSource source, [MockUpRequestOptions? mockUpOptions]) {
     AbstractSource? theSource;
 
     if (mockUpOptions != null) {
@@ -117,7 +117,7 @@ class MainDataProvider {
     final MainDataSource dataSource = MainDataSource(dataRequests);
 
     for (DataRequest dataRequest in dataRequests) {
-      AbstractSource? theSource = _initialitedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
+      AbstractSource? theSource = _initializedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
 
       if (theSource is MockUpSource) {
         dataRequest.sourceRegisteredTo = MainDataProviderSource.MockUp;
@@ -136,7 +136,7 @@ class MainDataProvider {
   /// UnRegister the DataSource from source/s
   void unRegisterDataRequests(MainDataSource dataSource) {
     for (MainDataProviderSource source in dataSource.sourcesRegisteredTo) {
-      AbstractSource? theSource = _initialitedSource(source);
+      AbstractSource? theSource = _initializedSource(source);
 
       if (theSource == null) {
         throw Exception('Cannot unRegister for not initialized source $source');
@@ -148,7 +148,7 @@ class MainDataProvider {
 
   /// Check if DataRequest has next page
   Future<bool> dataRequestHasNextPage(DataRequest dataRequest) async {
-    AbstractSource? theSource = _initialitedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
+    AbstractSource? theSource = _initializedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
 
     if (theSource == null) {
       throw Exception('Cannot check nextPage for not initialized source ${dataRequest.source}');
@@ -159,7 +159,7 @@ class MainDataProvider {
 
   /// Request to load next page of DataRequest
   dataRequestLoadNextPage(DataRequest dataRequest) {
-    AbstractSource? theSource = _initialitedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
+    AbstractSource? theSource = _initializedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
 
     if (theSource == null) {
       throw Exception('Cannot load nextPage for not initialized source ${dataRequest.source}');
@@ -201,7 +201,7 @@ class MainDataProvider {
 
   /// ReFetch data for DataRequest of initialized source based on methods or identifiers
   Future<void> reFetchData(MainDataProviderSource source, {List<String>? methods, List<String>? identifiers}) {
-    AbstractSource? theSource = _initialitedSource(source);
+    AbstractSource? theSource = _initializedSource(source);
 
     if (theSource == null) {
       throw Exception('Cannot reFetchData for not initialized source $source');
@@ -215,34 +215,34 @@ class MainDataProvider {
     final List<MainDataProviderSourceState> states = [];
 
     mainDataSource.sourcesRegisteredTo.forEach((MainDataProviderSource source) {
-      AbstractSource? theSource = _initialitedSource(source);
+      AbstractSource? theSource = _initializedSource(source);
 
       if (theSource == null) {
-        states.add(MainDataProviderSourceState.UnAvailable);
+        states.add(MainDataProviderSourceState.unAvailable);
       } else {
         states.add(theSource.state.value);
       }
     });
 
-    if (states.contains(MainDataProviderSourceState.UnAvailable)) {
-      mainDataSource.state.value = MainDataProviderSourceState.UnAvailable;
-    } else if (states.contains(MainDataProviderSourceState.Connecting)) {
-      mainDataSource.state.value = MainDataProviderSourceState.Connecting;
+    if (states.contains(MainDataProviderSourceState.unAvailable)) {
+      mainDataSource.state.value = MainDataProviderSourceState.unAvailable;
+    } else if (states.contains(MainDataProviderSourceState.connecting)) {
+      mainDataSource.state.value = MainDataProviderSourceState.connecting;
     } else {
-      mainDataSource.state.value = MainDataProviderSourceState.Ready;
+      mainDataSource.state.value = MainDataProviderSourceState.ready;
     }
   }
 }
 
 enum MainDataProviderSourceState {
-  UnAvailable,
-  Ready,
-  Connecting,
+  unAvailable,
+  ready,
+  connecting,
 }
 
 abstract class AbstractSource {
   MainDataProviderSource get isSource;
-  ValueNotifier<MainDataProviderSourceState> state = ValueNotifier(MainDataProviderSourceState.UnAvailable);
+  ValueNotifier<MainDataProviderSourceState> state = ValueNotifier(MainDataProviderSourceState.unAvailable);
 
   final List<MainDataSource> _dataSources = <MainDataSource>[];
   final List<String> _identifiers = <String>[];
@@ -345,8 +345,11 @@ class MockUpSource extends AbstractSource {
   MockUpSource({
     required MockUpOptions options,
   }) : _options = options {
-    state = ValueNotifier(MainDataProviderSourceState.Ready);
+    state = ValueNotifier(MainDataProviderSourceState.ready);
   }
+
+  /// Normalize flutter asset key to POSIX separators required by AssetBundle.
+  String _normalizeAssetKey(String value) => value.replaceAll('\\', '/');
 
   /// Get mockUp data for MainDataProviderSource, if not exists try to load from assets
   Future<Map<String, dynamic>> _sourceMockUpData(MainDataProviderSource source) async {
@@ -357,19 +360,20 @@ class MockUpSource extends AbstractSource {
 
       switch (source) {
         case MainDataProviderSource.HTTPClient:
-          assetPath = join(assetPath, 'HTTPClient.json');
+          assetPath = path.posix.join(assetPath, 'HTTPClient.json');
           break;
         case MainDataProviderSource.SQLite:
-          assetPath = join(assetPath, 'SQLite.json');
+          assetPath = path.posix.join(assetPath, 'SQLite.json');
           break;
         case MainDataProviderSource.Sembast:
-          assetPath = join(assetPath, 'Sembast.json');
+          assetPath = path.posix.join(assetPath, 'Sembast.json');
           break;
         default:
           throw Exception('Cannot init mockUp data for source $source');
       }
+      final String assetKey = _normalizeAssetKey(assetPath);
 
-      String assetData = await rootBundle.loadString(assetPath);
+      String assetData = await rootBundle.loadString(assetKey);
 
       _mockUpData[source] = jsonDecode(assetData);
 
@@ -382,7 +386,8 @@ class MockUpSource extends AbstractSource {
   /// Query data from mockup in memory data
   Future<dynamic> _query(MainDataProviderSource source, String identifier, [String? assetDataPath]) async {
     if (assetDataPath != null) {
-      String assetData = await rootBundle.loadString(assetDataPath);
+      final String assetKey = _normalizeAssetKey(assetDataPath);
+      String assetData = await rootBundle.loadString(assetKey);
 
       return jsonDecode(assetData);
     } else {
@@ -423,9 +428,11 @@ class MockUpSource extends AbstractSource {
         if (dataSource.identifiers.contains(dataRequest.identifier)) {
           dataSource.setResult(
             dataRequest.identifier,
-            <String, dynamic>{
-              'response': json,
-            },
+            exception == null
+                ? <String, dynamic>{
+                    'response': json,
+                  }
+                : null,
             exception,
           );
         }
@@ -443,9 +450,11 @@ class MockUpSource extends AbstractSource {
         if (dataSource.identifiers.contains(dataRequest.identifier)) {
           dataSource.setResult(
             dataRequest.identifier,
-            <String, dynamic>{
-              'list': results,
-            },
+            exception == null
+                ? <String, dynamic>{
+                    'list': results,
+                  }
+                : null,
             exception,
           );
         }
@@ -615,7 +624,7 @@ class HTTPSource extends AbstractSource {
   HTTPSource({
     required HTTPClientOptions options,
   }) : _options = options {
-    state = ValueNotifier(MainDataProviderSourceState.Ready);
+    state = ValueNotifier(MainDataProviderSourceState.ready);
   }
 
   /// Query data from remote API
@@ -1109,7 +1118,10 @@ class SQLiteSource extends AbstractSource {
   SQLiteSource({
     required SQLiteOptions options,
   }) : _options = options {
-    state = ValueNotifier(MainDataProviderSourceState.Ready);
+    state = ValueNotifier(MainDataProviderSourceState.ready);
+
+    SQLite.sqfliteFfiInit();
+    SQLite.databaseFactory = SQLite.databaseFactoryFfi;
   }
 
   /// Create Database connection and init tables structure
@@ -1532,7 +1544,7 @@ class SembastSource extends AbstractSource {
   SembastSource({
     required SembastOptions options,
   }) : _options = options {
-    state = ValueNotifier(MainDataProviderSourceState.Ready);
+    state = ValueNotifier(MainDataProviderSourceState.ready);
   }
 
   /// Create Database connection

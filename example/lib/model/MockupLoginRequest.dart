@@ -7,7 +7,7 @@ class MockupLoginRequest extends DataModel {
   String password;
 
   /// MockupLoginRequest initialization
-  MockupLoginRequest(this.username, this.password) : super.fromJson(Map());
+  MockupLoginRequest(this.username, this.password) : super.fromJson({});
 
   /// Convert the object into JSON map
   @override

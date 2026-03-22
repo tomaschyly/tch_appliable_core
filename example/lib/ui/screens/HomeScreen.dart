@@ -2,7 +2,9 @@ import 'package:example/ui/screens/AbstractAppScreen.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class HomeScreen extends AbstractAppScreen {
-  static const String ROUTE = "/home";
+  static const String ROUTE = '/home';
+
+  HomeScreen({super.key});
 
   /// Create state for widget
   @override
@@ -36,9 +38,6 @@ class _HomeScreenState extends AbstractAppScreenState<HomeScreen> {
 }
 
 class _BodyWidget extends AbstractStatefulWidget {
-  /// BodyWidget initialization
-  _BodyWidget({Key? key}) : super(key: key);
-
   /// Create state for widget
   @override
   State<StatefulWidget> createState() => _BodyWidgetState();
@@ -50,14 +49,16 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
   Widget buildContent(BuildContext context) {
     return Scrollbar(
       child: SingleChildScrollView(
-        child: Container(
-          width: double.infinity,
+        child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Column(
+          child: SizedBox(
+            width: double.infinity,
+            child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
               Text('Wip: This app will contain various examples to show usage of the CoreApp'),
             ],
+          ),
           ),
         ),
       ),
