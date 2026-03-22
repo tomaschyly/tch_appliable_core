@@ -149,11 +149,7 @@ You can also change language during runtime.
 await Translator.instance!.changeLanguage('sk');
 ```
 
-Then to see your new language immediately you can invalidate CoreApp.
-
-```dart
-CoreAppState.instance.invalidateApp();
-``` 
+`changeLanguage` reloads the translations and notifies the locale change automatically — no additional call needed.
 
 To use the Translator for string translations, you just write text with short `tt` function.
 
