@@ -5,7 +5,7 @@ import 'package:example/ui/widgets/TextFormFieldWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class MDPSQLiteRecordScreen extends AbstractAppScreen {
-  static const String ROUTE = "/mdpsqlite/record";
+  static const String ROUTE = '/mdpsqlite/record';
 
   MDPSQLiteRecordScreen({super.key});
 

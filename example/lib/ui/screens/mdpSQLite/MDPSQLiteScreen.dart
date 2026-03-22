@@ -8,7 +8,7 @@ import 'package:example/ui/screens/mdpSQLite/MDPSQLiteRecordScreen.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class MDPSQLiteScreen extends AbstractAppScreen {
-  static const String ROUTE = "/mdpsqlite";
+  static const String ROUTE = '/mdpsqlite';
 
   MDPSQLiteScreen({super.key});
 

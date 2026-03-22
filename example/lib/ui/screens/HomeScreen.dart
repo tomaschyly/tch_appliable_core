@@ -2,7 +2,7 @@ import 'package:example/ui/screens/AbstractAppScreen.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class HomeScreen extends AbstractAppScreen {
-  static const String ROUTE = "/home";
+  static const String ROUTE = '/home';
 
   HomeScreen({super.key});
 

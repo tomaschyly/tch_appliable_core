@@ -4,7 +4,7 @@ import 'package:example/ui/screens/AbstractAppScreen.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class MDPMockupTaskScreen extends AbstractAppScreen {
-  static const String ROUTE = "/mdpmockup/task";
+  static const String ROUTE = '/mdpmockup/task';
 
   MDPMockupTaskScreen({super.key});
 

@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
-import 'package:path/path.dart' as p;
+import 'package:path/path.dart' as path;
 import 'package:sembast/sembast.dart' as Sembast;
 import 'package:sembast/sembast_io.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart' as SQLite;
@@ -360,13 +360,13 @@ class MockUpSource extends AbstractSource {
 
       switch (source) {
         case MainDataProviderSource.HTTPClient:
-          assetPath = p.posix.join(assetPath, 'HTTPClient.json');
+          assetPath = path.posix.join(assetPath, 'HTTPClient.json');
           break;
         case MainDataProviderSource.SQLite:
-          assetPath = p.posix.join(assetPath, 'SQLite.json');
+          assetPath = path.posix.join(assetPath, 'SQLite.json');
           break;
         case MainDataProviderSource.Sembast:
-          assetPath = p.posix.join(assetPath, 'Sembast.json');
+          assetPath = path.posix.join(assetPath, 'Sembast.json');
           break;
         default:
           throw Exception('Cannot init mockUp data for source $source');

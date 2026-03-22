@@ -6,7 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class MDPHttpScreen extends AbstractAppScreen {
-  static const String ROUTE = "/mdphttp";
+  static const String ROUTE = '/mdphttp';
 
   MDPHttpScreen({super.key});
 

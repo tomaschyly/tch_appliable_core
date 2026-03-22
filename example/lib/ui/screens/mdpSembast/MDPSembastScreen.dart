@@ -8,7 +8,7 @@ import 'package:example/ui/screens/mdpSembast/MDPSembastRecordScreen.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class MDPSembastScreen extends AbstractAppScreen {
-  static const String ROUTE = "/mdpsembast";
+  static const String ROUTE = '/mdpsembast';
 
   MDPSembastScreen({super.key});
 
