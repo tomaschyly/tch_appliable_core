@@ -172,26 +172,19 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
               valueListenable: _v2InitComplete,
               builder: (context, initComplete, _) {
                 if (!initComplete) {
-                  return Stack(
-                    children: [
-                      routerChild,
-                      Positioned.fill(
-                        child: _V2InitializationWidget(
-                          initializeOnce: _initializeOnce,
-                          initializationUi: widget.initializationUi,
-                          initializationMinDurationInMilliseconds: widget.initializationMinDurationInMilliseconds,
-                          onAppInitStart: widget.onAppInitStart,
-                          onAppInitEnd: widget.onAppInitEnd,
-                          initialScreenRoute: widget.initialScreenRoute,
-                          initialScreenRouteArguments: widget.initialScreenRouteArguments,
-                          translatorOptions: theTranslatorOptions,
-                          preferencesOptions: widget.preferencesOptions,
-                          mainDataProviderOptions: widget.mainDataProviderOptions,
-                          router: theRouter,
-                          v2InitComplete: _v2InitComplete,
-                        ),
-                      ),
-                    ],
+                  return _V2InitializationWidget(
+                    initializeOnce: _initializeOnce,
+                    initializationUi: widget.initializationUi,
+                    initializationMinDurationInMilliseconds: widget.initializationMinDurationInMilliseconds,
+                    onAppInitStart: widget.onAppInitStart,
+                    onAppInitEnd: widget.onAppInitEnd,
+                    initialScreenRoute: widget.initialScreenRoute,
+                    initialScreenRouteArguments: widget.initialScreenRouteArguments,
+                    translatorOptions: theTranslatorOptions,
+                    preferencesOptions: widget.preferencesOptions,
+                    mainDataProviderOptions: widget.mainDataProviderOptions,
+                    router: theRouter,
+                    v2InitComplete: _v2InitComplete,
                   );
                 }
 
