@@ -23,9 +23,9 @@ class RestApiClient {
     _pollSubscriptionsTimer = Timer.periodic(options.pollSubscriptionsInterval, (timer) {
       final allTopicsOfSubscriptions = _allTopicsOfSubscriptions.toSet().toList();
 
-      allTopicsOfSubscriptions.forEach((topic) {
+      for (final topic in allTopicsOfSubscriptions) {
         getDataForSubscriptions(topic);
-      });
+      }
     });
   }
 
@@ -35,18 +35,18 @@ class RestApiClient {
 
     final theSubscriptions = _subscriptions.toSet().toList();
     _subscriptions.clear();
-    theSubscriptions.forEach((subscription) {
+    for (final subscription in theSubscriptions) {
       subscription.cancel.call();
-    });
+    }
     options.onSubscriptionsChange?.call(_subscriptions);
 
-    _brodcastDebouncersByTopic.forEach((key, value) {
+    for (final value in _brodcastDebouncersByTopic.values) {
       value.dispose();
-    });
+    }
 
-    _brodcastDebouncersByIdentifier.forEach((key, value) {
+    for (final value in _brodcastDebouncersByIdentifier.values) {
       value.dispose();
-    });
+    }
   }
 
   /// Create default request headers
@@ -277,7 +277,7 @@ class RestApiClient {
       FetchPolicy.cacheOnly: <String, List<RestApiSubscription>>{},
     };
 
-    subscriptionsByTopic.forEach((subscription) {
+    for (final subscription in subscriptionsByTopic) {
       final fetchPolicy = subscription.params.fetchPolicy ?? options.fetchPolicy;
 
       if (!subscriptionsByIdentifier[fetchPolicy]!.containsKey(subscription.identifier)) {
@@ -285,7 +285,7 @@ class RestApiClient {
       }
 
       subscriptionsByIdentifier[fetchPolicy]![subscription.identifier]!.add(subscription);
-    });
+    }
 
     for (final fetchPolicyIn in subscriptionsByIdentifier.keys) {
       final subscriptions = subscriptionsByIdentifier[fetchPolicyIn]!;
@@ -297,9 +297,9 @@ class RestApiClient {
           final data = _getFromCache(identifier);
 
           if (data != null || fetchPolicyIn == FetchPolicy.cacheOnly) {
-            subscriptions[identifier]!.forEach((subscription) {
+            for (final subscription in subscriptions[identifier]!) {
               subscription.params.onData(data, FetchPolicy.cacheOnly);
-            });
+            }
           }
         }
 
@@ -311,19 +311,19 @@ class RestApiClient {
               subscription.params.copyWith(
                 fetchPolicy: fetchPolicyIn,
                 setLoading: (loading) {
-                  subscriptions[identifier]!.forEach((subscription) {
+                  for (final subscription in subscriptions[identifier]!) {
                     subscription.params.setLoading?.call(loading);
-                  });
+                  }
                 },
                 onData: (data, fetchPolicy) {
-                  subscriptions[identifier]!.forEach((subscription) {
+                  for (final subscription in subscriptions[identifier]!) {
                     subscription.params.onData(data, fetchPolicy);
-                  });
+                  }
                 },
                 onError: (error) {
-                  subscriptions[identifier]!.forEach((subscription) {
+                  for (final subscription in subscriptions[identifier]!) {
                     subscription.params.onError?.call(error);
-                  });
+                  }
                 },
               ),
             );
@@ -347,7 +347,7 @@ class RestApiClient {
       FetchPolicy.cacheOnly: <String, List<RestApiSubscription>>{},
     };
 
-    subscriptionsByIdentifier.forEach((subscription) {
+    for (final subscription in subscriptionsByIdentifier) {
       final fetchPolicy = subscription.params.fetchPolicy ?? options.fetchPolicy;
 
       if (!subscriptionsByFetchPolicy[fetchPolicy]!.containsKey(subscription.identifier)) {
@@ -355,7 +355,7 @@ class RestApiClient {
       }
 
       subscriptionsByFetchPolicy[fetchPolicy]![subscription.identifier]!.add(subscription);
-    });
+    }
 
     for (final fetchPolicyIn in subscriptionsByFetchPolicy.keys) {
       final subscriptions = subscriptionsByFetchPolicy[fetchPolicyIn]!;
@@ -367,9 +367,9 @@ class RestApiClient {
           final data = _getFromCache(identifier);
 
           if (data != null || fetchPolicyIn == FetchPolicy.cacheOnly) {
-            subscriptions[identifier]!.forEach((subscription) {
+            for (final subscription in subscriptions[identifier]!) {
               subscription.params.onData(data, FetchPolicy.cacheOnly);
-            });
+            }
           }
         }
 
@@ -381,19 +381,19 @@ class RestApiClient {
               subscription.params.copyWith(
                 fetchPolicy: fetchPolicyIn,
                 setLoading: (loading) {
-                  subscriptions[identifier]!.forEach((subscription) {
+                  for (final subscription in subscriptions[identifier]!) {
                     subscription.params.setLoading?.call(loading);
-                  });
+                  }
                 },
                 onData: (data, fetchPolicy) {
-                  subscriptions[identifier]!.forEach((subscription) {
+                  for (final subscription in subscriptions[identifier]!) {
                     subscription.params.onData(data, fetchPolicy);
-                  });
+                  }
                 },
                 onError: (error) {
-                  subscriptions[identifier]!.forEach((subscription) {
+                  for (final subscription in subscriptions[identifier]!) {
                     subscription.params.onError?.call(error);
-                  });
+                  }
                 },
               ),
             );
@@ -407,9 +407,9 @@ class RestApiClient {
   void _updateTopicsOfSubscriptions() {
     _allTopicsOfSubscriptions.clear();
 
-    _subscriptions.forEach((subscription) {
+    for (final subscription in _subscriptions) {
       _allTopicsOfSubscriptions.add(subscription.topic);
-    });
+    }
   }
 
   /// Create and save subscription
@@ -564,6 +564,7 @@ class RestApiProvider extends InheritedWidget {
 
   /// RestApiProvider initialization
   RestApiProvider({
+    super.key,
     required this.apiClient,
     required Widget child,
   }) : super(child: child);

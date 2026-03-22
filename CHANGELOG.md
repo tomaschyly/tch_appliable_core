@@ -12,6 +12,10 @@
 * `CoreApp` V2 mode uses `MaterialApp.router`; initialization overlay handled internally, navigates to `initialScreenRoute` via `GoRouter.go()` after init completes
 * New `router_v2.dart`: `RoutingArgumentsV2`, `pushNamedV2`, `goNamedV2`, `popNotDisposedV2`, `createGoPage`, `createGoPageFade`, `createGoPageNoAnimation`; `BuildContext` extensions `context.routingArguments` (V1) and `context.routingArgumentsV2` (V2)
 * V1 (`router_v1.dart`, `onGenerateRoute`, `RoutingArguments`, `pushNamed`, `pushNamedNewStack`, `popNotDisposed`) fully preserved — zero breaking changes for existing projects
+* **Warning:** `DarkMode` enum values renamed to `lowerCamelCase` (`Automatic` → `automatic`, `Enabled` → `enabled`, `Disabled` → `disabled`)
+* `super.key` added to remaining widget/provider constructors (`AppDataState`, `ScreenDataState`, `RestApiProvider`, `SembastApiProvider`, `LoadingItemWidget`, `LoadingItemFullScreenWidget`)
+* `.forEach` lambdas replaced with `for` loops throughout `RestApiClient` and `SembastApiClient`
+* `ScreenMessage` initializer list: removed redundant `this.` prefix
 
 ## [0.36.0] - 21.3.2026
 

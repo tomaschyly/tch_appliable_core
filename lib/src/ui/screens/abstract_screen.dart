@@ -298,6 +298,7 @@ class ScreenDataState extends InheritedWidget {
 
   /// ScreenDataState initialization
   ScreenDataState({
+    super.key,
     required Widget child,
     required this.isLoading,
     required this.loadingTags,

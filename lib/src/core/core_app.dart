@@ -128,9 +128,9 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
     final theDarkThemePrefsKey = widget.darkThemePrefsKey;
     bool darkMode = _isOSDarkMode;
     if (theDarkThemePrefsKey != null) {
-      final darkModeType = prefsInt(theDarkThemePrefsKey) == null ? DarkMode.Automatic : DarkMode.values[prefsInt(theDarkThemePrefsKey)!];
+      final darkModeType = prefsInt(theDarkThemePrefsKey) == null ? DarkMode.automatic : DarkMode.values[prefsInt(theDarkThemePrefsKey)!];
 
-      darkMode = darkModeType == DarkMode.Automatic ? darkMode : darkModeType == DarkMode.Enabled;
+      darkMode = darkModeType == DarkMode.automatic ? darkMode : darkModeType == DarkMode.enabled;
     }
 
     final snapshot = widget.snapshot
@@ -587,6 +587,7 @@ class AppDataState extends InheritedWidget {
 
   /// AppDataState
   AppDataState({
+    super.key,
     required Widget child,
     required this.snapshot,
   }) : super(child: child);
@@ -650,7 +651,7 @@ abstract class AbstractAppDataStateSnapshot {
 }
 
 enum DarkMode {
-  Automatic,
-  Enabled,
-  Disabled,
+  automatic,
+  enabled,
+  disabled,
 }

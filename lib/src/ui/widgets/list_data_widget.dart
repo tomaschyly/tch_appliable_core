@@ -274,6 +274,7 @@ class LoadingItemWidget extends StatelessWidget {
 
   /// LoadingItemWidget initialization
   LoadingItemWidget({
+    super.key,
     this.containerKey,
     required this.text,
   });
@@ -294,6 +295,9 @@ class LoadingItemWidget extends StatelessWidget {
 }
 
 class LoadingItemFullScreenWidget extends StatelessWidget {
+  /// LoadingItemFullScreenWidget initialization
+  const LoadingItemFullScreenWidget({super.key});
+
   /// Create view from widgets
   @override
   Widget build(BuildContext context) {

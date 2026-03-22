@@ -71,6 +71,6 @@ class ScreenMessage {
     ScreenMessageType? type,
     required this.message,
     Duration? duration,
-  })  : this.type = type ?? ScreenMessageType.none,
-        this.duration = duration ?? const Duration(milliseconds: 4000);
+  })  : type = type ?? ScreenMessageType.none,
+        duration = duration ?? const Duration(milliseconds: 4000);
 }
