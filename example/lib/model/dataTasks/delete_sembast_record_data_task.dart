@@ -1,5 +1,5 @@
-import 'package:example/model/SembastRecord.dart';
-import 'package:example/model/SembastResult.dart';
+import 'package:example/model/sembast_record.dart';
+import 'package:example/model/sembast_result.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class DeleteSembastRecordDataTask extends DataTask<SembastRecord, SembastResult> {
@@ -7,12 +7,12 @@ class DeleteSembastRecordDataTask extends DataTask<SembastRecord, SembastResult>
   DeleteSembastRecordDataTask({
     required SembastRecord data,
   }) : super(
-          method: SembastRecord.STORE,
+          method: SembastRecord.store,
           options: SembastTaskOptions(
-            type: SembastType.Delete,
+            type: SembastType.delete,
           ),
           data: data,
           processResult: (Map<String, dynamic> json) => SembastResult.fromJson(json),
-          reFetchMethods: [SembastRecord.STORE],
+          reFetchMethods: [SembastRecord.store],
         );
 }

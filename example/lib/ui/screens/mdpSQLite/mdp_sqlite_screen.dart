@@ -1,16 +1,16 @@
-import 'package:example/model/SQLiteRecord.dart';
-import 'package:example/model/SQLiteRecordQuery.dart';
-import 'package:example/model/dataRequests/GetSQLiteRecordsDataRequest.dart';
-import 'package:example/model/dataTasks/DeleteSQLiteRecordDataTask.dart';
-import 'package:example/model/dataTasks/DeleteSQLiteRecordsDataTask.dart';
-import 'package:example/ui/screens/AbstractAppScreen.dart';
-import 'package:example/ui/screens/mdpSQLite/MDPSQLiteRecordScreen.dart';
+import 'package:example/model/sqlite_record.dart';
+import 'package:example/model/sqlite_record_query.dart';
+import 'package:example/model/dataRequests/get_sqlite_records_data_request.dart';
+import 'package:example/model/dataTasks/delete_sqlite_record_data_task.dart';
+import 'package:example/model/dataTasks/delete_sqlite_records_data_task.dart';
+import 'package:example/ui/screens/abstract_app_screen.dart';
+import 'package:example/ui/screens/mdpSQLite/mdp_sqlite_record_screen.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class MDPSQLiteScreen extends AbstractAppScreen {
-  static const String ROUTE = '/mdpsqlite';
+  static const String route = '/mdpsqlite';
 
-  MDPSQLiteScreen({super.key});
+  const MDPSQLiteScreen({super.key});
 
   /// Create state for widget
   @override
@@ -19,35 +19,38 @@ class MDPSQLiteScreen extends AbstractAppScreen {
 
 class _MDPSQLiteScreenState extends AbstractAppScreenState<MDPSQLiteScreen> {
   @override
-  AbstractScreenOptions options = AppScreenStateOptions.drawer(
-    screenName: MDPSQLiteScreen.ROUTE,
-    title: tt('mdpsqlite.screen.title'),
-  )..appBarOptions = <AppBarOption>[
-      AppBarOption(
-        onTap: (BuildContext context) {
-          pushNamedV2(context, MDPSQLiteRecordScreen.ROUTE);
-        },
-        icon: Icon(
-          Icons.add,
-          color: Colors.black,
+  void initState() {
+    super.initState();
+    options = AppScreenStateOptions.drawer(
+      screenName: MDPSQLiteScreen.route,
+      title: tt('mdpsqlite.screen.title'),
+    )..appBarOptions = <AppBarOption>[
+        AppBarOption(
+          onTap: (BuildContext context) {
+            pushNamedV2(context, MDPSQLiteRecordScreen.route);
+          },
+          icon: Icon(
+            Icons.add,
+            color: Colors.black,
+          ),
         ),
-      ),
-      AppBarOption(
-        onTap: (BuildContext context) {
-          MainDataProvider.instance!.executeDataTask(
-            DeleteSQLiteRecordsDataTask(
-              data: SQLiteRecordQuery.fromJson({
-                // 'name': 'a',
-              }),
-            ),
-          );
-        },
-        icon: Icon(
-          Icons.delete,
-          color: Colors.black,
+        AppBarOption(
+          onTap: (BuildContext context) {
+            MainDataProvider.instance!.executeDataTask(
+              DeleteSQLiteRecordsDataTask(
+                data: SQLiteRecordQuery.fromJson({
+                  // 'name': 'a',
+                }),
+              ),
+            );
+          },
+          icon: Icon(
+            Icons.delete,
+            color: Colors.black,
+          ),
         ),
-      ),
-    ];
+      ];
+  }
 
   @override
   Widget extraLargeDesktopScreen(BuildContext context) => _BodyWidget();

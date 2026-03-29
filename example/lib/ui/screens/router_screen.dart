@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class RouterScreen extends StatelessWidget {
-  static const String ROUTE = '/route';
+  static const String route = '/route';
 
   const RouterScreen({super.key});
 

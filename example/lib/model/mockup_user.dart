@@ -1,7 +1,7 @@
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class MockupUser extends DataModel {
-  static const String STORE = 'user';
+  static const String store = 'user';
 
   int? id;
   late String name;

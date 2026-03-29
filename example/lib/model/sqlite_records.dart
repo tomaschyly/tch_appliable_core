@@ -1,8 +1,8 @@
-import 'package:example/model/SQLiteRecord.dart';
+import 'package:example/model/sqlite_record.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class SQLiteRecords extends DataModel {
-  static const String TABLE = 'record';
+  static const String table = 'record';
 
   late List<SQLiteRecord> records;
 

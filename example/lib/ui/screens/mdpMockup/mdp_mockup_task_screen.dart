@@ -1,12 +1,12 @@
-import 'package:example/model/MockupLoginRequest.dart';
-import 'package:example/model/dataTasks/LoginMockupDataTask.dart';
-import 'package:example/ui/screens/AbstractAppScreen.dart';
+import 'package:example/model/mockup_login_request.dart';
+import 'package:example/model/dataTasks/login_mockup_data_task.dart';
+import 'package:example/ui/screens/abstract_app_screen.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class MDPMockupTaskScreen extends AbstractAppScreen {
-  static const String ROUTE = '/mdpmockup/task';
+  static const String route = '/mdpmockup/task';
 
-  MDPMockupTaskScreen({super.key});
+  const MDPMockupTaskScreen({super.key});
 
   /// Create state for widget
   @override
@@ -15,10 +15,13 @@ class MDPMockupTaskScreen extends AbstractAppScreen {
 
 class _MDPMockupTaskScreenState extends AbstractAppScreenState<MDPMockupTaskScreen> {
   @override
-  AbstractScreenOptions options = AppScreenStateOptions.basic(
-    screenName: MDPMockupTaskScreen.ROUTE,
-    title: tt('mdpmockuptask.screen.title'),
-  );
+  void initState() {
+    super.initState();
+    options = AppScreenStateOptions.basic(
+      screenName: MDPMockupTaskScreen.route,
+      title: tt('mdpmockuptask.screen.title'),
+    );
+  }
 
   @override
   Widget extraLargeDesktopScreen(BuildContext context) => _BodyWidget();

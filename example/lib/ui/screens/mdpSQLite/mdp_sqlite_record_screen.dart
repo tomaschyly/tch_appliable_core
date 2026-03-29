@@ -1,32 +1,30 @@
-import 'package:example/model/SembastRecord.dart';
-import 'package:example/model/dataTasks/SaveSembastRecordDataTask.dart';
-import 'package:example/ui/screens/AbstractAppScreen.dart';
-import 'package:example/ui/widgets/TextFormFieldWidget.dart';
+import 'package:example/model/sqlite_record.dart';
+import 'package:example/model/dataTasks/save_sqlite_record_data_task.dart';
+import 'package:example/ui/screens/abstract_app_screen.dart';
+import 'package:example/ui/widgets/text_form_field_widget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
-class MDPSembastRecordScreen extends AbstractAppScreen {
-  static const String ROUTE = '/mdpsembast/record';
+class MDPSQLiteRecordScreen extends AbstractAppScreen {
+  static const String route = '/mdpsqlite/record';
 
-  MDPSembastRecordScreen({super.key});
+  const MDPSQLiteRecordScreen({super.key});
 
   /// Create state for widget
   @override
-  State<StatefulWidget> createState() => _MDPSembastRecordScreenState();
+  State<StatefulWidget> createState() => _MDPSQLiteRecordScreenState();
 }
 
-class _MDPSembastRecordScreenState extends AbstractAppScreenState<MDPSembastRecordScreen> {
-  @override
-  AbstractScreenOptions options = AppScreenStateOptions.basic(
-    screenName: MDPSembastRecordScreen.ROUTE,
-    title: tt('mdpsembastrecord.screen.title'),
-  );
-
+class _MDPSQLiteRecordScreenState extends AbstractAppScreenState<MDPSQLiteRecordScreen> {
   final GlobalKey<_BodyWidgetState> _bodyKey = GlobalKey();
 
   /// State initialization
   @override
   void initState() {
     super.initState();
+    options = AppScreenStateOptions.basic(
+      screenName: MDPSQLiteRecordScreen.route,
+      title: tt('mdpsqliterecord.screen.title'),
+    );
 
     options.appBarOptions = <AppBarOption>[
       AppBarOption(
@@ -62,7 +60,7 @@ class _MDPSembastRecordScreenState extends AbstractAppScreenState<MDPSembastReco
 
 class _BodyWidget extends AbstractStatefulWidget {
   /// BodyWidget initialization
-  _BodyWidget({super.key});
+  const _BodyWidget({super.key});
 
   /// Create state for widget
   @override
@@ -106,7 +104,7 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
                   autofocus: true,
                   focusNode: _nameFocus,
                   textCapitalization: TextCapitalization.words,
-                  label: tt('mdpsembastrecord.screen.name'),
+                  label: tt('mdpsqliterecord.screen.name'),
                   textInputAction: TextInputAction.next,
                   onFieldSubmitted: (String text) {
                     _nameFocus.unfocus();
@@ -114,7 +112,7 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
                     _descriptionFocus.requestFocus();
                   },
                   validator: (String? text) {
-                    return text?.isEmpty == true ? tt('mdpsembastrecord.screen.name.error') : null;
+                    return text?.isEmpty == true ? tt('mdpsqliterecord.screen.name.error') : null;
                   },
                 ),
                 const SizedBox(height: 16),
@@ -122,7 +120,7 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
                   controller: _descriptionController,
                   focusNode: _descriptionFocus,
                   textCapitalization: TextCapitalization.sentences,
-                  label: tt('mdpsembastrecord.screen.description'),
+                  label: tt('mdpsqliterecord.screen.description'),
                   lines: 3,
                 ),
               ],
@@ -141,14 +139,14 @@ class _BodyWidgetState extends AbstractStatefulWidgetState<_BodyWidget> {
     if (_formKey.currentState!.validate()) {
       final now = DateTime.now();
 
-      final SembastRecord record = SembastRecord.fromJson(<String, dynamic>{
-        SembastRecord.COL_NAME: _nameController.text,
-        SembastRecord.COL_DESCRIPTION: _descriptionController.text,
-        SembastRecord.COL_CREATED: now.millisecondsSinceEpoch,
+      final SQLiteRecord record = SQLiteRecord.fromJson(<String, dynamic>{
+        SQLiteRecord.colName: _nameController.text,
+        SQLiteRecord.colDescription: _descriptionController.text,
+        SQLiteRecord.colCreated: now.millisecondsSinceEpoch,
       });
 
-      final SaveSembastRecordDataTask result = await MainDataProvider.instance!.executeDataTask<SaveSembastRecordDataTask>(
-        SaveSembastRecordDataTask(
+      final SaveSQLiteRecordDataTask result = await MainDataProvider.instance!.executeDataTask<SaveSQLiteRecordDataTask>(
+        SaveSQLiteRecordDataTask(
           data: record,
         ),
       );

@@ -1,11 +1,11 @@
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class SembastRecord extends DataModel {
-  static const String STORE = 'record';
-  static const String COL_ID = 'id';
-  static const String COL_NAME = 'name';
-  static const String COL_DESCRIPTION = 'description';
-  static const String COL_CREATED = 'created';
+  static const String store = 'record';
+  static const String colId = 'id';
+  static const String colName = 'name';
+  static const String colDescription = 'description';
+  static const String colCreated = 'created';
 
   int? id;
   late String name;
@@ -14,23 +14,23 @@ class SembastRecord extends DataModel {
 
   /// SembastRecord initialization from JSON map
   SembastRecord.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
-    id = json[COL_ID];
-    name = json[COL_NAME] ?? '';
-    description = json[COL_DESCRIPTION] ?? '';
-    created = json[COL_CREATED];
+    id = json[colId];
+    name = json[colName] ?? '';
+    description = json[colDescription] ?? '';
+    created = json[colCreated];
   }
 
   /// Convert the object into JSON map
   @override
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{
-      COL_NAME: name,
-      COL_DESCRIPTION: description,
-      COL_CREATED: created,
+      colName: name,
+      colDescription: description,
+      colCreated: created,
     };
 
     if (id != null) {
-      json[COL_ID] = id;
+      json[colId] = id;
     }
 
     return json;

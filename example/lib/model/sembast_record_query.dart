@@ -1,4 +1,4 @@
-import 'package:example/model/SembastRecord.dart';
+import 'package:example/model/sembast_record.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class SembastRecordQuery extends DataModel {
@@ -6,7 +6,7 @@ class SembastRecordQuery extends DataModel {
 
   /// SembastRecordQuery initialization from JSON map
   SembastRecordQuery.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
-    name = json[SembastRecord.COL_NAME];
+    name = json[SembastRecord.colName];
   }
 
   /// Convert the object into JSON map
@@ -15,7 +15,7 @@ class SembastRecordQuery extends DataModel {
     final json = <String, dynamic>{};
 
     if (name != null) {
-      json['${SembastRecord.COL_NAME} LIKE'] = name;
+      json['${SembastRecord.colName} LIKE'] = name;
     }
 
     return json;

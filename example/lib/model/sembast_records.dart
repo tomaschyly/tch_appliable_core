@@ -1,8 +1,8 @@
-import 'package:example/model/SembastRecord.dart';
+import 'package:example/model/sembast_record.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class SembastRecords extends DataModel {
-  static const String STORE = 'record';
+  static const String store = 'record';
 
   late List<SembastRecord> records;
 

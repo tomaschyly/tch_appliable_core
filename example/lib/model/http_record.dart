@@ -1,7 +1,7 @@
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class HttpRecord extends DataModel {
-  static const String METHOD = '/Person';
+  static const String method = '/Person';
 
   late String id;
   late String name;

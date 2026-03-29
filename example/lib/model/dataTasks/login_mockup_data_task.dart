@@ -1,5 +1,5 @@
-import 'package:example/model/MockupLoginRequest.dart';
-import 'package:example/model/MockupUser.dart';
+import 'package:example/model/mockup_login_request.dart';
+import 'package:example/model/mockup_user.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class LoginMockupDataTask extends DataTask<MockupLoginRequest, MockupUser> {
@@ -7,15 +7,15 @@ class LoginMockupDataTask extends DataTask<MockupLoginRequest, MockupUser> {
   LoginMockupDataTask({
     required MockupLoginRequest data,
   }) : super(
-          method: MockupLoginRequest.STORE,
+          method: MockupLoginRequest.store,
           options: SembastTaskOptions(
-            type: SembastType.Query,
+            type: SembastType.query,
           ),
           mockUpTaskOptions: MockUpTaskOptions(
-            type: MockUpType.Query,
+            type: MockUpType.query,
           ),
           data: data,
           processResult: (Map<String, dynamic> json) => MockupUser.fromJson(json),
-          reFetchMethods: [MockupLoginRequest.STORE],
+          reFetchMethods: [MockupLoginRequest.store],
         );
 }

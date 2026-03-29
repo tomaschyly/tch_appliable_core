@@ -1,6 +1,6 @@
-import 'package:example/core/Router.dart' as app_router;
-import 'package:example/model/SQLiteRecord.dart';
-import 'package:example/ui/screens/HomeScreen.dart';
+import 'package:example/core/router.dart' as app_router;
+import 'package:example/model/sqlite_record.dart';
+import 'package:example/ui/screens/home_screen.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -21,7 +21,7 @@ class App extends StatelessWidget {
         ),
       ),
       initializationMinDurationInMilliseconds: 1200,
-      initialScreenRoute: HomeScreen.ROUTE,
+      initialScreenRoute: HomeScreen.route,
       router: app_router.router,
       snapshot: AppDataStateSnapshot(),
       translatorOptions: TranslatorOptions(

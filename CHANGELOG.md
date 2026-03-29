@@ -1,3 +1,7 @@
+## [0.37.0+2] - 29.3.2026
+
+* Pub.dev score improvements: fixed all `example/` analysis issues — `file_names` (renamed all PascalCase files to `snake_case`), `constant_identifier_names` (renamed `ROUTE`, `METHOD`, `STORE`, `TABLE`, `COL_*` constants to `lowerCamelCase`), `overridden_fields` (moved `options` initialization to `initState()`), `prefer_const_constructors_in_immutables` (added `const` to screen and body widget constructors), and `undefined_enum_constant` errors (updated enum references to match renamed `lowerCamelCase` values)
+
 ## [0.37.0+1] - 22.3.2026
 
 * Pub.dev score improvements: fixed lint issues across core and provider files — `@override` annotations added, router constructors use `super` parameters, `ImagesDirectoryImageWidget` constructor corrected, `translator.dart` mounted-check log added, `_HTTPSourceResponse` made private, `AppDataState` snapshot positioning corrected

@@ -1,13 +1,13 @@
-import 'package:example/model/SembastRecord.dart';
-import 'package:example/model/dataRequests/GetMockupRecordsDataRequest.dart';
-import 'package:example/ui/screens/AbstractAppScreen.dart';
-import 'package:example/ui/screens/mdpMockup/MDPMockupTaskScreen.dart';
+import 'package:example/model/sembast_record.dart';
+import 'package:example/model/dataRequests/get_mockup_records_data_request.dart';
+import 'package:example/ui/screens/abstract_app_screen.dart';
+import 'package:example/ui/screens/mdpMockup/mdp_mockup_task_screen.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class MDPMockupScreen extends AbstractAppScreen {
-  static const String ROUTE = '/mdpmockup';
+  static const String route = '/mdpmockup';
 
-  MDPMockupScreen({super.key});
+  const MDPMockupScreen({super.key});
 
   /// Create state for widget
   @override
@@ -16,20 +16,23 @@ class MDPMockupScreen extends AbstractAppScreen {
 
 class _MDPMockupScreenState extends AbstractAppScreenState<MDPMockupScreen> {
   @override
-  AbstractScreenOptions options = AppScreenStateOptions.drawer(
-    screenName: MDPMockupScreen.ROUTE,
-    title: tt('mdpmockup.screen.title'),
-  )..appBarOptions = <AppBarOption>[
-      AppBarOption(
-        onTap: (BuildContext context) {
-          pushNamedV2(context, MDPMockupTaskScreen.ROUTE);
-        },
-        icon: Icon(
-          Icons.login,
-          color: Colors.black,
+  void initState() {
+    super.initState();
+    options = AppScreenStateOptions.drawer(
+      screenName: MDPMockupScreen.route,
+      title: tt('mdpmockup.screen.title'),
+    )..appBarOptions = <AppBarOption>[
+        AppBarOption(
+          onTap: (BuildContext context) {
+            pushNamedV2(context, MDPMockupTaskScreen.route);
+          },
+          icon: Icon(
+            Icons.login,
+            color: Colors.black,
+          ),
         ),
-      ),
-    ];
+      ];
+  }
 
   @override
   Widget extraLargeDesktopScreen(BuildContext context) => _BodyWidget();

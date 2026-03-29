@@ -1,14 +1,14 @@
 import 'dart:convert';
 
-import 'package:example/model/HttpRecords.dart';
+import 'package:example/model/http_records.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class GetHttpRecordsDataRequest extends DataRequest<HttpRecords> {
   /// GetHttpRecordsDataRequest initialization
   GetHttpRecordsDataRequest(Map<String, dynamic> parameters)
       : super(
-          source: MainDataProviderSource.HTTPClient,
-          method: HttpRecords.METHOD,
+          source: MainDataProviderSource.httpClient,
+          method: HttpRecords.method,
           parameters: parameters,
           processResult: (json) {
             final String recordsJson = json['response'] ?? '[]';

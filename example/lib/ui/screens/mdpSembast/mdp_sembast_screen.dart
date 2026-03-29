@@ -1,16 +1,16 @@
-import 'package:example/model/SembastRecord.dart';
-import 'package:example/model/SembastRecordQuery.dart';
-import 'package:example/model/dataRequests/GetSembastRecordsDataRequest.dart';
-import 'package:example/model/dataTasks/DeleteSembastRecordDataTask.dart';
-import 'package:example/model/dataTasks/DeleteSembastRecordsDataTask.dart';
-import 'package:example/ui/screens/AbstractAppScreen.dart';
-import 'package:example/ui/screens/mdpSembast/MDPSembastRecordScreen.dart';
+import 'package:example/model/sembast_record.dart';
+import 'package:example/model/sembast_record_query.dart';
+import 'package:example/model/dataRequests/get_sembast_records_data_request.dart';
+import 'package:example/model/dataTasks/delete_sembast_record_data_task.dart';
+import 'package:example/model/dataTasks/delete_sembast_records_data_task.dart';
+import 'package:example/ui/screens/abstract_app_screen.dart';
+import 'package:example/ui/screens/mdpSembast/mdp_sembast_record_screen.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class MDPSembastScreen extends AbstractAppScreen {
-  static const String ROUTE = '/mdpsembast';
+  static const String route = '/mdpsembast';
 
-  MDPSembastScreen({super.key});
+  const MDPSembastScreen({super.key});
 
   /// Create state for widget
   @override
@@ -19,35 +19,38 @@ class MDPSembastScreen extends AbstractAppScreen {
 
 class _MDPSembastScreenState extends AbstractAppScreenState<MDPSembastScreen> {
   @override
-  AbstractScreenOptions options = AppScreenStateOptions.drawer(
-    screenName: MDPSembastScreen.ROUTE,
-    title: tt('mdpsembast.screen.title'),
-  )..appBarOptions = <AppBarOption>[
-      AppBarOption(
-        onTap: (BuildContext context) {
-          pushNamedV2(context, MDPSembastRecordScreen.ROUTE);
-        },
-        icon: Icon(
-          Icons.add,
-          color: Colors.black,
+  void initState() {
+    super.initState();
+    options = AppScreenStateOptions.drawer(
+      screenName: MDPSembastScreen.route,
+      title: tt('mdpsembast.screen.title'),
+    )..appBarOptions = <AppBarOption>[
+        AppBarOption(
+          onTap: (BuildContext context) {
+            pushNamedV2(context, MDPSembastRecordScreen.route);
+          },
+          icon: Icon(
+            Icons.add,
+            color: Colors.black,
+          ),
         ),
-      ),
-      AppBarOption(
-        onTap: (BuildContext context) {
-          MainDataProvider.instance!.executeDataTask(
-            DeleteSembastRecordsDataTask(
-              data: SembastRecordQuery.fromJson({
-                // 'name': 'a',
-              }),
-            ),
-          );
-        },
-        icon: Icon(
-          Icons.delete,
-          color: Colors.black,
+        AppBarOption(
+          onTap: (BuildContext context) {
+            MainDataProvider.instance!.executeDataTask(
+              DeleteSembastRecordsDataTask(
+                data: SembastRecordQuery.fromJson({
+                  // 'name': 'a',
+                }),
+              ),
+            );
+          },
+          icon: Icon(
+            Icons.delete,
+            color: Colors.black,
+          ),
         ),
-      ),
-    ];
+      ];
+  }
 
   @override
   Widget extraLargeDesktopScreen(BuildContext context) => _BodyWidget();

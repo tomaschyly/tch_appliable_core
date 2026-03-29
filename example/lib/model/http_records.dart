@@ -1,8 +1,8 @@
-import 'package:example/model/HttpRecord.dart';
+import 'package:example/model/http_record.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class HttpRecords extends DataModel {
-  static const String METHOD = '/Person';
+  static const String method = '/Person';
 
   late List<HttpRecord> records;
 

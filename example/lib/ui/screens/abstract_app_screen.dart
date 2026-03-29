@@ -1,9 +1,9 @@
-import 'package:example/ui/screens/HomeScreen.dart';
-import 'package:example/ui/screens/mdpHttp/MDPHttpScreen.dart';
-import 'package:example/ui/screens/mdpMockup/MDPMockupScreen.dart';
-import 'package:example/ui/screens/mdpSQLite/MDPSQLiteScreen.dart';
-import 'package:example/ui/screens/mdpSembast/MDPSembastScreen.dart';
-import 'package:example/ui/widgets/IconButtonWidget.dart';
+import 'package:example/ui/screens/home_screen.dart';
+import 'package:example/ui/screens/mdpHttp/mdp_http_screen.dart';
+import 'package:example/ui/screens/mdpMockup/mdp_mockup_screen.dart';
+import 'package:example/ui/screens/mdpSQLite/mdp_sqlite_screen.dart';
+import 'package:example/ui/screens/mdpSembast/mdp_sembast_screen.dart';
+import 'package:example/ui/widgets/icon_button_widget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class AppScreenStateOptions extends AbstractScreenOptions {
@@ -25,10 +25,10 @@ class AppScreenStateOptions extends AbstractScreenOptions {
     drawerOptions = <DrawerOption>[
       DrawerOption(
         onSelect: (BuildContext context) {
-          goNamedV2(context, HomeScreen.ROUTE);
+          goNamedV2(context, HomeScreen.route);
         },
         isSelected: (BuildContext context) {
-          return context.routingArgumentsV2?.route == HomeScreen.ROUTE;
+          return context.routingArgumentsV2?.route == HomeScreen.route;
         },
         title: Text(
           tt('home.screen.title'),
@@ -36,10 +36,10 @@ class AppScreenStateOptions extends AbstractScreenOptions {
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
-          goNamedV2(context, MDPSQLiteScreen.ROUTE);
+          goNamedV2(context, MDPSQLiteScreen.route);
         },
         isSelected: (BuildContext context) {
-          return context.routingArgumentsV2?.route == MDPSQLiteScreen.ROUTE;
+          return context.routingArgumentsV2?.route == MDPSQLiteScreen.route;
         },
         title: Text(
           tt('mdpsqlite.screen.title'),
@@ -47,10 +47,10 @@ class AppScreenStateOptions extends AbstractScreenOptions {
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
-          goNamedV2(context, MDPHttpScreen.ROUTE);
+          goNamedV2(context, MDPHttpScreen.route);
         },
         isSelected: (BuildContext context) {
-          return context.routingArgumentsV2?.route == MDPHttpScreen.ROUTE;
+          return context.routingArgumentsV2?.route == MDPHttpScreen.route;
         },
         title: Text(
           tt('mdphttp.screen.title'),
@@ -58,10 +58,10 @@ class AppScreenStateOptions extends AbstractScreenOptions {
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
-          goNamedV2(context, MDPSembastScreen.ROUTE);
+          goNamedV2(context, MDPSembastScreen.route);
         },
         isSelected: (BuildContext context) {
-          return context.routingArgumentsV2?.route == MDPSembastScreen.ROUTE;
+          return context.routingArgumentsV2?.route == MDPSembastScreen.route;
         },
         title: Text(
           tt('mdpsembast.screen.title'),
@@ -69,10 +69,10 @@ class AppScreenStateOptions extends AbstractScreenOptions {
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
-          goNamedV2(context, MDPMockupScreen.ROUTE);
+          goNamedV2(context, MDPMockupScreen.route);
         },
         isSelected: (BuildContext context) {
-          return context.routingArgumentsV2?.route == MDPMockupScreen.ROUTE;
+          return context.routingArgumentsV2?.route == MDPMockupScreen.route;
         },
         title: Text(
           tt('mdpmockup.screen.title'),
@@ -97,7 +97,7 @@ class AppScreenStateOptions extends AbstractScreenOptions {
 }
 
 abstract class AbstractAppScreen extends AbstractResponsiveScreen {
-  AbstractAppScreen({super.key});
+  const AbstractAppScreen({super.key});
 }
 
 abstract class AbstractAppScreenState<T extends AbstractAppScreen> extends AbstractResponsiveScreenState<T> {

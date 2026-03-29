@@ -1,10 +1,10 @@
-import 'package:example/ui/screens/AbstractAppScreen.dart';
+import 'package:example/ui/screens/abstract_app_screen.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class HomeScreen extends AbstractAppScreen {
-  static const String ROUTE = '/home';
+  static const String route = '/home';
 
-  HomeScreen({super.key});
+  const HomeScreen({super.key});
 
   /// Create state for widget
   @override
@@ -13,10 +13,13 @@ class HomeScreen extends AbstractAppScreen {
 
 class _HomeScreenState extends AbstractAppScreenState<HomeScreen> {
   @override
-  AbstractScreenOptions options = AppScreenStateOptions.drawer(
-    screenName: HomeScreen.ROUTE,
-    title: tt('home.screen.title'),
-  );
+  void initState() {
+    super.initState();
+    options = AppScreenStateOptions.drawer(
+      screenName: HomeScreen.route,
+      title: tt('home.screen.title'),
+    );
+  }
 
   @override
   Widget extraLargeDesktopScreen(BuildContext context) => _BodyWidget();

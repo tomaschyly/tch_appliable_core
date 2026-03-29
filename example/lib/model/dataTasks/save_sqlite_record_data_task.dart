@@ -1,5 +1,5 @@
-import 'package:example/model/SQLiteRecord.dart';
-import 'package:example/model/SQLiteResult.dart';
+import 'package:example/model/sqlite_record.dart';
+import 'package:example/model/sqlite_result.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class SaveSQLiteRecordDataTask extends DataTask<SQLiteRecord, SQLiteResult> {
@@ -7,12 +7,12 @@ class SaveSQLiteRecordDataTask extends DataTask<SQLiteRecord, SQLiteResult> {
   SaveSQLiteRecordDataTask({
     required SQLiteRecord data,
   }) : super(
-          method: SQLiteRecord.TABLE,
+          method: SQLiteRecord.table,
           options: SQLiteTaskOptions(
-            type: SQLiteType.Save,
+            type: SQLiteType.save,
           ),
           data: data,
           processResult: (Map<String, dynamic> json) => SQLiteResult.fromJson(json),
-          reFetchMethods: [SQLiteRecord.TABLE],
+          reFetchMethods: [SQLiteRecord.table],
         );
 }
