@@ -50,7 +50,7 @@ class ListDataWidget<R extends DataRequest, I extends DataModel> extends Abstrac
 
 class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends AbstractDataWidgetState<ListDataWidget<R, I>> {
   late ScrollController _scrollController;
-  GlobalKey _loadingItemKey = GlobalKey();
+  final GlobalKey _loadingItemKey = GlobalKey();
   OverlayEntry? _loadingItemEntry;
   double _loadingItemHeight = 0;
   bool _isLastPage = false;
@@ -273,7 +273,7 @@ class LoadingItemWidget extends StatelessWidget {
   final Text text;
 
   /// LoadingItemWidget initialization
-  LoadingItemWidget({
+  const LoadingItemWidget({
     super.key,
     this.containerKey,
     required this.text,

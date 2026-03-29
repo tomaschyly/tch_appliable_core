@@ -16,7 +16,7 @@ class Debouncer {
   }
 
   /// Debounce action
-  run(
+  void run(
     VoidCallback action, {
     int? milliseconds,
   }) {

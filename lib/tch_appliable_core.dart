@@ -1,5 +1,3 @@
-library tch_appliable_core;
-
 export 'src/core/core_app.dart';
 export 'src/core/media.dart';
 export 'src/core/preferences.dart';

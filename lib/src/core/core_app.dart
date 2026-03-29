@@ -38,7 +38,8 @@ class CoreApp extends AbstractStatefulWidget {
   final String? restorationScopeId;
 
   /// CoreApp initialization
-  CoreApp({
+  const CoreApp({
+    super.key,
     this.debugShowCheckedModeBanner = true,
     required this.title,
     required this.initializationUi,
@@ -143,6 +144,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
 
     if (theRouter != null) {
       return AppDataState(
+        snapshot: snapshot,
         child: MaterialApp.router(
           debugShowCheckedModeBanner: widget.debugShowCheckedModeBanner,
           title: widget.title,
@@ -200,11 +202,11 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
           ],
           supportedLocales: theTranslatorOptions?.supportedLocales ?? const <Locale>[Locale('en', 'US')],
         ),
-        snapshot: snapshot,
       );
     }
 
     return AppDataState(
+      snapshot: snapshot,
       child: MaterialApp(
         debugShowCheckedModeBanner: widget.debugShowCheckedModeBanner,
         title: widget.title,
@@ -212,7 +214,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
         onGenerateInitialRoutes: (String initialRoute) {
           final generate = widget.onGenerateInitialRoute;
 
-          final builder = (BuildContext context) {
+          Widget builder(BuildContext context) {
             return _InitializationScreen(
               initializeOnce: _initializeOnce,
               initializationUi: widget.initializationUi,
@@ -225,7 +227,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
               preferencesOptions: widget.preferencesOptions,
               mainDataProviderOptions: widget.mainDataProviderOptions,
             );
-          };
+          }
 
           if (generate != null) {
             return [
@@ -275,7 +277,6 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
         ],
         supportedLocales: theTranslatorOptions?.supportedLocales ?? const <Locale>[Locale('en', 'US')],
       ),
-      snapshot: snapshot,
     );
   }
 
@@ -305,7 +306,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
 
   /// Determine if is OS Dark mode enabled
   @protected
-  determineOSThemeMode(BuildContext context, [bool setState = true]) {
+  void determineOSThemeMode(BuildContext context, [bool setState = true]) {
     final isOSDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
 
     if (isOSDarkMode != _isOSDarkMode) {
@@ -319,7 +320,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
 
   /// Determine correct screen by width for responsivity
   @protected
-  determineScreen(BuildContext context) {
+  void determineScreen(BuildContext context) {
     ResponsiveScreen responsiveScreen = determineResponsiveScreen(context);
 
     if (_responsiveScreen != responsiveScreen) {
@@ -358,7 +359,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
 }
 
 /// Determine correct screen by width for responsivity
-determineResponsiveScreen(BuildContext context) {
+ResponsiveScreen determineResponsiveScreen(BuildContext context) {
   final double width = MediaQuery.of(context).size.width;
   ResponsiveScreen responsiveScreen = ResponsiveScreen.unDetermined;
 
@@ -392,7 +393,7 @@ class _InitializationScreen extends StatelessWidget {
   final MainDataProviderOptions? mainDataProviderOptions;
 
   /// InitializationScreen initialization
-  _InitializationScreen({
+  const _InitializationScreen({
     required this.initializeOnce,
     required this.initializationUi,
     required this.initializationMinDurationInMilliseconds,
@@ -438,11 +439,21 @@ class _InitializationScreen extends StatelessWidget {
         await preferences.init();
       }
 
+      if (!context.mounted) {
+        debugPrint('CoreApp - _appInit - Context is not mounted after preferences init');
+        return;
+      }
+
       final theTranslatorOptions = translatorOptions;
       if (theTranslatorOptions != null) {
         final translator = Translator(options: theTranslatorOptions);
 
         await translator.init(context);
+      }
+
+      if (!context.mounted) {
+        debugPrint('CoreApp - _appInit - Context is not mounted after translator init');
+        return;
       }
 
       final theMainDataProviderOptions = mainDataProviderOptions;
@@ -454,6 +465,11 @@ class _InitializationScreen extends StatelessWidget {
         await onAppInitEnd!(context);
       }
 
+      if (!context.mounted) {
+        debugPrint('CoreApp - _appInit - Context is not mounted after app init end');
+        return;
+      }
+
       CoreAppState.instance._invalidateApp();
 
       final diff = DateTime.now().difference(start);
@@ -461,7 +477,11 @@ class _InitializationScreen extends StatelessWidget {
       if (diff.inMilliseconds < initializationMinDurationInMilliseconds) {
         Future.delayed(
           Duration(milliseconds: initializationMinDurationInMilliseconds - diff.inMilliseconds),
-          () => pushNamedNewStack(context, initialScreenRoute, arguments: initialScreenRouteArguments),
+          () {
+            if (context.mounted) {
+              pushNamedNewStack(context, initialScreenRoute, arguments: initialScreenRouteArguments);
+            }
+          },
         );
       } else {
         pushNamedNewStack(context, initialScreenRoute, arguments: initialScreenRouteArguments);
@@ -485,7 +505,7 @@ class _V2InitializationWidget extends StatelessWidget {
   final ValueNotifier<bool> v2InitComplete;
 
   /// _V2InitializationWidget initialization
-  _V2InitializationWidget({
+  const _V2InitializationWidget({
     required this.initializeOnce,
     required this.initializationUi,
     required this.initializationMinDurationInMilliseconds,
@@ -533,11 +553,21 @@ class _V2InitializationWidget extends StatelessWidget {
         await preferences.init();
       }
 
+      if (!context.mounted) {
+        debugPrint('CoreApp - _appInit - Context is not mounted after preferences init');
+        return;
+      }
+
       final theTranslatorOptions = translatorOptions;
       if (theTranslatorOptions != null) {
         final translator = Translator(options: theTranslatorOptions);
 
         await translator.init(context);
+      }
+
+      if (!context.mounted) {
+        debugPrint('CoreApp - _appInit - Context is not mounted after translator init');
+        return;
       }
 
       final theMainDataProviderOptions = mainDataProviderOptions;
@@ -547,6 +577,11 @@ class _V2InitializationWidget extends StatelessWidget {
 
       if (onAppInitEnd != null) {
         await onAppInitEnd!(context);
+      }
+
+      if (!context.mounted) {
+        debugPrint('CoreApp - _appInit - Context is not mounted after app init end');
+        return;
       }
 
       CoreAppState.instance._invalidateApp();
@@ -579,11 +614,11 @@ class AppDataState extends InheritedWidget {
   final AbstractAppDataStateSnapshot snapshot;
 
   /// AppDataState
-  AppDataState({
+  const AppDataState({
     super.key,
-    required Widget child,
     required this.snapshot,
-  }) : super(child: child);
+    required super.child,
+  });
 
   /// AbstractAppDataState access current snapshot anywhere from BuildContext
   static T? of<T extends AbstractAppDataStateSnapshot>(BuildContext context) {

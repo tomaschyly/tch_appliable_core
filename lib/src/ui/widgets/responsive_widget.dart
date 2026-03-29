@@ -23,7 +23,7 @@ class ResponsiveWidget extends StatelessWidget {
   final int mobileDesktopBreakpoint;
 
   /// ResponsiveWidget initialization
-  ResponsiveWidget({
+  const ResponsiveWidget({
     super.key,
     required this.child,
     this.smallPhoneScreen,
@@ -45,9 +45,7 @@ class ResponsiveWidget extends StatelessWidget {
     final double width = MediaQuery.of(context).size.width;
     ResponsiveScreen? responsiveScreen = snapshot?.responsiveScreen;
 
-    if (responsiveScreen == null) {
-      responsiveScreen = determineResponsiveScreen(context);
-    }
+    responsiveScreen ??= determineResponsiveScreen(context);
 
     if (mobileScreen != null && width <= mobileDesktopBreakpoint) {
       return mobileScreen!;

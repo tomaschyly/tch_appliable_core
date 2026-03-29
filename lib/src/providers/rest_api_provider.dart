@@ -563,11 +563,11 @@ class RestApiProvider extends InheritedWidget {
   final RestApiClient apiClient;
 
   /// RestApiProvider initialization
-  RestApiProvider({
+  const RestApiProvider({
     super.key,
     required this.apiClient,
-    required Widget child,
-  }) : super(child: child);
+    required super.child,
+  });
 
   /// Get the closest instance of RestApiClient class from the build context
   static RestApiClient? of(BuildContext context) {

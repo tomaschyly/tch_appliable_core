@@ -292,11 +292,11 @@ class SembastApiProvider extends InheritedWidget {
   final SembastApiClient apiClient;
 
   /// SembastApiProvider
-  SembastApiProvider({
+  const SembastApiProvider({
     super.key,
-    required Widget child,
+    required super.child,
     required this.apiClient,
-  }) : super(child: child);
+  });
 
   /// SembastApiProvider access current apiClient anywhere from BuildContext
   static SembastApiClient? of(BuildContext context) {

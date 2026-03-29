@@ -3,7 +3,7 @@ class ListExtensionDummy {}
 
 extension ListExtension<E> on List<E> {
   /// Maps the list into new list, but keep only unique values
-  Iterable<T> mapUnique<T>(T toElement(E e)) {
+  Iterable<T> mapUnique<T>(T Function(E) toElement) {
     return map(toElement).toSet().toList();
   }
 }

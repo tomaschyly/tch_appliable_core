@@ -48,7 +48,7 @@ class SafeAreaOptions {
 
 abstract class AbstractScreen extends AbstractStatefulWidget {
   /// AbstractScreen initialization
-  AbstractScreen({super.key});
+  const AbstractScreen({super.key});
 }
 
 abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractStatefulWidgetState<T> with RouteAware {
@@ -141,6 +141,10 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
         }
 
         return ScreenDataState(
+          isLoading: isLoading.value,
+          loadingTags: _loadingTags,
+          executeAsyncTaskCallback: executeAsyncTask,
+          loading: isLoading,
           child: Scaffold(
             extendBodyBehindAppBar: options.extendBodyBehindAppBar,
             backgroundColor: backgroundColor ?? Theme.of(context).colorScheme.surface,
@@ -161,10 +165,6 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
             floatingActionButtonAnimator: setFloatingActionButtonAnimator(context),
             floatingActionButtonLocation: setFloatingActionButtonLocation(context),
           ),
-          isLoading: isLoading.value,
-          loadingTags: _loadingTags,
-          executeAsyncTaskCallback: executeAsyncTask,
-          loading: isLoading,
         );
       },
     );
@@ -198,6 +198,8 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
   @protected
   void screenMessage(BuildContext context, ScreenMessage message) {
     Future.delayed(kThemeAnimationDuration, () {
+      if (!context.mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -297,14 +299,14 @@ class ScreenDataState extends InheritedWidget {
   final ValueNotifier<bool> loading;
 
   /// ScreenDataState initialization
-  ScreenDataState({
+  const ScreenDataState({
     super.key,
-    required Widget child,
     required this.isLoading,
     required this.loadingTags,
     required this.executeAsyncTaskCallback,
     required this.loading,
-  }) : super(child: child);
+    required super.child,
+  });
 
   /// Access current ScreenDataState anywhere from BuildContext
   static T? of<T extends ScreenDataState>(BuildContext context) {

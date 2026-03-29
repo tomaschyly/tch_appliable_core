@@ -14,7 +14,7 @@ enum ResponsiveScreen {
 
 abstract class AbstractResponsiveWidget extends AbstractStatefulWidget {
   /// AbstractResponsiveWidget initialization
-  AbstractResponsiveWidget({super.key});
+  const AbstractResponsiveWidget({super.key});
 }
 
 abstract class AbstractResponsiveWidgetState<T extends AbstractResponsiveWidget> extends AbstractStatefulWidgetState<T> {
