@@ -4,7 +4,7 @@ import 'package:tch_appliable_core/src/ui/screens/abstract_screen.dart';
 import 'package:tch_appliable_core/src/ui/widgets/abstract_responsive_widget.dart';
 
 abstract class AbstractResponsiveScreen extends AbstractScreen {
-  AbstractResponsiveScreen({super.key});
+  const AbstractResponsiveScreen({super.key});
 }
 
 abstract class AbstractResponsiveScreenState<T extends AbstractResponsiveScreen> extends AbstractScreenState<T> {

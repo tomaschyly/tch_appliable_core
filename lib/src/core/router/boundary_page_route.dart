@@ -78,7 +78,7 @@ class BoundaryPageRouteWidget extends AbstractStatefulWidget {
   final double? borderRadius;
 
   /// BoundaryPageRouteWidget initialization
-  BoundaryPageRouteWidget({
+  const BoundaryPageRouteWidget({
     super.key,
     required this.child,
     required this.pushRoute,

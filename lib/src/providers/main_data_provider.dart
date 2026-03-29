@@ -6,20 +6,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart' as path;
-import 'package:sembast/sembast.dart' as Sembast;
+import 'package:sembast/sembast.dart' as sembast;
 import 'package:sembast/sembast_io.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart' as SQLite;
+import 'package:sqflite_common_ffi/sqflite_ffi.dart' as sqlite;
 import 'package:tch_appliable_core/src/providers/mainDataProvider/data_request.dart';
 import 'package:tch_appliable_core/src/providers/mainDataProvider/data_task.dart';
 import 'package:tch_appliable_core/src/providers/mainDataProvider/main_data_source.dart';
 import 'package:collection/collection.dart';
 
 enum MainDataProviderSource {
-  None,
-  MockUp,
-  HTTPClient,
-  SQLite,
-  Sembast,
+  none,
+  mockUp,
+  httpClient,
+  sqLite,
+  sembast,
 }
 
 class MainDataProviderOptions {
@@ -44,7 +44,7 @@ class MainDataProvider {
 
   List<AbstractSource> get initializedSources => _initializedSources.toList(growable: false);
 
-  List<AbstractSource> _initializedSources = <AbstractSource>[];
+  final List<AbstractSource> _initializedSources = <AbstractSource>[];
 
   /// MainDataProvider initialization
   MainDataProvider({
@@ -93,16 +93,16 @@ class MainDataProvider {
     }
 
     switch (source) {
-      case MainDataProviderSource.MockUp:
+      case MainDataProviderSource.mockUp:
         theSource = _initializedSources.firstWhereOrNull((element) => element is MockUpSource);
         break;
-      case MainDataProviderSource.HTTPClient:
+      case MainDataProviderSource.httpClient:
         theSource = _initializedSources.firstWhereOrNull((element) => element is HTTPSource);
         break;
-      case MainDataProviderSource.SQLite:
+      case MainDataProviderSource.sqLite:
         theSource = _initializedSources.firstWhereOrNull((element) => element is SQLiteSource);
         break;
-      case MainDataProviderSource.Sembast:
+      case MainDataProviderSource.sembast:
         theSource = _initializedSources.firstWhereOrNull((element) => element is SembastSource);
         break;
       default:
@@ -120,7 +120,7 @@ class MainDataProvider {
       AbstractSource? theSource = _initializedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
 
       if (theSource is MockUpSource) {
-        dataRequest.sourceRegisteredTo = MainDataProviderSource.MockUp;
+        dataRequest.sourceRegisteredTo = MainDataProviderSource.mockUp;
       }
 
       if (theSource == null) {
@@ -158,7 +158,7 @@ class MainDataProvider {
   }
 
   /// Request to load next page of DataRequest
-  dataRequestLoadNextPage(DataRequest dataRequest) {
+  void dataRequestLoadNextPage(DataRequest dataRequest) {
     AbstractSource? theSource = _initializedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
 
     if (theSource == null) {
@@ -214,7 +214,7 @@ class MainDataProvider {
   void _updateMainDataSourceState(MainDataSource mainDataSource) {
     final List<MainDataProviderSourceState> states = [];
 
-    mainDataSource.sourcesRegisteredTo.forEach((MainDataProviderSource source) {
+    for (final MainDataProviderSource source in mainDataSource.sourcesRegisteredTo) {
       AbstractSource? theSource = _initializedSource(source);
 
       if (theSource == null) {
@@ -222,7 +222,7 @@ class MainDataProvider {
       } else {
         states.add(theSource.state.value);
       }
-    });
+    }
 
     if (states.contains(MainDataProviderSourceState.unAvailable)) {
       mainDataSource.state.value = MainDataProviderSourceState.unAvailable;
@@ -246,7 +246,7 @@ abstract class AbstractSource {
 
   final List<MainDataSource> _dataSources = <MainDataSource>[];
   final List<String> _identifiers = <String>[];
-  final Map<String, DataRequest> _identifierRequests = Map();
+  final Map<String, DataRequest> _identifierRequests = {};
 
   /// Register the DataSource for data
   void registerDataSource(MainDataSource dataSource);
@@ -254,19 +254,19 @@ abstract class AbstractSource {
   /// Register DataSource DataRequests for identifiers and example DataRequests mapping
   @protected
   void registerDataRequests(MainDataSource dataSource) {
-    dataSource.identifiers.forEach((String identifier) {
+    for (final String identifier in dataSource.identifiers) {
       if (_identifiers.contains(identifier)) {
         final DataRequest dataRequest = dataSource.requestForIdentifier(identifier)!;
 
         if (dataRequest.source != isSource) {
-          return;
+          continue;
         }
 
         _identifiers.add(identifier);
 
         _identifierRequests[identifier] = dataRequest;
       }
-    });
+    }
   }
 
   /// UnRegister the DataSource from receiving data
@@ -274,19 +274,20 @@ abstract class AbstractSource {
 
   /// UnRegister DataSource DataRequests for identifiers if no other DataSource has equal
   @protected
-  unRegisterDataRequests(MainDataSource dataSource) {
-    dataSource.identifiers.forEach((String identifier) {
+  void unRegisterDataRequests(MainDataSource dataSource) {
+    outer:
+    for (final String identifier in dataSource.identifiers) {
       final DataRequest dataRequest = dataSource.requestForIdentifier(identifier)!;
 
       if (dataRequest.source != isSource) {
-        return;
+        continue;
       }
 
       for (MainDataSource otherDataSource in _dataSources) {
         if (otherDataSource != dataSource) {
           for (String otherDataSourceMethod in otherDataSource.identifiers) {
             if (otherDataSourceMethod == identifier) {
-              return;
+              continue outer;
             }
           }
         }
@@ -295,14 +296,14 @@ abstract class AbstractSource {
       _identifiers.remove(identifier);
 
       _identifierRequests.remove(identifier);
-    });
+    }
   }
 
   /// Check if DataRequest has next page
   Future<bool> dataRequestHasNextPage(DataRequest dataRequest);
 
   /// Request to load next page of DataRequest
-  dataRequestLoadNextPage(DataRequest dataRequest);
+  void dataRequestLoadNextPage(DataRequest dataRequest);
 
   /// Execute one time DataTask against the source
   Future<T> executeDataTask<T extends DataTask>(T dataTask);
@@ -312,13 +313,13 @@ abstract class AbstractSource {
 
   MainDataProviderSource sourceForTaskOptions(DataTaskOptions options) {
     if (options is MockUpTaskOptions) {
-      return MainDataProviderSource.MockUp;
+      return MainDataProviderSource.mockUp;
     } else if (options is HTTPTaskOptions) {
-      return MainDataProviderSource.HTTPClient;
+      return MainDataProviderSource.httpClient;
     } else if (options is SQLiteTaskOptions) {
-      return MainDataProviderSource.SQLite;
+      return MainDataProviderSource.sqLite;
     } else if (options is SembastTaskOptions) {
-      return MainDataProviderSource.Sembast;
+      return MainDataProviderSource.sembast;
     } else {
       throw Exception('Cannot get source for options $options');
     }
@@ -336,10 +337,10 @@ class MockUpOptions {
 
 class MockUpSource extends AbstractSource {
   @override
-  MainDataProviderSource get isSource => MainDataProviderSource.MockUp;
+  MainDataProviderSource get isSource => MainDataProviderSource.mockUp;
 
   final MockUpOptions _options;
-  final Map<MainDataProviderSource, Map<String, dynamic>> _mockUpData = Map();
+  final Map<MainDataProviderSource, Map<String, dynamic>> _mockUpData = {};
 
   /// MockUpSource initialization
   MockUpSource({
@@ -359,14 +360,14 @@ class MockUpSource extends AbstractSource {
       String assetPath = _options.assetsDataPath;
 
       switch (source) {
-        case MainDataProviderSource.HTTPClient:
+        case MainDataProviderSource.httpClient:
           assetPath = path.posix.join(assetPath, 'HTTPClient.json');
           break;
-        case MainDataProviderSource.SQLite:
-          assetPath = path.posix.join(assetPath, 'SQLite.json');
+        case MainDataProviderSource.sqLite:
+          assetPath = path.posix.join(assetPath, 'sqlite.json');
           break;
-        case MainDataProviderSource.Sembast:
-          assetPath = path.posix.join(assetPath, 'Sembast.json');
+        case MainDataProviderSource.sembast:
+          assetPath = path.posix.join(assetPath, 'sembast.json');
           break;
         default:
           throw Exception('Cannot init mockUp data for source $source');
@@ -407,7 +408,7 @@ class MockUpSource extends AbstractSource {
   Future<void> _queryDataUpdate(DataRequest dataRequest) async {
     SourceException? exception;
 
-    if (dataRequest.source == MainDataProviderSource.HTTPClient) {
+    if (dataRequest.source == MainDataProviderSource.httpClient) {
       String? json;
 
       try {
@@ -424,7 +425,7 @@ class MockUpSource extends AbstractSource {
         exception = SourceException(originalException: e);
       }
 
-      _dataSources.forEach((MainDataSource dataSource) {
+      for (final MainDataSource dataSource in _dataSources) {
         if (dataSource.identifiers.contains(dataRequest.identifier)) {
           dataSource.setResult(
             dataRequest.identifier,
@@ -436,7 +437,7 @@ class MockUpSource extends AbstractSource {
             exception,
           );
         }
-      });
+      }
     } else {
       List<Map<String, dynamic>>? results;
 
@@ -446,7 +447,7 @@ class MockUpSource extends AbstractSource {
         exception = SourceException(originalException: e);
       }
 
-      _dataSources.forEach((MainDataSource dataSource) {
+      for (final MainDataSource dataSource in _dataSources) {
         if (dataSource.identifiers.contains(dataRequest.identifier)) {
           dataSource.setResult(
             dataRequest.identifier,
@@ -458,7 +459,7 @@ class MockUpSource extends AbstractSource {
             exception,
           );
         }
-      });
+      }
     }
   }
 
@@ -533,7 +534,7 @@ class MockUpSource extends AbstractSource {
     }
 
     switch (options.type) {
-      case MockUpType.Query:
+      case MockUpType.query:
         Map<String, dynamic>? results;
         SourceException? exception;
 
@@ -616,7 +617,7 @@ class HTTPClientOptions {
 
 class HTTPSource extends AbstractSource {
   @override
-  MainDataProviderSource get isSource => MainDataProviderSource.HTTPClient;
+  MainDataProviderSource get isSource => MainDataProviderSource.httpClient;
 
   final HTTPClientOptions _options;
 
@@ -628,7 +629,7 @@ class HTTPSource extends AbstractSource {
   }
 
   /// Query data from remote API
-  Future<_HTTPSourceResponse> query(
+  Future<_HTTPSourceResponse> _query(
     DataRequest dataRequest, {
     bool paginate = false,
   }) async {
@@ -651,7 +652,7 @@ class HTTPSource extends AbstractSource {
 
     final String url = '${_options.hostUrl}${dataRequest.method}?${values.join('&')}';
 
-    final theHeaders = _options.headers != null ? Map<String, String>.from(_options.headers!) : Map<String, String>();
+    final theHeaders = _options.headers != null ? Map<String, String>.from(_options.headers!) : <String, String>{};
     if (_options.dynamicHeaders != null) {
       theHeaders.addAll(_options.dynamicHeaders!.call());
     }
@@ -690,7 +691,7 @@ class HTTPSource extends AbstractSource {
     SourceException? exception;
 
     try {
-      final response = await query(dataRequest, paginate: paginate);
+      final response = await _query(dataRequest, paginate: paginate);
 
       json = response.body;
 
@@ -704,13 +705,13 @@ class HTTPSource extends AbstractSource {
       exception = SourceException(originalException: e);
     }
 
-    _dataSources.forEach((MainDataSource dataSource) {
+    for (final MainDataSource dataSource in _dataSources) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
         dataSource.setRawResult(dataRequest.identifier, json);
       }
-    });
+    }
 
-    _dataSources.forEach((MainDataSource dataSource) {
+    for (final MainDataSource dataSource in _dataSources) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
         dataSource.setResult(
           dataRequest.identifier,
@@ -720,7 +721,7 @@ class HTTPSource extends AbstractSource {
           exception,
         );
       }
-    });
+    }
   }
 
   /// Register the DataSource for data
@@ -760,7 +761,7 @@ class HTTPSource extends AbstractSource {
     try {
       dataRequest.pagination.page++;
 
-      final response = await query(
+      final response = await _query(
         dataRequest,
         paginate: true,
       );
@@ -770,7 +771,7 @@ class HTTPSource extends AbstractSource {
       json = null;
     }
 
-    _dataSources.forEach((MainDataSource dataSource) {
+    for (final MainDataSource dataSource in _dataSources) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
         dataSource.setRawResult(
           dataRequest.identifier,
@@ -778,7 +779,7 @@ class HTTPSource extends AbstractSource {
           lastHasNext: true,
         );
       }
-    });
+    }
 
     final ResultsNotEmpty? checkResultNotEmpty = dataRequest.pagination.checkResultNotEmpty;
 
@@ -800,13 +801,13 @@ class HTTPSource extends AbstractSource {
     if (combine != null) {
       final dynamic json = combine(rawResults, paginationResults);
 
-      _dataSources.forEach((MainDataSource dataSource) {
+      for (final MainDataSource dataSource in _dataSources) {
         if (dataSource.identifiers.contains(dataRequest.identifier)) {
           dataSource.setRawResult(dataRequest.identifier, json);
         }
-      });
+      }
 
-      _dataSources.forEach((MainDataSource dataSource) {
+      for (final MainDataSource dataSource in _dataSources) {
         if (dataSource.identifiers.contains(dataRequest.identifier)) {
           dataSource.setResult(
             dataRequest.identifier,
@@ -816,7 +817,7 @@ class HTTPSource extends AbstractSource {
             null,
           );
         }
-      });
+      }
     } else {
       throw Exception('HTTPSource requires dataRequest.pagination.combinePaginationResult to combine results after loading next page');
     }
@@ -831,7 +832,7 @@ class HTTPSource extends AbstractSource {
     final Map<String, dynamic> data = dataTask.data.toJson();
 
     switch (options.type) {
-      case HTTPType.Get:
+      case HTTPType.get:
         final List<String> values = [];
         data.forEach((key, value) {
           values.add('$key=$value');
@@ -885,16 +886,16 @@ class HTTPSource extends AbstractSource {
           dataTask.error = SourceException(originalException: e);
         }
         break;
-      case HTTPType.Post:
+      case HTTPType.post:
         try {
           _HTTPSourceResponse response;
 
           if (options.useDio) {
-            if (options.postDataFormat == HTTPPostDataFormat.ToJson) {
-              final theHeaders = options.headers ?? Map<String, String>();
+            if (options.postDataFormat == HTTPPostDataFormat.toJson) {
+              final theHeaders = options.headers ?? <String, String>{};
 
               theHeaders.addAll(
-                {"Content-Type": "application/json; charset=utf-8"},
+                {'Content-Type': 'application/json; charset=utf-8'},
               );
 
               final dioResponse = await Dio().post<String>(
@@ -924,11 +925,11 @@ class HTTPSource extends AbstractSource {
               );
             }
           } else {
-            if (options.postDataFormat == HTTPPostDataFormat.ToJson) {
-              final theHeaders = options.headers ?? Map<String, String>();
+            if (options.postDataFormat == HTTPPostDataFormat.toJson) {
+              final theHeaders = options.headers ?? <String, String>{};
 
               theHeaders.addAll(
-                {"Content-Type": "application/json; charset=utf-8"},
+                {'Content-Type': 'application/json; charset=utf-8'},
               );
 
               final httpResponse = await post(
@@ -974,7 +975,7 @@ class HTTPSource extends AbstractSource {
           dataTask.error = SourceException(originalException: e);
         }
         break;
-      case HTTPType.Delete:
+      case HTTPType.delete:
         final List<String> values = [];
         data.forEach((key, value) {
           values.add('$key=$value');
@@ -1093,9 +1094,9 @@ class _HTTPSourceResponse {
 class SQLiteOptions {
   final Future<String> Function() databasePath;
   final int version;
-  final SQLite.OnDatabaseCreateFn onCreate;
-  final SQLite.OnDatabaseVersionChangeFn? onUpgrade;
-  final SQLite.OnDatabaseVersionChangeFn? onDowngrade;
+  final sqlite.OnDatabaseCreateFn onCreate;
+  final sqlite.OnDatabaseVersionChangeFn? onUpgrade;
+  final sqlite.OnDatabaseVersionChangeFn? onDowngrade;
 
   /// SQLiteOptions initialization
   SQLiteOptions({
@@ -1109,10 +1110,10 @@ class SQLiteOptions {
 
 class SQLiteSource extends AbstractSource {
   @override
-  MainDataProviderSource get isSource => MainDataProviderSource.SQLite;
+  MainDataProviderSource get isSource => MainDataProviderSource.sqLite;
 
   final SQLiteOptions _options;
-  SQLite.Database? _database;
+  sqlite.Database? _database;
 
   /// SQLiteSource initialization
   SQLiteSource({
@@ -1120,16 +1121,16 @@ class SQLiteSource extends AbstractSource {
   }) : _options = options {
     state = ValueNotifier(MainDataProviderSourceState.ready);
 
-    SQLite.sqfliteFfiInit();
-    SQLite.databaseFactory = SQLite.databaseFactoryFfi;
+    sqlite.sqfliteFfiInit();
+    sqlite.databaseFactory = sqlite.databaseFactoryFfi;
   }
 
   /// Create Database connection and init tables structure
-  Future<SQLite.Database> _open() async {
-    SQLite.Database? database = _database;
+  Future<sqlite.Database> _open() async {
+    sqlite.Database? database = _database;
 
     if (database == null) {
-      database = await SQLite.openDatabase(
+      database = await sqlite.openDatabase(
         await _options.databasePath(),
         version: _options.version,
         onCreate: _options.onCreate,
@@ -1275,13 +1276,13 @@ class SQLiteSource extends AbstractSource {
       exception = SourceException(originalException: e);
     }
 
-    _dataSources.forEach((MainDataSource dataSource) {
+    for (final MainDataSource dataSource in _dataSources) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
         dataSource.setRawResult(dataRequest.identifier, results);
       }
-    });
+    }
 
-    _dataSources.forEach((MainDataSource dataSource) {
+    for (final MainDataSource dataSource in _dataSources) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
         dataSource.setResult(
           dataRequest.identifier,
@@ -1291,7 +1292,7 @@ class SQLiteSource extends AbstractSource {
           exception,
         );
       }
-    });
+    }
   }
 
   /// Register the DataSource for data
@@ -1344,7 +1345,7 @@ class SQLiteSource extends AbstractSource {
       results = [];
     }
 
-    _dataSources.forEach((MainDataSource dataSource) {
+    for (final MainDataSource dataSource in _dataSources) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
         dataSource.setRawResult(
           dataRequest.identifier,
@@ -1352,7 +1353,7 @@ class SQLiteSource extends AbstractSource {
           lastHasNext: true,
         );
       }
-    });
+    }
 
     return results.isNotEmpty;
   }
@@ -1365,13 +1366,13 @@ class SQLiteSource extends AbstractSource {
 
     rawResults.addAll(paginationResults);
 
-    _dataSources.forEach((MainDataSource dataSource) {
+    for (final MainDataSource dataSource in _dataSources) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
         dataSource.setRawResult(dataRequest.identifier, rawResults);
       }
-    });
+    }
 
-    _dataSources.forEach((MainDataSource dataSource) {
+    for (final MainDataSource dataSource in _dataSources) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
         dataSource.setResult(
           dataRequest.identifier,
@@ -1381,7 +1382,7 @@ class SQLiteSource extends AbstractSource {
           null,
         );
       }
-    });
+    }
   }
 
   /// Execute one time DataTask against the source
@@ -1392,10 +1393,10 @@ class SQLiteSource extends AbstractSource {
     final Map<String, dynamic> data = dataTask.data.toJson();
 
     switch (options.type) {
-      case SQLiteType.Raw:
+      case SQLiteType.raw:
         await raw(options.rawQuery!);
         break;
-      case SQLiteType.Query:
+      case SQLiteType.query:
         List<Map<String, dynamic>>? results;
         SourceException? exception;
 
@@ -1422,7 +1423,7 @@ class SQLiteSource extends AbstractSource {
             : null;
         dataTask.error = exception;
         break;
-      case SQLiteType.Save:
+      case SQLiteType.save:
         int? id;
         SourceException? exception;
 
@@ -1439,7 +1440,7 @@ class SQLiteSource extends AbstractSource {
         dataTask.result = id != null ? dataTask.processResult(<String, dynamic>{'id': id}) : null;
         dataTask.error = exception;
         break;
-      case SQLiteType.Delete:
+      case SQLiteType.delete:
         int? deleted;
         SourceException? exception;
 
@@ -1455,7 +1456,7 @@ class SQLiteSource extends AbstractSource {
         dataTask.result = deleted != null ? dataTask.processResult(<String, dynamic>{'deleted': deleted}) : null;
         dataTask.error = exception;
         break;
-      case SQLiteType.DeleteWhere:
+      case SQLiteType.deleteWhere:
         try {
           int deleted = await deleteWhere(
             dataTask.method,
@@ -1523,7 +1524,7 @@ class SQLiteSource extends AbstractSource {
 class SembastOptions {
   final Future<String> Function() databasePath;
   final int version;
-  final Sembast.OnVersionChangedFunction? onVersionChanged;
+  final sembast.OnVersionChangedFunction? onVersionChanged;
 
   /// SembastOptions initialization
   SembastOptions({
@@ -1535,10 +1536,10 @@ class SembastOptions {
 
 class SembastSource extends AbstractSource {
   @override
-  MainDataProviderSource get isSource => MainDataProviderSource.Sembast;
+  MainDataProviderSource get isSource => MainDataProviderSource.sembast;
 
   final SembastOptions _options;
-  Sembast.Database? _database;
+  sembast.Database? _database;
 
   /// SembastSource initialization
   SembastSource({
@@ -1548,11 +1549,11 @@ class SembastSource extends AbstractSource {
   }
 
   /// Create Database connection
-  Future<Sembast.Database> _open() async {
-    Sembast.Database? database = _database;
+  Future<sembast.Database> _open() async {
+    sembast.Database? database = _database;
 
     if (database == null) {
-      Sembast.DatabaseFactory dbFactory = databaseFactoryIo;
+      sembast.DatabaseFactory dbFactory = databaseFactoryIo;
 
       database = await dbFactory.openDatabase(
         await _options.databasePath(),
@@ -1567,8 +1568,8 @@ class SembastSource extends AbstractSource {
   }
 
   /// Convert parameters into Finder Filters
-  List<Sembast.Filter> _filtersFromParameters(Map<String, dynamic> parameters) {
-    final List<Sembast.Filter> filters = [];
+  List<sembast.Filter> _filtersFromParameters(Map<String, dynamic> parameters) {
+    final List<sembast.Filter> filters = [];
 
     for (String key in parameters.keys) {
       final List<String> parts = key.split(' ');
@@ -1583,22 +1584,22 @@ class SembastSource extends AbstractSource {
 
       switch (parts[1]) {
         case '=':
-          filters.add(Sembast.Filter.equals(parts[0], parameters[key]));
+          filters.add(sembast.Filter.equals(parts[0], parameters[key]));
           break;
         case 'LIKE':
-          filters.add(Sembast.Filter.matchesRegExp(parts[0], RegExp(parameters[key], caseSensitive: false)));
+          filters.add(sembast.Filter.matchesRegExp(parts[0], RegExp(parameters[key], caseSensitive: false)));
           break;
         case '>':
-          filters.add(Sembast.Filter.greaterThan(parts[0], parameters[key]));
+          filters.add(sembast.Filter.greaterThan(parts[0], parameters[key]));
           break;
         case '>=':
-          filters.add(Sembast.Filter.greaterThanOrEquals(parts[0], parameters[key]));
+          filters.add(sembast.Filter.greaterThanOrEquals(parts[0], parameters[key]));
           break;
         case '<':
-          filters.add(Sembast.Filter.lessThan(parts[0], parameters[key]));
+          filters.add(sembast.Filter.lessThan(parts[0], parameters[key]));
           break;
         case '<=':
-          filters.add(Sembast.Filter.lessThanOrEquals(parts[0], parameters[key]));
+          filters.add(sembast.Filter.lessThanOrEquals(parts[0], parameters[key]));
           break;
       }
     }
@@ -1610,23 +1611,23 @@ class SembastSource extends AbstractSource {
   Future<List<Map<String, dynamic>>> query(String store, Map<String, dynamic> parameters) async {
     final database = await _open();
 
-    final theStore = Sembast.intMapStoreFactory.store(store);
+    final theStore = sembast.intMapStoreFactory.store(store);
 
-    final finder = Sembast.Finder(
-      filter: Sembast.Filter.and(_filtersFromParameters(parameters)),
+    final finder = sembast.Finder(
+      filter: sembast.Filter.and(_filtersFromParameters(parameters)),
     );
 
-    final List<Sembast.RecordSnapshot<int, Map<String, Object?>>> snapshot = await theStore.find(database, finder: finder);
+    final List<sembast.RecordSnapshot<int, Map<String, Object?>>> snapshot = await theStore.find(database, finder: finder);
 
     final List<Map<String, dynamic>> results = [];
 
-    snapshot.forEach((Sembast.RecordSnapshot<int, Map<String, Object?>> record) {
+    for (final sembast.RecordSnapshot<int, Map<String, Object?>> record in snapshot) {
       final data = Map<String, dynamic>.from(record.value);
 
       data['id'] = record.key;
 
       results.add(data);
-    });
+    }
 
     return results;
   }
@@ -1635,7 +1636,7 @@ class SembastSource extends AbstractSource {
   Future<int> _insert(String store, Map<String, dynamic> data) async {
     final database = await _open();
 
-    final theStore = Sembast.intMapStoreFactory.store(store);
+    final theStore = sembast.intMapStoreFactory.store(store);
 
     return theStore.add(database, data);
   }
@@ -1644,7 +1645,7 @@ class SembastSource extends AbstractSource {
   Future<void> _update(String store, Map<String, dynamic> data, int id) async {
     final database = await _open();
 
-    final theStore = Sembast.intMapStoreFactory.store(store);
+    final theStore = sembast.intMapStoreFactory.store(store);
 
     await theStore.record(id).put(database, data);
   }
@@ -1664,7 +1665,7 @@ class SembastSource extends AbstractSource {
   Future<void> delete(String store, int id) async {
     final database = await _open();
 
-    final theStore = Sembast.intMapStoreFactory.store(store);
+    final theStore = sembast.intMapStoreFactory.store(store);
 
     await theStore.record(id).delete(database);
   }
@@ -1673,10 +1674,10 @@ class SembastSource extends AbstractSource {
   Future<void> deleteWhere(String store, Map<String, dynamic> parameters) async {
     final database = await _open();
 
-    final theStore = Sembast.intMapStoreFactory.store(store);
+    final theStore = sembast.intMapStoreFactory.store(store);
 
-    final finder = Sembast.Finder(
-      filter: Sembast.Filter.and(_filtersFromParameters(parameters)),
+    final finder = sembast.Finder(
+      filter: sembast.Filter.and(_filtersFromParameters(parameters)),
     );
 
     await theStore.delete(database, finder: finder);
@@ -1693,7 +1694,7 @@ class SembastSource extends AbstractSource {
       exception = SourceException(originalException: e);
     }
 
-    _dataSources.forEach((MainDataSource dataSource) {
+    for (final MainDataSource dataSource in _dataSources) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
         dataSource.setResult(
           dataRequest.identifier,
@@ -1703,7 +1704,7 @@ class SembastSource extends AbstractSource {
           exception,
         );
       }
-    });
+    }
   }
 
   /// Register the DataSource for data
@@ -1750,7 +1751,7 @@ class SembastSource extends AbstractSource {
     final Map<String, dynamic> data = dataTask.data.toJson();
 
     switch (options.type) {
-      case SembastType.Query:
+      case SembastType.query:
         List<Map<String, dynamic>>? results;
         SourceException? exception;
 
@@ -1770,7 +1771,7 @@ class SembastSource extends AbstractSource {
             : null;
         dataTask.error = exception;
         break;
-      case SembastType.Save:
+      case SembastType.save:
         int? id;
         SourceException? exception;
 
@@ -1787,7 +1788,7 @@ class SembastSource extends AbstractSource {
         dataTask.result = id != null ? dataTask.processResult(<String, dynamic>{options.idKey: id}) : null;
         dataTask.error = exception;
         break;
-      case SembastType.Delete:
+      case SembastType.delete:
         try {
           await delete(dataTask.method, data[options.idKey]);
 
@@ -1798,7 +1799,7 @@ class SembastSource extends AbstractSource {
         }
 
         break;
-      case SembastType.DeleteWhere:
+      case SembastType.deleteWhere:
         try {
           await deleteWhere(dataTask.method, data);
 

@@ -8,7 +8,7 @@ class ScreenMessengerWidget extends AbstractStatefulWidget {
   final Widget child;
 
   /// ScreenMessengerWidget initialization
-  ScreenMessengerWidget({
+  const ScreenMessengerWidget({
     super.key,
     required this.options,
     required this.displayMessage,

@@ -69,7 +69,6 @@ class ResponsiveWidget extends StatelessWidget {
       case ResponsiveScreen.smallPhone:
         return smallPhoneScreen ?? child;
       case ResponsiveScreen.unDetermined:
-      default:
         return child;
     }
   }

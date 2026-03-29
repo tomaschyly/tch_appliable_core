@@ -10,7 +10,7 @@ abstract class AbstractDataWidget extends AbstractStatefulWidget {
   final List<DataRequest> dataRequests;
 
   /// AbstractDataWidget initialization
-  AbstractDataWidget({
+  const AbstractDataWidget({
     super.key,
     required this.dataRequests,
   });

@@ -8,14 +8,14 @@ abstract class DataTaskOptions {
 }
 
 enum HTTPType {
-  Get,
-  Post,
-  Delete,
+  get,
+  post,
+  delete,
 }
 
 enum HTTPPostDataFormat {
-  FormData,
-  ToJson,
+  formData,
+  toJson,
 }
 
 class HTTPTaskOptions extends DataTaskOptions {
@@ -30,7 +30,7 @@ class HTTPTaskOptions extends DataTaskOptions {
   const HTTPTaskOptions({
     this.useDio = true,
     required this.type,
-    this.postDataFormat = HTTPPostDataFormat.FormData,
+    this.postDataFormat = HTTPPostDataFormat.formData,
     this.url,
     this.headers,
     this.processBody,
@@ -38,11 +38,11 @@ class HTTPTaskOptions extends DataTaskOptions {
 }
 
 enum SQLiteType {
-  Raw,
-  Query,
-  Save,
-  Delete,
-  DeleteWhere,
+  raw,
+  query,
+  save,
+  delete,
+  deleteWhere,
 }
 
 class SQLiteTaskOptions extends DataTaskOptions {
@@ -67,10 +67,10 @@ class SQLiteTaskOptions extends DataTaskOptions {
 }
 
 enum SembastType {
-  Query,
-  Save,
-  Delete,
-  DeleteWhere,
+  query,
+  save,
+  delete,
+  deleteWhere,
 }
 
 class SembastTaskOptions extends DataTaskOptions {
@@ -104,11 +104,11 @@ class DataTask<T extends DataModel, R extends DataModel> {
     required this.processResult,
     this.reFetchMethods,
     RequestPagination? pagination,
-  }) : this.pagination = pagination ?? RequestPagination();
+  }) : pagination = pagination ?? RequestPagination();
 }
 
 enum MockUpType {
-  Query,
+  query,
 }
 
 class MockUpTaskOptions {
