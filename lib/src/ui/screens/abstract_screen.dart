@@ -51,7 +51,8 @@ abstract class AbstractScreen extends AbstractStatefulWidget {
   const AbstractScreen({super.key});
 }
 
-abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractStatefulWidgetState<T> with RouteAware {
+abstract class AbstractScreenState<T extends AbstractScreen>
+    extends AbstractStatefulWidgetState<T> with RouteAware {
   @protected
   bool get isCurrent => _isCurrent;
   @protected
@@ -115,7 +116,10 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
       valueListenable: isLoading,
       builder: (BuildContext context, bool value, Widget? child) {
         Widget theContent = buildContent(context);
-        if (options.safeArea.top || options.safeArea.left || options.safeArea.right || options.safeArea.bottom) {
+        if (options.safeArea.top ||
+            options.safeArea.left ||
+            options.safeArea.right ||
+            options.safeArea.bottom) {
           theContent = SafeArea(
             top: options.safeArea.top,
             left: options.safeArea.left,
@@ -147,7 +151,8 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
           loading: isLoading,
           child: Scaffold(
             extendBodyBehindAppBar: options.extendBodyBehindAppBar,
-            backgroundColor: backgroundColor ?? Theme.of(context).colorScheme.surface,
+            backgroundColor:
+                backgroundColor ?? Theme.of(context).colorScheme.surface,
             appBar: createAppBar(context),
             body: Builder(
               builder: (BuildContext context) {
@@ -162,8 +167,10 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
             bottomNavigationBar: createBottomBar(context),
             drawer: !options.drawerIsPermanentlyVisible ? theDrawer : null,
             floatingActionButton: createFloatingActionButton(context),
-            floatingActionButtonAnimator: setFloatingActionButtonAnimator(context),
-            floatingActionButtonLocation: setFloatingActionButtonLocation(context),
+            floatingActionButtonAnimator:
+                setFloatingActionButtonAnimator(context),
+            floatingActionButtonLocation:
+                setFloatingActionButtonLocation(context),
           ),
         );
       },
@@ -188,19 +195,23 @@ abstract class AbstractScreenState<T extends AbstractScreen> extends AbstractSta
 
   /// Set animator for floating action button
   @protected
-  FloatingActionButtonAnimator? setFloatingActionButtonAnimator(BuildContext context) => null;
+  FloatingActionButtonAnimator? setFloatingActionButtonAnimator(
+          BuildContext context) =>
+      null;
 
   /// Set location of floating action button
   @protected
-  FloatingActionButtonLocation? setFloatingActionButtonLocation(BuildContext context) => null;
+  FloatingActionButtonLocation? setFloatingActionButtonLocation(
+          BuildContext context) =>
+      null;
 
   /// If available show message for this screen
   @protected
   void screenMessage(BuildContext context, ScreenMessage message) {
-    Future.delayed(kThemeAnimationDuration, () {
-      if (!context.mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
 
-      ScaffoldMessenger.of(context).showSnackBar(
+    Future.delayed(kThemeAnimationDuration, () {
+      messenger.showSnackBar(
         SnackBar(
           content: Text(
             message.message,
@@ -283,7 +294,8 @@ typedef ExecuteAsyncTaskCallback = Future<void> Function(
 });
 
 /// Shorthand to get ScreenDataState from context
-ScreenDataState getScreenDataState(BuildContext context) => ScreenDataState.of<ScreenDataState>(context)!;
+ScreenDataState getScreenDataState(BuildContext context) =>
+    ScreenDataState.of<ScreenDataState>(context)!;
 
 /// Set loading state on parent AbstractScreenState
 void setScreenStateLoadingState(BuildContext context, bool loading) {
@@ -332,7 +344,10 @@ class AppBarOption {
     this.complexIcon,
     this.button,
     this.svgAssetPath,
-  }) : assert(icon != null || complexIcon != null || button != null || svgAssetPath != null);
+  }) : assert(icon != null ||
+            complexIcon != null ||
+            button != null ||
+            svgAssetPath != null);
 }
 
 class BottomBarOption {

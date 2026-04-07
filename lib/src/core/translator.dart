@@ -22,7 +22,8 @@ class TranslatorOptions {
 }
 
 /// Shorthand to translate string to current Language
-String tt(String text, {Map<String, String>? parameters}) => Translator.instance?.translate(text, parameters: parameters) ?? text;
+String tt(String text, {Map<String, String>? parameters}) =>
+    Translator.instance?.translate(text, parameters: parameters) ?? text;
 
 class Translator {
   static Translator? get instance => _instance;
@@ -46,6 +47,8 @@ class Translator {
 
   /// Initialize correct Language and translations for it
   Future<void> init(BuildContext context) async {
+    final Locale locale = Localizations.localeOf(context);
+
     final theGetInitialLanguage = _options.getInitialLanguage;
     if (theGetInitialLanguage != null) {
       final String? initialLanguage = await theGetInitialLanguage(context);
@@ -59,12 +62,6 @@ class Translator {
       }
     }
 
-    if (!context.mounted) {
-      debugPrint('Translator - init - Context is not mounted');
-      return;
-    }
-
-    final Locale locale = Localizations.localeOf(context);
     final String fullCode = '${locale.languageCode}_${locale.countryCode}';
 
     final hasCodeWithCountry = langSupportedStrict(fullCode);
@@ -98,7 +95,8 @@ class Translator {
       throw Exception('Translator cannot initialize unsupported language');
     }
 
-    final String json = await rootBundle.loadString('assets/translations/$_currentLanguage.json');
+    final String json = await rootBundle
+        .loadString('assets/translations/$_currentLanguage.json');
 
     _currentTranslations = Map<String, String>.from(jsonDecode(json));
 
@@ -107,7 +105,9 @@ class Translator {
 
   /// Translate string to current Language
   String translate(String text, {Map<String, String>? parameters}) {
-    String translated = _currentTranslations[text] != null ? _htmlUnescape.convert(_currentTranslations[text]!) : text;
+    String translated = _currentTranslations[text] != null
+        ? _htmlUnescape.convert(_currentTranslations[text]!)
+        : text;
 
     if (parameters != null) {
       for (String key in parameters.keys) {
@@ -128,7 +128,8 @@ class Translator {
   }
 
   /// Default DateFormat localized to current Language
-  DateFormat get localizedDateTimeFormat => DateFormat.yMMMMEEEEd(_currentLanguage).add_jm();
+  DateFormat get localizedDateTimeFormat =>
+      DateFormat.yMMMMEEEEd(_currentLanguage).add_jm();
 
   /// Default DateFormat localized to current Language
   DateFormat get localizedDateFormat => DateFormat.yMMMMEEEEd(_currentLanguage);
