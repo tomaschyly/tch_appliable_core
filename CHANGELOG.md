@@ -1,3 +1,8 @@
+## [0.37.1] - 10.4.2026
+
+* **Warning:** Minimum SDK version bumped to `>=3.10.0` and Flutter to `>=3.38.0`
+* Preferences: lazy initialization of `SharedPreferences` — getters now safely handle uninitialized state, setters/removers lazily initialize instance on first use
+
 ## [0.37.0+3] - 7.4.2026
 
 * Code improvements to avoid issues under certain conditions 

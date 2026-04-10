@@ -10,31 +10,39 @@ double? prefsDouble(String key) => Preferences.instance?.getDouble(key);
 String? prefsString(String key) => Preferences.instance?.getString(key);
 
 /// Shorthand to save int value to prefs
-Future<bool> prefsSetInt(String key, int value) => Preferences.instance?.setInt(key, value) ?? Future.value(false);
+Future<bool> prefsSetInt(String key, int value) =>
+    Preferences.instance?.setInt(key, value) ?? Future.value(false);
 
 /// Shorthand to save double value to prefs
-Future<bool> prefsSetDouble(String key, double value) => Preferences.instance?.setDouble(key, value) ?? Future.value(false);
+Future<bool> prefsSetDouble(String key, double value) =>
+    Preferences.instance?.setDouble(key, value) ?? Future.value(false);
 
 /// Shorthand to save string value to prefs
-Future<bool> prefsSetString(String key, String value) => Preferences.instance?.setString(key, value) ?? Future.value(false);
+Future<bool> prefsSetString(String key, String value) =>
+    Preferences.instance?.setString(key, value) ?? Future.value(false);
 
 /// Shorthand to remove int value from prefs
-Future<bool> prefsRemoveInt(String key) => Preferences.instance?.removeInt(key) ?? Future.value(false);
+Future<bool> prefsRemoveInt(String key) =>
+    Preferences.instance?.removeInt(key) ?? Future.value(false);
 
 /// Shorthand to remove double value from prefs
-Future<bool> prefsRemoveDouble(String key) => Preferences.instance?.removeDouble(key) ?? Future.value(false);
+Future<bool> prefsRemoveDouble(String key) =>
+    Preferences.instance?.removeDouble(key) ?? Future.value(false);
 
 /// Shorthand for bool value from prefs
 bool? prefsBool(String key) => Preferences.instance?.getBool(key);
 
 /// Shorthand to save bool value to prefs
-Future<bool> prefsSetBool(String key, bool value) => Preferences.instance?.setBool(key, value) ?? Future.value(false);
+Future<bool> prefsSetBool(String key, bool value) =>
+    Preferences.instance?.setBool(key, value) ?? Future.value(false);
 
 /// Shorthand to remove bool value from prefs
-Future<bool> prefsRemoveBool(String key) => Preferences.instance?.removeBool(key) ?? Future.value(false);
+Future<bool> prefsRemoveBool(String key) =>
+    Preferences.instance?.removeBool(key) ?? Future.value(false);
 
 /// Shorthand to remove string value from prefs
-Future<bool> prefsRemoveString(String key) => Preferences.instance?.removeString(key) ?? Future.value(false);
+Future<bool> prefsRemoveString(String key) =>
+    Preferences.instance?.removeString(key) ?? Future.value(false);
 
 class PreferencesOptions {
   final Map<String, int>? intPrefs;
@@ -57,7 +65,7 @@ class Preferences {
   static Preferences? _instance;
 
   final PreferencesOptions _options;
-  late SharedPreferences _prefs;
+  SharedPreferences? _prefs;
   final Map<String, int> _intPrefs = {};
   final Map<String, double> _doublePrefs = {};
   final Map<String, String> _stringPrefs = {};
@@ -77,105 +85,123 @@ class Preferences {
     final theOptionsIntPrefs = _options.intPrefs;
     if (theOptionsIntPrefs != null) {
       for (String key in theOptionsIntPrefs.keys) {
-        _intPrefs[key] = _prefs.getInt(key) ?? theOptionsIntPrefs[key]!;
+        _intPrefs[key] = _prefs!.getInt(key) ?? theOptionsIntPrefs[key]!;
       }
     }
 
     final theOptionsDoublePrefs = _options.doublePrefs;
     if (theOptionsDoublePrefs != null) {
       for (String key in theOptionsDoublePrefs.keys) {
-        _doublePrefs[key] = _prefs.getDouble(key) ?? theOptionsDoublePrefs[key]!;
+        _doublePrefs[key] =
+            _prefs!.getDouble(key) ?? theOptionsDoublePrefs[key]!;
       }
     }
 
     final theOptionsStringPrefs = _options.stringPrefs;
     if (theOptionsStringPrefs != null) {
       for (String key in theOptionsStringPrefs.keys) {
-        _stringPrefs[key] = _prefs.getString(key) ?? theOptionsStringPrefs[key]!;
+        _stringPrefs[key] =
+            _prefs!.getString(key) ?? theOptionsStringPrefs[key]!;
       }
     }
 
     final theOptionsBoolPrefs = _options.boolPrefs;
     if (theOptionsBoolPrefs != null) {
       for (String key in theOptionsBoolPrefs.keys) {
-        _boolPrefs[key] = _prefs.getBool(key) ?? theOptionsBoolPrefs[key]!;
+        _boolPrefs[key] = _prefs!.getBool(key) ?? theOptionsBoolPrefs[key]!;
       }
     }
   }
 
   /// Get int value for key from prefs
   int? getInt(String key) {
-    return _intPrefs[key] ?? _prefs.getInt(key);
+    return _intPrefs[key] ?? _prefs?.getInt(key);
   }
 
   /// Get double value for key from prefs
   double? getDouble(String key) {
-    return _doublePrefs[key] ?? _prefs.getDouble(key);
+    return _doublePrefs[key] ?? _prefs?.getDouble(key);
   }
 
   /// Get string value for key from prefs
   String? getString(String key) {
-    return _stringPrefs[key] ?? _prefs.getString(key);
+    return _stringPrefs[key] ?? _prefs?.getString(key);
   }
 
   /// Get bool value for key from prefs
   bool? getBool(String key) {
-    return _boolPrefs[key] ?? _prefs.getBool(key);
+    return _boolPrefs[key] ?? _prefs?.getBool(key);
   }
 
   /// Set int value for key to prefs
-  Future<bool> setInt(String key, int value) {
+  Future<bool> setInt(String key, int value) async {
     _intPrefs[key] = value;
 
-    return _prefs.setInt(key, value);
+    final prefs = _prefs ?? await SharedPreferences.getInstance();
+
+    return prefs.setInt(key, value);
   }
 
   /// Set double value for key to prefs
-  Future<bool> setDouble(String key, double value) {
+  Future<bool> setDouble(String key, double value) async {
     _doublePrefs[key] = value;
 
-    return _prefs.setDouble(key, value);
+    final prefs = _prefs ?? await SharedPreferences.getInstance();
+
+    return prefs.setDouble(key, value);
   }
 
   /// Set string value for key to prefs
-  Future<bool> setString(String key, String value) {
+  Future<bool> setString(String key, String value) async {
     _stringPrefs[key] = value;
 
-    return _prefs.setString(key, value);
+    final prefs = _prefs ?? await SharedPreferences.getInstance();
+
+    return prefs.setString(key, value);
   }
 
   /// Set bool value for key to prefs
-  Future<bool> setBool(String key, bool value) {
+  Future<bool> setBool(String key, bool value) async {
     _boolPrefs[key] = value;
 
-    return _prefs.setBool(key, value);
+    final prefs = _prefs ?? await SharedPreferences.getInstance();
+
+    return prefs.setBool(key, value);
   }
 
   /// Remove int value for key
-  Future<bool> removeInt(String key) {
+  Future<bool> removeInt(String key) async {
     _intPrefs.remove(key);
 
-    return _prefs.remove(key);
+    final prefs = _prefs ?? await SharedPreferences.getInstance();
+
+    return prefs.remove(key);
   }
 
   /// Remove double value for key
-  Future<bool> removeDouble(String key) {
+  Future<bool> removeDouble(String key) async {
     _doublePrefs.remove(key);
 
-    return _prefs.remove(key);
+    final prefs = _prefs ?? await SharedPreferences.getInstance();
+
+    return prefs.remove(key);
   }
 
   /// Remove string value for key
-  Future<bool> removeString(String key) {
+  Future<bool> removeString(String key) async {
     _stringPrefs.remove(key);
 
-    return _prefs.remove(key);
+    final prefs = _prefs ?? await SharedPreferences.getInstance();
+
+    return prefs.remove(key);
   }
 
   /// Remove bool value for key
-  Future<bool> removeBool(String key) {
+  Future<bool> removeBool(String key) async {
     _boolPrefs.remove(key);
 
-    return _prefs.remove(key);
+    final prefs = _prefs ?? await SharedPreferences.getInstance();
+
+    return prefs.remove(key);
   }
 }
