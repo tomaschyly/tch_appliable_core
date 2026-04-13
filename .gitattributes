@@ -1,0 +1,2 @@
+# Hide bundled Adminer from language statistics
+example/mockHttpAPI/adminer/** linguist-vendored
