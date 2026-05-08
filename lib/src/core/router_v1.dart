@@ -14,8 +14,8 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
 
   if (arguments != null) {
     switch (arguments.route) {
-//    case ExampleScreen.ROUTE:
-//      return createRoute((BuildContext context) => ExampleScreen(), settings);
+      //    case ExampleScreen.ROUTE:
+      //      return createRoute((BuildContext context) => ExampleScreen(), settings);
       default:
         throw Exception('Implement OnGenerateRoute in app');
     }
@@ -25,7 +25,10 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
 }
 
 /// Create Route depending on platform for different effects
-Route<T> createRoute<T extends Object>(WidgetBuilder builder, RouteSettings settings) {
+Route<T> createRoute<T extends Object>(
+  WidgetBuilder builder,
+  RouteSettings settings,
+) {
   if (kIsWeb) {
     return NoAnimationPageRoute<T>(builder: builder, settings: settings);
   } else {
@@ -57,16 +60,14 @@ class RoutingArguments {
   final Map<String, String>? _query;
 
   /// RoutingArguments initialization
-  RoutingArguments({
-    this.route,
-    Map<String, String>? query,
-  }) : _query = query;
+  RoutingArguments({this.route, Map<String, String>? query}) : _query = query;
 
   /// RoutingArguments from current ModalRoute
   static RoutingArguments? of(BuildContext context) {
     final route = ModalRoute.of(context);
 
-    return route?.settings.name?.routingArguments?..isCurrent = route?.isCurrent ?? false;
+    return route?.settings.name?.routingArguments
+      ?..isCurrent = route?.isCurrent ?? false;
   }
 
   /// Using [] operator gets value from query for key
@@ -87,20 +88,67 @@ extension StringExtension on String {
 
     final uri = Uri.parse(this);
 
-    return RoutingArguments(
-      route: uri.path,
-      query: uri.queryParameters,
-    );
+    return RoutingArguments(route: uri.path, query: uri.queryParameters);
   }
 }
 
 /// Push named route to stack
-Future<T?> pushNamed<T extends Object?>(BuildContext context, String routeName, {Map<String, String>? arguments}) {
+Future<T?> pushNamed<T extends Object?>(
+  BuildContext context,
+  String routeName, {
+  Map<String, String>? arguments,
+}) {
   if (arguments != null) {
     routeName = Uri(path: routeName, queryParameters: arguments).toString();
   }
 
   return Navigator.pushNamed<T>(context, routeName);
+}
+
+/// Push named route to stack using navigator
+Future<T?> pushNamedByNavigator<T extends Object?>(
+  NavigatorState navigator,
+  String routeName, {
+  Map<String, String>? arguments,
+}) {
+  if (arguments != null) {
+    routeName = Uri(path: routeName, queryParameters: arguments).toString();
+  }
+
+  return navigator.pushNamed<T>(routeName);
+}
+
+/// Push replacement named route to stack
+Future<T?> pushReplacementNamed<T extends Object?, TO extends Object?>(
+  BuildContext context,
+  String routeName, {
+  Map<String, String>? arguments,
+  TO? result,
+}) {
+  if (arguments != null) {
+    routeName = Uri(path: routeName, queryParameters: arguments).toString();
+  }
+
+  return Navigator.pushReplacementNamed<T, TO>(
+    context,
+    routeName,
+    result: result,
+  );
+}
+
+/// Push replacement named route to stack using navigator
+Future<T?>
+pushReplacementNamedByNavigator<T extends Object?, TO extends Object?>(
+  NavigatorState navigator,
+  String routeName, {
+  Map<String, String>? arguments,
+  TO? result,
+}) {
+  if (arguments != null) {
+    routeName = Uri(path: routeName, queryParameters: arguments).toString();
+  }
+
+  return navigator.pushReplacementNamed<T, TO>(routeName, result: result);
 }
 
 /// Push named route to stack & clear all others
@@ -114,12 +162,48 @@ Future<T?> pushNamedNewStack<T extends Object?>(
     routeName = Uri(path: routeName, queryParameters: arguments).toString();
   }
 
-  return Navigator.pushNamedAndRemoveUntil<T>(context, routeName, predicate ?? (Route<dynamic> route) => false);
+  return Navigator.pushNamedAndRemoveUntil<T>(
+    context,
+    routeName,
+    predicate ?? (Route<dynamic> route) => false,
+  );
+}
+
+/// Push named route to stack & clear all others using navigator
+Future<T?> pushNamedNewStackByNavigator<T extends Object?>(
+  NavigatorState navigator,
+  String routeName, {
+  Map<String, String>? arguments,
+  RoutePredicate? predicate,
+}) {
+  if (arguments != null) {
+    routeName = Uri(path: routeName, queryParameters: arguments).toString();
+  }
+
+  return navigator.pushNamedAndRemoveUntil<T>(
+    routeName,
+    predicate ?? (Route<dynamic> route) => false,
+  );
 }
 
 /// Pop the route if not yet disposed
-void popNotDisposed<T extends Object?>(BuildContext context, bool mounted, [T? result]) {
+void popNotDisposed<T extends Object?>(
+  BuildContext context,
+  bool mounted, [
+  T? result,
+]) {
   if (mounted) {
     Navigator.pop<T>(context, result);
+  }
+}
+
+/// Pop the route using navigator if not yet disposed
+void popNotDisposedByNavigator<T extends Object?>(
+  NavigatorState navigator,
+  bool mounted, [
+  T? result,
+]) {
+  if (mounted) {
+    navigator.pop<T>(result);
   }
 }

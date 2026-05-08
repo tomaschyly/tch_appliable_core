@@ -1,3 +1,10 @@
+## [0.38.0] - 8.5.2026
+
+* Router V1: added `pushReplacementNamed` helper
+* Router V1 and V2: added navigator-based helper alternatives so apps can resolve `Navigator.of(context)` once and chain navigation calls
+* Router V2: navigation helpers aligned to `go_router` URL-first usage with named route location generation (`pathParameters`, `queryParameters`, `fragment`)
+* Router V2: extended `RoutingArgumentsV2` with `path(String key)` for path parameters and `fragment` support
+
 ## [0.37.1] - 10.4.2026
 
 * **Warning:** Minimum SDK version bumped to `>=3.10.0` and Flutter to `>=3.38.0`

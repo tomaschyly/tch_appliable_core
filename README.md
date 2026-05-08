@@ -30,7 +30,7 @@ If some instructions are not clear enough, then analyse usage inside the example
 In your project's `pubspec.yaml` add:
 ```yaml
 dependencies:
-  tch_appliable_core: ^0.37.1
+  tch_appliable_core: ^0.38.0
 ```
 
 ## App Create
@@ -170,8 +170,9 @@ createGoPageNoAnimation(state, child) // no animation (equivalent of NoAnimation
 Navigate using the V2 functions:
 
 ```dart
-Future<T?> pushNamedV2<T>(context, routeName, {Map<String, String>? arguments})
-void goNamedV2(context, routeName, {Map<String, String>? arguments})
+Future<Object?> pushNamedV2(context, routeName, {pathParameters, queryParameters, fragment})
+void pushReplacementNamedV2(context, routeName, {pathParameters, queryParameters, fragment})
+void goNamedV2(context, routeName, {pathParameters, queryParameters, fragment})
 void popNotDisposedV2(context, mounted, [result])
 ```
 
