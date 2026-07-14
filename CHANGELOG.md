@@ -1,3 +1,8 @@
+## [0.39.0] - 14.7.2026
+
+* **Warning:** Minimum Dart SDK version bumped to `>=3.12.0` and Flutter to `>=3.44.0`
+* Updated direct dependencies to their compatible current versions
+
 ## [0.38.0] - 8.5.2026
 
 * Router V1: added `pushReplacementNamed` helper
