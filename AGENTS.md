@@ -6,18 +6,19 @@ These instructions apply to the whole repository unless a deeper `AGENTS.md` ove
 
 - For implementation work (any non-planning/non-question-only task), if current branch is `main` or `master`, ask the user first whether to switch to a new `version/*` or `feature/*` branch before making edits.
 - Do not start code changes on `main`/`master` until the user confirms how to proceed.
+- **Exception — version bumps:** When the user asks to bump the package to a specific version, automatically create and switch to `version/x.y.z` without asking again.
 
 ## Release versioning rule
 
-Before you decide on your own to update version, first ask user if you should do it and what is next version.
+Before deciding to update the version without an explicit user request, ask whether to do so and what the next version should be.
 
 When releasing a new package version, always update these 3 files together:
 
-1. `pubspec.yaml` - bump `version`.
-2. `CHANGELOG.md` - add a new top entry for the released version.
+1. `pubspec.yaml` — bump `version`.
+2. `CHANGELOG.md` — add a new top entry for the released version.
     - Focus on important changes, especially breaking changes.
     - Summarize general changes in broad terms rather than listing every single change in each file/class.
-3. `README.md` - update the dependency snippet version (`tch_appliable_core: ^x.y.z`).
+3. `README.md` — update the dependency snippet version (`tch_appliable_core: ^x.y.z`).
 
 All three files must stay in sync for each release.
 
@@ -45,15 +46,22 @@ All three files must stay in sync for each release.
 - In every change, follow established patterns from related contexts in this project (similar layer, model, provider, utility, or widget type).
 - Prefer consistency with existing structure and naming over introducing a new approach.
 - If multiple patterns exist, choose the one used in the closest relevant files unless the user explicitly asks otherwise.
-- When adding or moving methods, fields, constants, configuration values, or utilities, place them with related code rather than at the end of the file or the first convenient location.
-- Before editing a file, scan nearby declarations for the existing grouping and order pattern, then preserve it.
-- For cross-file lists or registries that represent the same domain concept, keep their order consistent.
+- When adding or moving methods, widget helpers, fields, constants, configuration values, provider functions, or utilities, place them with related code rather than at the end of the file or the first convenient location.
+- Before editing a file, scan nearby declarations for the existing grouping and order pattern (for example fields before lifecycle methods, lifecycle methods before build helpers, callbacks near related UI, domain workflow order, or alphabetical order), then preserve it.
+- In a new file centered on a primary class, mixin, extension, or other type, declare that primary type before supporting top-level declarations. Place helper data classes, enums, constants, typedefs, and similar supporting declarations after the primary type unless Dart, Flutter, or an established local pattern requires a different order.
+- For cross-file lists or registries that represent the same domain concept, keep their order consistent across the related files.
 
 ### Utilities architecture
 
 - Keep generic reusable utilities in `lib/utils/`.
 - Keep utilities inside a component or feature file only when they are used exclusively by that component or feature.
 - Write utility and provider code in a functional, stateless style where practical; do not introduce stateful service classes without a clear need.
+
+### Build method data processing
+
+- Keep widget build methods focused on composing UI from prepared values.
+- Prepare and store derived collections when source data is received instead of repeatedly sorting, grouping, mapping, filtering, or calculating expensive statistics during every build.
+- Recompute derived state when its source changes. Perform transformations in build methods only when they are trivial or depend on the current inherited UI context.
 
 ### TODO ownership format
 
@@ -88,17 +96,17 @@ All three files must stay in sync for each release.
 
 ### Dependency updates
 
-- Do not update a pub package, framework, library, or dependency to a version that has been publicly available for fewer than 30 days.
+- Because package ecosystems are exposed to supply-chain attacks, do not update a pub package, framework, library, or dependency to a version that has been publicly available for fewer than 30 days.
 - Before choosing the latest version, verify its release date from an official source such as the package registry, vendor release notes, or repository release page.
 - If the latest version is newer than 30 days, select the newest version that is at least 30 days old and explain the choice in the handoff.
-- An urgent security fix may use a newer version only when the user explicitly approves that specific update.
+- Exception: an urgent security fix may use a newer version only when the user explicitly approves that specific update.
 
 ## Development workflow
 
 ### Cross-project feature planning
 
 - When a new feature is likely to affect this package and multiple consuming projects, or take multiple days, suggest creating a plan before writing code.
-- Signals that a feature warrants a plan include changes to public APIs, domain models, integrations, or workflows that may have ripple effects across consumers.
+- Signals that a feature warrants a plan include changes to public APIs, domain models, integrations, or workflows that may have ripple effects across consumers, especially when the feature does not exist in any affected codebase yet.
 - Ask the user which projects are affected before proposing a cross-project plan, and outline the expected scope for each affected project.
 - If the user wants to start coding immediately without a plan, respect that choice after noting the suggestion once.
 
@@ -130,13 +138,16 @@ All three files must stay in sync for each release.
 
 - Do not create a new plan file unless the user explicitly asks for one.
 - Keep active plans in `plans/` and completed plans in `plans/archive/`.
-- When working on a task that corresponds to a plan step, reference the relevant plan file and tick completed checklist items as part of the handoff.
-- When all items in a phase are complete, append `[DONE]` to its heading.
+- When working on a task that corresponds to a plan step, reference the relevant plan file and tick completed checklist items by changing `- [ ]` to `- [x]` as part of the handoff.
+- When all items in a phase are checked, append `[DONE]` to its heading (for example `### Phase 2 — Providers [DONE]`).
 - Before moving a completed plan to `plans/archive/`, ask the user to confirm that the plan is complete and no new steps will be added.
 
 ### Meeting-focused plan markers
 
 - When a plan has points that need meeting discussion, add a `## Meeting focus` section near the top of the plan.
-- Use the labels `**[DECISION]**`, `**[VERIFY]**`, and `**[BLOCKER]**` for product or architecture choices, validation needs, and work that blocks dependent implementation.
-- Include a short checklist of current focus items, and prefix the matching original checklist items with the same label.
+- Use plain text labels that render reliably in GitLab and other Markdown viewers. Include this legend in the section:
+    - `**[DECISION]**` — needs a product or architecture choice before implementation can be finalized.
+    - `**[VERIFY]**` — needs review or validation but likely does not require a product decision.
+    - `**[BLOCKER]**` — blocks dependent implementation work.
+- Include a short checklist of current focus items, and prefix the matching original checklist item titles with the same label.
 - Keep the meeting focus list curated; remove or tick items when their source checklist item is resolved.
