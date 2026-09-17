@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
@@ -14,13 +15,7 @@ import 'package:tch_appliable_core/src/providers/mainDataProvider/data_task.dart
 import 'package:tch_appliable_core/src/providers/mainDataProvider/main_data_source.dart';
 import 'package:collection/collection.dart';
 
-enum MainDataProviderSource {
-  none,
-  mockUp,
-  httpClient,
-  sqLite,
-  sembast,
-}
+enum MainDataProviderSource { none, mockUp, httpClient, sqLite, sembast }
 
 class MainDataProviderOptions {
   MockUpOptions? mockUpOptions;
@@ -42,14 +37,13 @@ class MainDataProvider {
 
   static MainDataProvider? _instance;
 
-  List<AbstractSource> get initializedSources => _initializedSources.toList(growable: false);
+  List<AbstractSource> get initializedSources =>
+      _initializedSources.toList(growable: false);
 
   final List<AbstractSource> _initializedSources = <AbstractSource>[];
 
   /// MainDataProvider initialization
-  MainDataProvider({
-    required MainDataProviderOptions options,
-  }) {
+  MainDataProvider({required MainDataProviderOptions options}) {
     _instance = this;
 
     _initSources(options);
@@ -81,11 +75,16 @@ class MainDataProvider {
   }
 
   /// Get source if it was initialized
-  AbstractSource? _initializedSource(MainDataProviderSource source, [MockUpRequestOptions? mockUpOptions]) {
+  AbstractSource? _initializedSource(
+    MainDataProviderSource source, [
+    MockUpRequestOptions? mockUpOptions,
+  ]) {
     AbstractSource? theSource;
 
     if (mockUpOptions != null) {
-      theSource = _initializedSources.firstWhereOrNull((element) => element is MockUpSource);
+      theSource = _initializedSources.firstWhereOrNull(
+        (element) => element is MockUpSource,
+      );
 
       if (theSource != null) {
         return theSource;
@@ -94,16 +93,24 @@ class MainDataProvider {
 
     switch (source) {
       case MainDataProviderSource.mockUp:
-        theSource = _initializedSources.firstWhereOrNull((element) => element is MockUpSource);
+        theSource = _initializedSources.firstWhereOrNull(
+          (element) => element is MockUpSource,
+        );
         break;
       case MainDataProviderSource.httpClient:
-        theSource = _initializedSources.firstWhereOrNull((element) => element is HTTPSource);
+        theSource = _initializedSources.firstWhereOrNull(
+          (element) => element is HTTPSource,
+        );
         break;
       case MainDataProviderSource.sqLite:
-        theSource = _initializedSources.firstWhereOrNull((element) => element is SQLiteSource);
+        theSource = _initializedSources.firstWhereOrNull(
+          (element) => element is SQLiteSource,
+        );
         break;
       case MainDataProviderSource.sembast:
-        theSource = _initializedSources.firstWhereOrNull((element) => element is SembastSource);
+        theSource = _initializedSources.firstWhereOrNull(
+          (element) => element is SembastSource,
+        );
         break;
       default:
         throw Exception('Cannot get not implemented source $source');
@@ -117,14 +124,19 @@ class MainDataProvider {
     final MainDataSource dataSource = MainDataSource(dataRequests);
 
     for (DataRequest dataRequest in dataRequests) {
-      AbstractSource? theSource = _initializedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
+      AbstractSource? theSource = _initializedSource(
+        dataRequest.source,
+        dataRequest.mockUpRequestOptions,
+      );
 
       if (theSource is MockUpSource) {
         dataRequest.sourceRegisteredTo = MainDataProviderSource.mockUp;
       }
 
       if (theSource == null) {
-        throw Exception('Cannot register for not initialized source ${dataRequest.source}');
+        throw Exception(
+          'Cannot register for not initialized source ${dataRequest.source}',
+        );
       }
 
       theSource.registerDataSource(dataSource);
@@ -148,10 +160,15 @@ class MainDataProvider {
 
   /// Check if DataRequest has next page
   Future<bool> dataRequestHasNextPage(DataRequest dataRequest) async {
-    AbstractSource? theSource = _initializedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
+    AbstractSource? theSource = _initializedSource(
+      dataRequest.source,
+      dataRequest.mockUpRequestOptions,
+    );
 
     if (theSource == null) {
-      throw Exception('Cannot check nextPage for not initialized source ${dataRequest.source}');
+      throw Exception(
+        'Cannot check nextPage for not initialized source ${dataRequest.source}',
+      );
     }
 
     return theSource.dataRequestHasNextPage(dataRequest);
@@ -159,10 +176,15 @@ class MainDataProvider {
 
   /// Request to load next page of DataRequest
   void dataRequestLoadNextPage(DataRequest dataRequest) {
-    AbstractSource? theSource = _initializedSource(dataRequest.source, dataRequest.mockUpRequestOptions);
+    AbstractSource? theSource = _initializedSource(
+      dataRequest.source,
+      dataRequest.mockUpRequestOptions,
+    );
 
     if (theSource == null) {
-      throw Exception('Cannot load nextPage for not initialized source ${dataRequest.source}');
+      throw Exception(
+        'Cannot load nextPage for not initialized source ${dataRequest.source}',
+      );
     }
 
     theSource.dataRequestLoadNextPage(dataRequest);
@@ -173,7 +195,9 @@ class MainDataProvider {
     AbstractSource? theSource;
 
     if (dataTask.mockUpTaskOptions != null) {
-      theSource = _initializedSources.firstWhereOrNull((element) => element is MockUpSource);
+      theSource = _initializedSources.firstWhereOrNull(
+        (element) => element is MockUpSource,
+      );
 
       if (theSource != null) {
         return theSource.executeDataTask<T>(dataTask);
@@ -181,26 +205,42 @@ class MainDataProvider {
     }
 
     if (dataTask.options is MockUpTaskOptions) {
-      theSource = _initializedSources.firstWhereOrNull((element) => element is MockUpSource);
+      theSource = _initializedSources.firstWhereOrNull(
+        (element) => element is MockUpSource,
+      );
     } else if (dataTask.options is HTTPTaskOptions) {
-      theSource = _initializedSources.firstWhereOrNull((element) => element is HTTPSource);
+      theSource = _initializedSources.firstWhereOrNull(
+        (element) => element is HTTPSource,
+      );
     } else if (dataTask.options is SQLiteTaskOptions) {
-      theSource = _initializedSources.firstWhereOrNull((element) => element is SQLiteSource);
+      theSource = _initializedSources.firstWhereOrNull(
+        (element) => element is SQLiteSource,
+      );
     } else if (dataTask.options is SembastTaskOptions) {
-      theSource = _initializedSources.firstWhereOrNull((element) => element is SembastSource);
+      theSource = _initializedSources.firstWhereOrNull(
+        (element) => element is SembastSource,
+      );
     } else {
-      throw Exception('Cannot get not implemented source for options ${dataTask.options}');
+      throw Exception(
+        'Cannot get not implemented source for options ${dataTask.options}',
+      );
     }
 
     if (theSource == null) {
-      throw Exception('Cannot execute DataTask for not initialized source for options ${dataTask.options}');
+      throw Exception(
+        'Cannot execute DataTask for not initialized source for options ${dataTask.options}',
+      );
     }
 
     return theSource.executeDataTask<T>(dataTask);
   }
 
   /// ReFetch data for DataRequest of initialized source based on methods or identifiers
-  Future<void> reFetchData(MainDataProviderSource source, {List<String>? methods, List<String>? identifiers}) {
+  Future<void> reFetchData(
+    MainDataProviderSource source, {
+    List<String>? methods,
+    List<String>? identifiers,
+  }) {
     AbstractSource? theSource = _initializedSource(source);
 
     if (theSource == null) {
@@ -214,7 +254,8 @@ class MainDataProvider {
   void _updateMainDataSourceState(MainDataSource mainDataSource) {
     final List<MainDataProviderSourceState> states = [];
 
-    for (final MainDataProviderSource source in mainDataSource.sourcesRegisteredTo) {
+    for (final MainDataProviderSource source
+        in mainDataSource.sourcesRegisteredTo) {
       AbstractSource? theSource = _initializedSource(source);
 
       if (theSource == null) {
@@ -234,15 +275,13 @@ class MainDataProvider {
   }
 }
 
-enum MainDataProviderSourceState {
-  unAvailable,
-  ready,
-  connecting,
-}
+enum MainDataProviderSourceState { unAvailable, ready, connecting }
 
 abstract class AbstractSource {
   MainDataProviderSource get isSource;
-  ValueNotifier<MainDataProviderSourceState> state = ValueNotifier(MainDataProviderSourceState.unAvailable);
+  ValueNotifier<MainDataProviderSourceState> state = ValueNotifier(
+    MainDataProviderSourceState.unAvailable,
+  );
 
   final List<MainDataSource> _dataSources = <MainDataSource>[];
   final List<String> _identifiers = <String>[];
@@ -256,7 +295,9 @@ abstract class AbstractSource {
   void registerDataRequests(MainDataSource dataSource) {
     for (final String identifier in dataSource.identifiers) {
       if (_identifiers.contains(identifier)) {
-        final DataRequest dataRequest = dataSource.requestForIdentifier(identifier)!;
+        final DataRequest dataRequest = dataSource.requestForIdentifier(
+          identifier,
+        )!;
 
         if (dataRequest.source != isSource) {
           continue;
@@ -277,7 +318,9 @@ abstract class AbstractSource {
   void unRegisterDataRequests(MainDataSource dataSource) {
     outer:
     for (final String identifier in dataSource.identifiers) {
-      final DataRequest dataRequest = dataSource.requestForIdentifier(identifier)!;
+      final DataRequest dataRequest = dataSource.requestForIdentifier(
+        identifier,
+      )!;
 
       if (dataRequest.source != isSource) {
         continue;
@@ -330,9 +373,7 @@ class MockUpOptions {
   final String assetsDataPath;
 
   /// MockUpOptions initialization
-  const MockUpOptions({
-    this.assetsDataPath = 'assets/mockUpData',
-  });
+  const MockUpOptions({this.assetsDataPath = 'assets/mockUpData'});
 }
 
 class MockUpSource extends AbstractSource {
@@ -343,9 +384,7 @@ class MockUpSource extends AbstractSource {
   final Map<MainDataProviderSource, Map<String, dynamic>> _mockUpData = {};
 
   /// MockUpSource initialization
-  MockUpSource({
-    required MockUpOptions options,
-  }) : _options = options {
+  MockUpSource({required MockUpOptions options}) : _options = options {
     state = ValueNotifier(MainDataProviderSourceState.ready);
   }
 
@@ -353,7 +392,9 @@ class MockUpSource extends AbstractSource {
   String _normalizeAssetKey(String value) => value.replaceAll('\\', '/');
 
   /// Get mockUp data for MainDataProviderSource, if not exists try to load from assets
-  Future<Map<String, dynamic>> _sourceMockUpData(MainDataProviderSource source) async {
+  Future<Map<String, dynamic>> _sourceMockUpData(
+    MainDataProviderSource source,
+  ) async {
     Map<String, dynamic>? data = _mockUpData[source];
 
     if (data == null) {
@@ -385,7 +426,11 @@ class MockUpSource extends AbstractSource {
   }
 
   /// Query data from mockup in memory data
-  Future<dynamic> _query(MainDataProviderSource source, String identifier, [String? assetDataPath]) async {
+  Future<dynamic> _query(
+    MainDataProviderSource source,
+    String identifier, [
+    String? assetDataPath,
+  ]) async {
     if (assetDataPath != null) {
       final String assetKey = _normalizeAssetKey(assetDataPath);
       String assetData = await rootBundle.loadString(assetKey);
@@ -412,7 +457,11 @@ class MockUpSource extends AbstractSource {
       String? json;
 
       try {
-        dynamic data = await _query(dataRequest.source, dataRequest.identifier, dataRequest.mockUpRequestOptions?.assetDataPath);
+        dynamic data = await _query(
+          dataRequest.source,
+          dataRequest.identifier,
+          dataRequest.mockUpRequestOptions?.assetDataPath,
+        );
 
         if (data is Map) {
           data = Map<String, dynamic>.from(data);
@@ -429,11 +478,7 @@ class MockUpSource extends AbstractSource {
         if (dataSource.identifiers.contains(dataRequest.identifier)) {
           dataSource.setResult(
             dataRequest.identifier,
-            exception == null
-                ? <String, dynamic>{
-                    'response': json,
-                  }
-                : null,
+            exception == null ? <String, dynamic>{'response': json} : null,
             exception,
           );
         }
@@ -442,7 +487,13 @@ class MockUpSource extends AbstractSource {
       List<Map<String, dynamic>>? results;
 
       try {
-        results = List<Map<String, dynamic>>.from(await _query(dataRequest.source, dataRequest.identifier, dataRequest.mockUpRequestOptions?.assetDataPath));
+        results = List<Map<String, dynamic>>.from(
+          await _query(
+            dataRequest.source,
+            dataRequest.identifier,
+            dataRequest.mockUpRequestOptions?.assetDataPath,
+          ),
+        );
       } catch (e) {
         exception = SourceException(originalException: e);
       }
@@ -451,11 +502,7 @@ class MockUpSource extends AbstractSource {
         if (dataSource.identifiers.contains(dataRequest.identifier)) {
           dataSource.setResult(
             dataRequest.identifier,
-            exception == null
-                ? <String, dynamic>{
-                    'list': results,
-                  }
-                : null,
+            exception == null ? <String, dynamic>{'list': results} : null,
             exception,
           );
         }
@@ -475,10 +522,13 @@ class MockUpSource extends AbstractSource {
     int minDelayMilliseconds = dataSource.mockupMinDelayMilliseconds;
     int maxDelayMilliseconds = dataSource.mockupMaxDelayMilliseconds;
 
-    if (maxDelayMilliseconds > 0 && maxDelayMilliseconds > minDelayMilliseconds) {
+    if (maxDelayMilliseconds > 0 &&
+        maxDelayMilliseconds > minDelayMilliseconds) {
       final random = Random();
 
-      int delay = random.nextInt(maxDelayMilliseconds - minDelayMilliseconds) + minDelayMilliseconds;
+      int delay =
+          random.nextInt(maxDelayMilliseconds - minDelayMilliseconds) +
+          minDelayMilliseconds;
 
       Future.delayed(Duration(milliseconds: delay)).then((value) {
         reFetchData(identifiers: dataSource.identifiers);
@@ -527,8 +577,13 @@ class MockUpSource extends AbstractSource {
     final random = Random();
     int delay = 0;
 
-    if (options.maxDelayMilliseconds > 0 && options.maxDelayMilliseconds > options.minDelayMilliseconds) {
-      delay = random.nextInt(options.maxDelayMilliseconds - options.minDelayMilliseconds) + options.minDelayMilliseconds;
+    if (options.maxDelayMilliseconds > 0 &&
+        options.maxDelayMilliseconds > options.minDelayMilliseconds) {
+      delay =
+          random.nextInt(
+            options.maxDelayMilliseconds - options.minDelayMilliseconds,
+          ) +
+          options.minDelayMilliseconds;
 
       await Future.delayed(Duration(milliseconds: delay ~/ 2));
     }
@@ -539,20 +594,25 @@ class MockUpSource extends AbstractSource {
         SourceException? exception;
 
         try {
-          results = Map<String, dynamic>.from(await _query(
-            sourceForTaskOptions(dataTask.options),
-            identifier,
-            dataTask.mockUpTaskOptions?.assetDataPath,
-          ));
+          results = Map<String, dynamic>.from(
+            await _query(
+              sourceForTaskOptions(dataTask.options),
+              identifier,
+              dataTask.mockUpTaskOptions?.assetDataPath,
+            ),
+          );
         } catch (e) {
           exception = SourceException(originalException: e);
         }
 
-        if (options.maxDelayMilliseconds > 0 && options.maxDelayMilliseconds > options.minDelayMilliseconds) {
+        if (options.maxDelayMilliseconds > 0 &&
+            options.maxDelayMilliseconds > options.minDelayMilliseconds) {
           await Future.delayed(Duration(milliseconds: delay ~/ 2));
         }
 
-        dataTask.result = results != null ? dataTask.processResult(results) : null;
+        dataTask.result = results != null
+            ? dataTask.processResult(results)
+            : null;
         dataTask.error = exception;
         break;
     }
@@ -566,7 +626,10 @@ class MockUpSource extends AbstractSource {
 
   /// ReFetch data for DataRequest based on methods or identifiers
   @override
-  Future<void> reFetchData({List<String>? methods, List<String>? identifiers}) async {
+  Future<void> reFetchData({
+    List<String>? methods,
+    List<String>? identifiers,
+  }) async {
     if (methods == null && identifiers == null) {
       throw Exception('Provide either methods or identifiers');
     }
@@ -578,7 +641,8 @@ class MockUpSource extends AbstractSource {
         for (MainDataSource dataSource in _dataSources) {
           final DataRequest? dataRequest = dataSource.requestForMethod(method);
 
-          if (dataRequest != null && !identifiers.contains(dataRequest.identifier)) {
+          if (dataRequest != null &&
+              !identifiers.contains(dataRequest.identifier)) {
             identifiers.add(dataRequest.identifier);
           }
         }
@@ -590,7 +654,9 @@ class MockUpSource extends AbstractSource {
     if (identifiers != null) {
       for (String identifier in identifiers) {
         for (MainDataSource dataSource in _dataSources) {
-          final DataRequest? dataRequest = dataSource.requestForIdentifier(identifier);
+          final DataRequest? dataRequest = dataSource.requestForIdentifier(
+            identifier,
+          );
 
           if (dataRequest != null) {
             await _queryDataUpdate(dataRequest);
@@ -608,11 +674,8 @@ class HTTPClientOptions {
   final Map<String, String> Function()? dynamicHeaders;
 
   /// HTTPClientOptions initialization
-  HTTPClientOptions({
-    required this.hostUrl,
-    this.headers,
-    this.dynamicHeaders,
-  }) : assert(hostUrl.isNotEmpty);
+  HTTPClientOptions({required this.hostUrl, this.headers, this.dynamicHeaders})
+    : assert(hostUrl.isNotEmpty);
 }
 
 class HTTPSource extends AbstractSource {
@@ -622,9 +685,7 @@ class HTTPSource extends AbstractSource {
   final HTTPClientOptions _options;
 
   /// HTTPSource initialization
-  HTTPSource({
-    required HTTPClientOptions options,
-  }) : _options = options {
+  HTTPSource({required HTTPClientOptions options}) : _options = options {
     state = ValueNotifier(MainDataProviderSourceState.ready);
   }
 
@@ -642,7 +703,9 @@ class HTTPSource extends AbstractSource {
       if (!paginate) {
         values.add('page=1');
 
-        values.add('limit=${dataRequest.pagination.pageSize * dataRequest.pagination.page}');
+        values.add(
+          'limit=${dataRequest.pagination.pageSize * dataRequest.pagination.page}',
+        );
       } else {
         values.add('page=${dataRequest.pagination.page}');
 
@@ -650,9 +713,12 @@ class HTTPSource extends AbstractSource {
       }
     }
 
-    final String url = '${_options.hostUrl}${dataRequest.method}?${values.join('&')}';
+    final String url =
+        '${_options.hostUrl}${dataRequest.method}?${values.join('&')}';
 
-    final theHeaders = _options.headers != null ? Map<String, String>.from(_options.headers!) : <String, String>{};
+    final theHeaders = _options.headers != null
+        ? Map<String, String>.from(_options.headers!)
+        : <String, String>{};
     if (_options.dynamicHeaders != null) {
       theHeaders.addAll(_options.dynamicHeaders!.call());
     }
@@ -660,9 +726,7 @@ class HTTPSource extends AbstractSource {
     if (dataRequest.httpRequestOptions.useDio) {
       final response = await Dio().get<String>(
         url,
-        options: Options(
-          headers: theHeaders,
-        ),
+        options: Options(headers: theHeaders),
       );
 
       return _HTTPSourceResponse(
@@ -670,10 +734,7 @@ class HTTPSource extends AbstractSource {
         statusCode: response.statusCode ?? 0,
       );
     } else {
-      final response = await get(
-        Uri.parse(url),
-        headers: theHeaders,
-      );
+      final response = await get(Uri.parse(url), headers: theHeaders);
 
       return _HTTPSourceResponse(
         body: response.body,
@@ -713,13 +774,9 @@ class HTTPSource extends AbstractSource {
 
     for (final MainDataSource dataSource in _dataSources) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
-        dataSource.setResult(
-          dataRequest.identifier,
-          <String, dynamic>{
-            'response': json,
-          },
-          exception,
-        );
+        dataSource.setResult(dataRequest.identifier, <String, dynamic>{
+          'response': json,
+        }, exception);
       }
     }
   }
@@ -733,10 +790,7 @@ class HTTPSource extends AbstractSource {
 
     MainDataProvider.instance!._updateMainDataSourceState(dataSource);
 
-    reFetchData(
-      identifiers: dataSource.identifiers,
-      paginate: true,
-    );
+    reFetchData(identifiers: dataSource.identifiers, paginate: true);
   }
 
   /// UnRegister the DataSource from receiving data
@@ -761,10 +815,7 @@ class HTTPSource extends AbstractSource {
     try {
       dataRequest.pagination.page++;
 
-      final response = await _query(
-        dataRequest,
-        paginate: true,
-      );
+      final response = await _query(dataRequest, paginate: true);
 
       json = response.body;
     } catch (e) {
@@ -781,12 +832,15 @@ class HTTPSource extends AbstractSource {
       }
     }
 
-    final ResultsNotEmpty? checkResultNotEmpty = dataRequest.pagination.checkResultNotEmpty;
+    final ResultsNotEmpty? checkResultNotEmpty =
+        dataRequest.pagination.checkResultNotEmpty;
 
     if (checkResultNotEmpty != null) {
       return checkResultNotEmpty(json);
     } else {
-      throw Exception('HTTPSource requires dataRequest.pagination.checkResultNotEmpty to know if there is next page to load');
+      throw Exception(
+        'HTTPSource requires dataRequest.pagination.checkResultNotEmpty to know if there is next page to load',
+      );
     }
   }
 
@@ -796,7 +850,8 @@ class HTTPSource extends AbstractSource {
     dynamic paginationResults = dataRequest.lastHasNextPageRawResults!;
     dynamic rawResults = dataRequest.rawResults!;
 
-    final ResultsCombination? combine = dataRequest.pagination.combinePaginationResult;
+    final ResultsCombination? combine =
+        dataRequest.pagination.combinePaginationResult;
 
     if (combine != null) {
       final dynamic json = combine(rawResults, paginationResults);
@@ -809,17 +864,15 @@ class HTTPSource extends AbstractSource {
 
       for (final MainDataSource dataSource in _dataSources) {
         if (dataSource.identifiers.contains(dataRequest.identifier)) {
-          dataSource.setResult(
-            dataRequest.identifier,
-            <String, dynamic>{
-              'response': json,
-            },
-            null,
-          );
+          dataSource.setResult(dataRequest.identifier, <String, dynamic>{
+            'response': json,
+          }, null);
         }
       }
     } else {
-      throw Exception('HTTPSource requires dataRequest.pagination.combinePaginationResult to combine results after loading next page');
+      throw Exception(
+        'HTTPSource requires dataRequest.pagination.combinePaginationResult to combine results after loading next page',
+      );
     }
   }
 
@@ -828,7 +881,8 @@ class HTTPSource extends AbstractSource {
   Future<T> executeDataTask<T extends DataTask>(T dataTask) async {
     final options = dataTask.options as HTTPTaskOptions;
 
-    final String endpointUrl = options.url ?? '${_options.hostUrl}${dataTask.method}';
+    final String endpointUrl =
+        options.url ?? '${_options.hostUrl}${dataTask.method}';
     final Map<String, dynamic> data = dataTask.data.toJson();
 
     switch (options.type) {
@@ -846,9 +900,7 @@ class HTTPSource extends AbstractSource {
           if (options.useDio) {
             final dioResponse = await Dio().get<String>(
               url,
-              options: Options(
-                headers: options.headers,
-              ),
+              options: Options(headers: options.headers),
             );
 
             response = _HTTPSourceResponse(
@@ -872,7 +924,9 @@ class HTTPSource extends AbstractSource {
 
             dataTask.result = dataTask.processResult(result);
           } else {
-            dataTask.result = dataTask.processResult(jsonDecode(response.body!));
+            dataTask.result = dataTask.processResult(
+              jsonDecode(response.body!),
+            );
           }
 
           if (response.statusCode >= 400) {
@@ -894,15 +948,13 @@ class HTTPSource extends AbstractSource {
             if (options.postDataFormat == HTTPPostDataFormat.toJson) {
               final theHeaders = options.headers ?? <String, String>{};
 
-              theHeaders.addAll(
-                {'Content-Type': 'application/json; charset=utf-8'},
-              );
+              theHeaders.addAll({
+                'Content-Type': 'application/json; charset=utf-8',
+              });
 
               final dioResponse = await Dio().post<String>(
                 endpointUrl,
-                options: Options(
-                  headers: theHeaders,
-                ),
+                options: Options(headers: theHeaders),
                 data: jsonEncode(data),
               );
 
@@ -913,9 +965,7 @@ class HTTPSource extends AbstractSource {
             } else {
               final dioResponse = await Dio().post<String>(
                 endpointUrl,
-                options: Options(
-                  headers: options.headers,
-                ),
+                options: Options(headers: options.headers),
                 data: data,
               );
 
@@ -928,9 +978,9 @@ class HTTPSource extends AbstractSource {
             if (options.postDataFormat == HTTPPostDataFormat.toJson) {
               final theHeaders = options.headers ?? <String, String>{};
 
-              theHeaders.addAll(
-                {'Content-Type': 'application/json; charset=utf-8'},
-              );
+              theHeaders.addAll({
+                'Content-Type': 'application/json; charset=utf-8',
+              });
 
               final httpResponse = await post(
                 Uri.parse(endpointUrl),
@@ -961,7 +1011,9 @@ class HTTPSource extends AbstractSource {
 
             dataTask.result = dataTask.processResult(result);
           } else {
-            dataTask.result = dataTask.processResult(jsonDecode(response.body!));
+            dataTask.result = dataTask.processResult(
+              jsonDecode(response.body!),
+            );
           }
 
           if (response.statusCode >= 400) {
@@ -989,9 +1041,7 @@ class HTTPSource extends AbstractSource {
           if (options.useDio) {
             final dioResponse = await Dio().delete<String>(
               url,
-              options: Options(
-                headers: options.headers,
-              ),
+              options: Options(headers: options.headers),
             );
 
             response = _HTTPSourceResponse(
@@ -1015,7 +1065,9 @@ class HTTPSource extends AbstractSource {
 
             dataTask.result = dataTask.processResult(result);
           } else {
-            dataTask.result = dataTask.processResult(jsonDecode(response.body!));
+            dataTask.result = dataTask.processResult(
+              jsonDecode(response.body!),
+            );
           }
 
           if (response.statusCode >= 400) {
@@ -1056,7 +1108,8 @@ class HTTPSource extends AbstractSource {
         for (MainDataSource dataSource in _dataSources) {
           final DataRequest? dataRequest = dataSource.requestForMethod(method);
 
-          if (dataRequest != null && !identifiers.contains(dataRequest.identifier)) {
+          if (dataRequest != null &&
+              !identifiers.contains(dataRequest.identifier)) {
             identifiers.add(dataRequest.identifier);
           }
         }
@@ -1068,7 +1121,9 @@ class HTTPSource extends AbstractSource {
     if (identifiers != null) {
       for (String identifier in identifiers) {
         for (MainDataSource dataSource in _dataSources) {
-          final DataRequest? dataRequest = dataSource.requestForIdentifier(identifier);
+          final DataRequest? dataRequest = dataSource.requestForIdentifier(
+            identifier,
+          );
 
           if (dataRequest != null) {
             await _queryDataUpdate(dataRequest, paginate: paginate);
@@ -1085,10 +1140,7 @@ class _HTTPSourceResponse {
   final int statusCode;
 
   /// HTTPSourceResponse initialization
-  const _HTTPSourceResponse({
-    required this.body,
-    required this.statusCode,
-  });
+  const _HTTPSourceResponse({required this.body, required this.statusCode});
 }
 
 class SQLiteOptions {
@@ -1116,13 +1168,14 @@ class SQLiteSource extends AbstractSource {
   sqlite.Database? _database;
 
   /// SQLiteSource initialization
-  SQLiteSource({
-    required SQLiteOptions options,
-  }) : _options = options {
+  SQLiteSource({required SQLiteOptions options}) : _options = options {
     state = ValueNotifier(MainDataProviderSourceState.ready);
 
-    sqlite.sqfliteFfiInit();
-    sqlite.databaseFactory = sqlite.databaseFactoryFfi;
+    // FFI factory only on desktop without sqflite plugin, other platforms must keep plugin factory registered by app's sqflite dependency to preserve existing database locations
+    if (Platform.isWindows || Platform.isLinux) {
+      sqlite.sqfliteFfiInit();
+      sqlite.databaseFactory = sqlite.databaseFactoryFfi;
+    }
   }
 
   /// Create Database connection and init tables structure
@@ -1166,7 +1219,10 @@ class SQLiteSource extends AbstractSource {
     final database = await _open();
 
     if (rawQuery?.isNotEmpty == true) {
-      final List<Map<String, dynamic>> results = await database.rawQuery(rawQuery!, rawArguments);
+      final List<Map<String, dynamic>> results = await database.rawQuery(
+        rawQuery!,
+        rawArguments,
+      );
 
       return results;
     }
@@ -1284,13 +1340,9 @@ class SQLiteSource extends AbstractSource {
 
     for (final MainDataSource dataSource in _dataSources) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
-        dataSource.setResult(
-          dataRequest.identifier,
-          <String, dynamic>{
-            'list': results,
-          },
-          exception,
-        );
+        dataSource.setResult(dataRequest.identifier, <String, dynamic>{
+          'list': results,
+        }, exception);
       }
     }
   }
@@ -1304,10 +1356,7 @@ class SQLiteSource extends AbstractSource {
 
     MainDataProvider.instance!._updateMainDataSourceState(dataSource);
 
-    reFetchData(
-      identifiers: dataSource.identifiers,
-      paginate: true,
-    );
+    reFetchData(identifiers: dataSource.identifiers, paginate: true);
   }
 
   /// UnRegister the DataSource from receiving data
@@ -1361,7 +1410,8 @@ class SQLiteSource extends AbstractSource {
   /// Request to load next page of DataRequest
   @override
   dataRequestLoadNextPage(DataRequest dataRequest) {
-    List<Map<String, dynamic>> paginationResults = dataRequest.lastHasNextPageRawResults!;
+    List<Map<String, dynamic>> paginationResults =
+        dataRequest.lastHasNextPageRawResults!;
     List<Map<String, dynamic>> rawResults = dataRequest.rawResults!.toList();
 
     rawResults.addAll(paginationResults);
@@ -1374,13 +1424,9 @@ class SQLiteSource extends AbstractSource {
 
     for (final MainDataSource dataSource in _dataSources) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
-        dataSource.setResult(
-          dataRequest.identifier,
-          <String, dynamic>{
-            'list': rawResults,
-          },
-          null,
-        );
+        dataSource.setResult(dataRequest.identifier, <String, dynamic>{
+          'list': rawResults,
+        }, null);
       }
     }
   }
@@ -1417,9 +1463,7 @@ class SQLiteSource extends AbstractSource {
         }
 
         dataTask.result = results != null
-            ? dataTask.processResult(<String, dynamic>{
-                'list': results,
-              })
+            ? dataTask.processResult(<String, dynamic>{'list': results})
             : null;
         dataTask.error = exception;
         break;
@@ -1428,16 +1472,14 @@ class SQLiteSource extends AbstractSource {
         SourceException? exception;
 
         try {
-          id = await save(
-            dataTask.method,
-            data,
-            id: data[options.idKey],
-          );
+          id = await save(dataTask.method, data, id: data[options.idKey]);
         } catch (e) {
           exception = SourceException(originalException: e);
         }
 
-        dataTask.result = id != null ? dataTask.processResult(<String, dynamic>{'id': id}) : null;
+        dataTask.result = id != null
+            ? dataTask.processResult(<String, dynamic>{'id': id})
+            : null;
         dataTask.error = exception;
         break;
       case SQLiteType.delete:
@@ -1445,25 +1487,23 @@ class SQLiteSource extends AbstractSource {
         SourceException? exception;
 
         try {
-          deleted = await delete(
-            dataTask.method,
-            data[options.idKey],
-          );
+          deleted = await delete(dataTask.method, data[options.idKey]);
         } catch (e) {
           exception = SourceException(originalException: e);
         }
 
-        dataTask.result = deleted != null ? dataTask.processResult(<String, dynamic>{'deleted': deleted}) : null;
+        dataTask.result = deleted != null
+            ? dataTask.processResult(<String, dynamic>{'deleted': deleted})
+            : null;
         dataTask.error = exception;
         break;
       case SQLiteType.deleteWhere:
         try {
-          int deleted = await deleteWhere(
-            dataTask.method,
-            data,
-          );
+          int deleted = await deleteWhere(dataTask.method, data);
 
-          dataTask.result = dataTask.processResult(<String, dynamic>{'deleted': deleted});
+          dataTask.result = dataTask.processResult(<String, dynamic>{
+            'deleted': deleted,
+          });
         } catch (e) {
           dataTask.result = null;
           dataTask.error = SourceException(originalException: e);
@@ -1497,7 +1537,8 @@ class SQLiteSource extends AbstractSource {
         for (MainDataSource dataSource in _dataSources) {
           final DataRequest? dataRequest = dataSource.requestForMethod(method);
 
-          if (dataRequest != null && !identifiers.contains(dataRequest.identifier)) {
+          if (dataRequest != null &&
+              !identifiers.contains(dataRequest.identifier)) {
             identifiers.add(dataRequest.identifier);
           }
         }
@@ -1509,7 +1550,9 @@ class SQLiteSource extends AbstractSource {
     if (identifiers != null) {
       for (String identifier in identifiers) {
         for (MainDataSource dataSource in _dataSources) {
-          final DataRequest? dataRequest = dataSource.requestForIdentifier(identifier);
+          final DataRequest? dataRequest = dataSource.requestForIdentifier(
+            identifier,
+          );
 
           if (dataRequest != null) {
             await _queryDataUpdate(dataRequest, paginate: paginate);
@@ -1542,9 +1585,7 @@ class SembastSource extends AbstractSource {
   sembast.Database? _database;
 
   /// SembastSource initialization
-  SembastSource({
-    required SembastOptions options,
-  }) : _options = options {
+  SembastSource({required SembastOptions options}) : _options = options {
     state = ValueNotifier(MainDataProviderSourceState.ready);
   }
 
@@ -1587,19 +1628,28 @@ class SembastSource extends AbstractSource {
           filters.add(sembast.Filter.equals(parts[0], parameters[key]));
           break;
         case 'LIKE':
-          filters.add(sembast.Filter.matchesRegExp(parts[0], RegExp(parameters[key], caseSensitive: false)));
+          filters.add(
+            sembast.Filter.matchesRegExp(
+              parts[0],
+              RegExp(parameters[key], caseSensitive: false),
+            ),
+          );
           break;
         case '>':
           filters.add(sembast.Filter.greaterThan(parts[0], parameters[key]));
           break;
         case '>=':
-          filters.add(sembast.Filter.greaterThanOrEquals(parts[0], parameters[key]));
+          filters.add(
+            sembast.Filter.greaterThanOrEquals(parts[0], parameters[key]),
+          );
           break;
         case '<':
           filters.add(sembast.Filter.lessThan(parts[0], parameters[key]));
           break;
         case '<=':
-          filters.add(sembast.Filter.lessThanOrEquals(parts[0], parameters[key]));
+          filters.add(
+            sembast.Filter.lessThanOrEquals(parts[0], parameters[key]),
+          );
           break;
       }
     }
@@ -1608,7 +1658,10 @@ class SembastSource extends AbstractSource {
   }
 
   /// Query data from database
-  Future<List<Map<String, dynamic>>> query(String store, Map<String, dynamic> parameters) async {
+  Future<List<Map<String, dynamic>>> query(
+    String store,
+    Map<String, dynamic> parameters,
+  ) async {
     final database = await _open();
 
     final theStore = sembast.intMapStoreFactory.store(store);
@@ -1617,11 +1670,13 @@ class SembastSource extends AbstractSource {
       filter: sembast.Filter.and(_filtersFromParameters(parameters)),
     );
 
-    final List<sembast.RecordSnapshot<int, Map<String, Object?>>> snapshot = await theStore.find(database, finder: finder);
+    final List<sembast.RecordSnapshot<int, Map<String, Object?>>> snapshot =
+        await theStore.find(database, finder: finder);
 
     final List<Map<String, dynamic>> results = [];
 
-    for (final sembast.RecordSnapshot<int, Map<String, Object?>> record in snapshot) {
+    for (final sembast.RecordSnapshot<int, Map<String, Object?>> record
+        in snapshot) {
       final data = Map<String, dynamic>.from(record.value);
 
       data['id'] = record.key;
@@ -1671,7 +1726,10 @@ class SembastSource extends AbstractSource {
   }
 
   /// Delete data from database by where parameters
-  Future<void> deleteWhere(String store, Map<String, dynamic> parameters) async {
+  Future<void> deleteWhere(
+    String store,
+    Map<String, dynamic> parameters,
+  ) async {
     final database = await _open();
 
     final theStore = sembast.intMapStoreFactory.store(store);
@@ -1696,13 +1754,9 @@ class SembastSource extends AbstractSource {
 
     for (final MainDataSource dataSource in _dataSources) {
       if (dataSource.identifiers.contains(dataRequest.identifier)) {
-        dataSource.setResult(
-          dataRequest.identifier,
-          <String, dynamic>{
-            'list': results,
-          },
-          exception,
-        );
+        dataSource.setResult(dataRequest.identifier, <String, dynamic>{
+          'list': results,
+        }, exception);
       }
     }
   }
@@ -1756,18 +1810,13 @@ class SembastSource extends AbstractSource {
         SourceException? exception;
 
         try {
-          results = await query(
-            dataTask.method,
-            data,
-          );
+          results = await query(dataTask.method, data);
         } catch (e) {
           exception = SourceException(originalException: e);
         }
 
         dataTask.result = results != null
-            ? dataTask.processResult(<String, dynamic>{
-                'list': results,
-              })
+            ? dataTask.processResult(<String, dynamic>{'list': results})
             : null;
         dataTask.error = exception;
         break;
@@ -1776,23 +1825,23 @@ class SembastSource extends AbstractSource {
         SourceException? exception;
 
         try {
-          id = await save(
-            dataTask.method,
-            data,
-            id: data[options.idKey],
-          );
+          id = await save(dataTask.method, data, id: data[options.idKey]);
         } catch (e) {
           exception = SourceException(originalException: e);
         }
 
-        dataTask.result = id != null ? dataTask.processResult(<String, dynamic>{options.idKey: id}) : null;
+        dataTask.result = id != null
+            ? dataTask.processResult(<String, dynamic>{options.idKey: id})
+            : null;
         dataTask.error = exception;
         break;
       case SembastType.delete:
         try {
           await delete(dataTask.method, data[options.idKey]);
 
-          dataTask.result = dataTask.processResult(<String, dynamic>{'deleted': true});
+          dataTask.result = dataTask.processResult(<String, dynamic>{
+            'deleted': true,
+          });
         } catch (e) {
           dataTask.result = null;
           dataTask.error = SourceException(originalException: e);
@@ -1803,7 +1852,9 @@ class SembastSource extends AbstractSource {
         try {
           await deleteWhere(dataTask.method, data);
 
-          dataTask.result = dataTask.processResult(<String, dynamic>{'deleted': true});
+          dataTask.result = dataTask.processResult(<String, dynamic>{
+            'deleted': true,
+          });
         } catch (e) {
           dataTask.result = null;
           dataTask.error = SourceException(originalException: e);
@@ -1821,7 +1872,10 @@ class SembastSource extends AbstractSource {
 
   /// ReFetch data for DataRequest based on methods or identifiers
   @override
-  Future<void> reFetchData({List<String>? methods, List<String>? identifiers}) async {
+  Future<void> reFetchData({
+    List<String>? methods,
+    List<String>? identifiers,
+  }) async {
     if (methods == null && identifiers == null) {
       throw Exception('Provide either methods or identifiers');
     }
@@ -1833,7 +1887,8 @@ class SembastSource extends AbstractSource {
         for (MainDataSource dataSource in _dataSources) {
           final DataRequest? dataRequest = dataSource.requestForMethod(method);
 
-          if (dataRequest != null && !identifiers.contains(dataRequest.identifier)) {
+          if (dataRequest != null &&
+              !identifiers.contains(dataRequest.identifier)) {
             identifiers.add(dataRequest.identifier);
           }
         }
@@ -1845,7 +1900,9 @@ class SembastSource extends AbstractSource {
     if (identifiers != null) {
       for (String identifier in identifiers) {
         for (MainDataSource dataSource in _dataSources) {
-          final DataRequest? dataRequest = dataSource.requestForIdentifier(identifier);
+          final DataRequest? dataRequest = dataSource.requestForIdentifier(
+            identifier,
+          );
 
           if (dataRequest != null) {
             await _queryDataUpdate(dataRequest);
@@ -1862,8 +1919,5 @@ class SourceException {
   final int? httpStatusCode;
 
   /// SourceException initialization
-  SourceException({
-    required this.originalException,
-    this.httpStatusCode,
-  });
+  SourceException({required this.originalException, this.httpStatusCode});
 }

@@ -1,3 +1,9 @@
+## [0.39.1] - 17.9.2026
+
+* **Warning:** Fixed `SQLiteSource` replacing the global sqflite database factory with FFI on every platform (versions `0.37.0` – `0.39.0`); on Android, iOS and macOS apps using `getDatabasesPath()` or a relative database path could open a new empty database in a different location instead of existing data — FFI factory is now used only on Windows and Linux
+* **Warning:** Apps using `SQLiteSource` on Android, iOS or macOS must depend on `sqflite` directly, so its plugin database factory is registered
+* `AbstractStatefulWidgetState`: fixed `clearFocusToDummy` dummy focus node attachment and disposal
+
 ## [0.39.0] - 14.7.2026
 
 * **Warning:** Minimum Dart SDK version bumped to `>=3.12.0` and Flutter to `>=3.44.0`
