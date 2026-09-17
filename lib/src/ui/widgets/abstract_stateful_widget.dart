@@ -1,22 +1,20 @@
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
-enum StatefulWidgetState {
-  notInitialized,
-  initialized,
-  disposed,
-}
+enum StatefulWidgetState { notInitialized, initialized, disposed }
 
 abstract class AbstractStatefulWidget extends StatefulWidget {
   /// AbstractStatefulWidget initialization
   const AbstractStatefulWidget({super.key});
 }
 
-abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> extends State<T> {
+abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget>
+    extends State<T> {
   StatefulWidgetState get widgetState => _widgetState;
 
   StatefulWidgetState _widgetState = StatefulWidgetState.notInitialized;
 
   final _dummyFocusNode = FocusNode();
+  FocusAttachment? _dummyFocusAttachment;
 
   @protected
   bool wasBackground = false;
@@ -52,9 +50,7 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
       }
     }
 
-    return Builder(
-      builder: (BuildContext context) => buildContent(context),
-    );
+    return Builder(builder: (BuildContext context) => buildContent(context));
   }
 
   /// Run initializations of view on first build only
@@ -78,7 +74,9 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
   /// Call setState only if it not disposed yet
   @protected
   void setStateNotDisposed(VoidCallback fn) {
-    if (mounted && context.mounted && _widgetState != StatefulWidgetState.disposed) {
+    if (mounted &&
+        context.mounted &&
+        _widgetState != StatefulWidgetState.disposed) {
       setState(fn);
     }
   }
@@ -93,6 +91,9 @@ abstract class AbstractStatefulWidgetState<T extends AbstractStatefulWidget> ext
   /// This should solve some situations on Android, where the focus jumps back to input when it should not do so
   @protected
   void clearFocusToDummy(BuildContext context) {
+    _dummyFocusAttachment ??= _dummyFocusNode.attach(context);
+    _dummyFocusAttachment!.reparent();
+
     FocusScope.of(context).requestFocus(_dummyFocusNode);
   }
 }
