@@ -2,6 +2,15 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:tch_appliable_core/src/core/translator.dart';
 
+/// Convenience class for easy autoimport
+class NullableStringExtensionDummy {}
+
+/// Helpers for nullable strings
+extension NullableStringExtension on String? {
+  /// Whether this string is null or empty
+  bool get isNullOrEmpty => this?.isEmpty ?? true;
+}
+
 /// Truncate text for limit, optionally find nearest whitespace for whole words
 String truncateText(
   String text,
@@ -35,7 +44,8 @@ Widget textWithLinks(
   required void Function(String link) onTapLink,
 }) {
   exp ??= RegExp(
-      r'(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?');
+    r'(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?',
+  );
 
   if (exp.hasMatch(text)) {
     List<TextSpan> spans = [];
@@ -44,10 +54,9 @@ Widget textWithLinks(
 
     for (RegExpMatch match in matches) {
       if (match.start > 0) {
-        spans.add(TextSpan(
-          text: text.substring(start, match.start),
-          style: textStyle,
-        ));
+        spans.add(
+          TextSpan(text: text.substring(start, match.start), style: textStyle),
+        );
       }
 
       spans.add(
@@ -65,31 +74,24 @@ Widget textWithLinks(
     }
 
     if (start < text.length) {
-      spans.add(TextSpan(
-        text: text.substring(start),
-        style: textStyle,
-      ));
+      spans.add(TextSpan(text: text.substring(start), style: textStyle));
     }
 
-    return Text.rich(
-      TextSpan(children: spans),
-      textAlign: TextAlign.left,
-    );
+    return Text.rich(TextSpan(children: spans), textAlign: TextAlign.left);
   }
 
-  return Text(
-    text,
-    style: textStyle,
-  );
+  return Text(text, style: textStyle);
 }
 
 /// Convert milliseconds since epoch to default formatted text, requires enabled Translator
 String millisToDefault(int millis, {bool time = true}) {
   if (time) {
-    return Translator.instance!.localizedDateTimeFormat
-        .format(DateTime.fromMillisecondsSinceEpoch(millis));
+    return Translator.instance!.localizedDateTimeFormat.format(
+      DateTime.fromMillisecondsSinceEpoch(millis),
+    );
   } else {
-    return Translator.instance!.localizedDateFormat
-        .format(DateTime.fromMillisecondsSinceEpoch(millis));
+    return Translator.instance!.localizedDateFormat.format(
+      DateTime.fromMillisecondsSinceEpoch(millis),
+    );
   }
 }
