@@ -1,3 +1,7 @@
+## [0.39.2] - 25.9.2026
+
+* Added `String?.isNullOrEmpty` for nullable string checks
+
 ## [0.39.1] - 17.9.2026
 
 * **Warning:** Fixed `SQLiteSource` replacing the global sqflite database factory with FFI on every platform (versions `0.37.0` – `0.39.0`); on Android, iOS and macOS apps using `getDatabasesPath()` or a relative database path could open a new empty database in a different location instead of existing data — FFI factory is now used only on Windows and Linux
