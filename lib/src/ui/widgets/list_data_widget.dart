@@ -5,17 +5,29 @@ import 'package:tch_appliable_core/src/providers/mainDataProvider/data_request.d
 import 'package:tch_appliable_core/src/ui/widgets/abstract_data_widget.dart';
 import 'package:tch_appliable_core/utils/widget.dart';
 
-typedef ProcessResult<R extends DataRequest, I extends DataModel> = List<I>? Function(R dataRequest);
+typedef ProcessResult<R extends DataRequest, I extends DataModel> =
+    List<I>? Function(R dataRequest);
 
-typedef ItemBuilder<I extends DataModel> = Widget Function(BuildContext context, int position, I item);
+typedef ItemBuilder<I extends DataModel> = Widget Function(
+  BuildContext context,
+  int position,
+  I item,
+);
 
-typedef BuildLoadingItemWithGlobalKey = Widget Function(BuildContext context, GlobalKey globalKey);
+typedef BuildLoadingItemWithGlobalKey = Widget Function(
+  BuildContext context,
+  GlobalKey globalKey,
+);
 
 typedef BuildLoadingItemFullScreen = Widget Function(BuildContext context);
 
-typedef BuildErrorStateWidget = Widget Function(SourceException exception, VoidCallback refresh);
+typedef BuildErrorStateWidget = Widget Function(
+  SourceException exception,
+  VoidCallback refresh,
+);
 
-class ListDataWidget<R extends DataRequest, I extends DataModel> extends AbstractDataWidget {
+class ListDataWidget<R extends DataRequest, I extends DataModel>
+    extends AbstractDataWidget {
   final ScrollController? scrollController;
   final ProcessResult<R, I> processResult;
   final ItemBuilder<I> buildItem;
@@ -41,14 +53,15 @@ class ListDataWidget<R extends DataRequest, I extends DataModel> extends Abstrac
     required this.emptyState,
     this.childAfterList,
     this.pullToRefreshOptions = const PullToRefreshOptions(),
-  }) : super(dataRequests: <DataRequest>[if (dataRequest != null) dataRequest]);
+  }) : super(dataRequests: <DataRequest>[?dataRequest]);
 
   /// Create state for widget
   @override
   ListDataWidgetState<R, I> createState() => ListDataWidgetState<R, I>();
 }
 
-class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends AbstractDataWidgetState<ListDataWidget<R, I>> {
+class ListDataWidgetState<R extends DataRequest, I extends DataModel>
+    extends AbstractDataWidgetState<ListDataWidget<R, I>> {
   late ScrollController _scrollController;
   final GlobalKey _loadingItemKey = GlobalKey();
   OverlayEntry? _loadingItemEntry;
@@ -89,100 +102,111 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
 
     return ValueListenableBuilder(
       valueListenable: theDataSource.results,
-      builder: (BuildContext context, List<DataRequest> dataRequests, Widget? child) {
-        addPostFrameCallback((timeStamp) => _isEndOfList());
+      builder:
+          (
+            BuildContext context,
+            List<DataRequest> dataRequests,
+            Widget? child,
+          ) {
+            addPostFrameCallback((timeStamp) => _isEndOfList());
 
-        final List<Widget> content = <Widget>[];
+            final List<Widget> content = <Widget>[];
 
-        final R dataRequest = dataRequests.first as R;
+            final R dataRequest = dataRequests.first as R;
 
-        Widget loadingItem = widget.buildLoadingItemWithGlobalKey(context, _loadingItemKey);
-
-        final theBuildErrorState = widget.buildErrorState;
-        final theError = dataRequest.error;
-
-        if (theBuildErrorState != null && theError != null) {
-          final theLoadingItemEntry = _loadingItemEntry;
-          if (theLoadingItemEntry != null) {
-            _loadingItemEntry = null;
-
-            addPostFrameCallback((timeStamp) {
-              theLoadingItemEntry.remove();
-            });
-          }
-
-          return theBuildErrorState(theError, _refresh);
-        } else if (dataRequest.result != null) {
-          final theLoadingItemEntry = _loadingItemEntry;
-          if (theLoadingItemEntry != null) {
-            _loadingItemEntry = null;
-
-            addPostFrameCallback((timeStamp) {
-              theLoadingItemEntry.remove();
-            });
-          }
-
-          final List<I>? items = widget.processResult(dataRequest);
-          _items = items ?? <I>[];
-
-          if (items?.isNotEmpty == true) {
-            content.addAll(
-              <Widget>[
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int position) {
-                      return widget.buildItem(context, position, _items[position]);
-                    },
-                    childCount: _items.length,
-                  ),
-                ),
-                if (!_isLastPage) loadingItem,
-              ],
+            Widget loadingItem = widget.buildLoadingItemWithGlobalKey(
+              context,
+              _loadingItemKey,
             );
-          } else {
-            return widget.emptyState;
-          }
-        } else {
-          if (widget.initialLoadingFullScreen) {
-            if (_loadingItemEntry == null) {
-              _loadingItemEntry = OverlayEntry(builder: (BuildContext context) {
-                return Material(
-                  color: Colors.transparent,
-                  child: widget.buildLoadingItemFullScreen?.call(context) ?? LoadingItemFullScreenWidget(),
-                );
-              });
 
-              addPostFrameCallback((timeStamp) {
-                Overlay.of(context).insert(_loadingItemEntry!);
-              });
+            final theBuildErrorState = widget.buildErrorState;
+            final theError = dataRequest.error;
+
+            if (theBuildErrorState != null && theError != null) {
+              final theLoadingItemEntry = _loadingItemEntry;
+              if (theLoadingItemEntry != null) {
+                _loadingItemEntry = null;
+
+                addPostFrameCallback((timeStamp) {
+                  theLoadingItemEntry.remove();
+                });
+              }
+
+              return theBuildErrorState(theError, _refresh);
+            } else if (dataRequest.result != null) {
+              final theLoadingItemEntry = _loadingItemEntry;
+              if (theLoadingItemEntry != null) {
+                _loadingItemEntry = null;
+
+                addPostFrameCallback((timeStamp) {
+                  theLoadingItemEntry.remove();
+                });
+              }
+
+              final List<I>? items = widget.processResult(dataRequest);
+              _items = items ?? <I>[];
+
+              if (items?.isNotEmpty == true) {
+                content.addAll(<Widget>[
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate((
+                      BuildContext context,
+                      int position,
+                    ) {
+                      return widget.buildItem(
+                        context,
+                        position,
+                        _items[position],
+                      );
+                    }, childCount: _items.length),
+                  ),
+                  if (!_isLastPage) loadingItem,
+                ]);
+              } else {
+                return widget.emptyState;
+              }
+            } else {
+              if (widget.initialLoadingFullScreen) {
+                if (_loadingItemEntry == null) {
+                  _loadingItemEntry = OverlayEntry(
+                    builder: (BuildContext context) {
+                      return Material(
+                        color: Colors.transparent,
+                        child:
+                            widget.buildLoadingItemFullScreen?.call(context) ??
+                            LoadingItemFullScreenWidget(),
+                      );
+                    },
+                  );
+
+                  addPostFrameCallback((timeStamp) {
+                    Overlay.of(context).insert(_loadingItemEntry!);
+                  });
+                }
+              } else {
+                content.add(loadingItem);
+              }
             }
-          } else {
-            content.add(loadingItem);
-          }
-        }
 
-        final theChildAfterList = widget.childAfterList;
-        if (theChildAfterList != null) {
-          content.add(theChildAfterList);
-        }
+            final theChildAfterList = widget.childAfterList;
+            if (theChildAfterList != null) {
+              content.add(theChildAfterList);
+            }
 
-        Widget list = Scrollbar(
-          controller: _scrollController,
-          child: CustomScrollView(
-            controller: _scrollController,
-            slivers: content,
-          ),
-        );
+            Widget list = Scrollbar(
+              controller: _scrollController,
+              child: CustomScrollView(
+                controller: _scrollController,
+                slivers: content,
+              ),
+            );
 
-        if (widget.pullToRefreshOptions.enabled) {
-          list = RefreshIndicator(
-            onRefresh: () => _refresh(),
-            child: list,
-          );
-        }
+            if (widget.pullToRefreshOptions.enabled) {
+              list = RefreshIndicator(onRefresh: () => _refresh(), child: list);
+            }
 
-        return list;
-      },
+            return list;
+          },
     );
   }
 
@@ -192,7 +216,8 @@ class ListDataWidgetState<R extends DataRequest, I extends DataModel> extends Ab
       return;
     }
 
-    final RenderBox? loadingItemRenderBox = _loadingItemKey.currentContext?.findRenderObject() as RenderBox?;
+    final RenderBox? loadingItemRenderBox =
+        _loadingItemKey.currentContext?.findRenderObject() as RenderBox?;
 
     if (loadingItemRenderBox != null) {
       _loadingItemHeight = loadingItemRenderBox.size.height;
@@ -273,11 +298,7 @@ class LoadingItemWidget extends StatelessWidget {
   final Text text;
 
   /// LoadingItemWidget initialization
-  const LoadingItemWidget({
-    super.key,
-    this.containerKey,
-    required this.text,
-  });
+  const LoadingItemWidget({super.key, this.containerKey, required this.text});
 
   /// Create view from widgets
   @override
@@ -286,9 +307,7 @@ class LoadingItemWidget extends StatelessWidget {
       child: SizedBox(
         key: containerKey,
         height: 48,
-        child: Center(
-          child: text,
-        ),
+        child: Center(child: text),
       ),
     );
   }
