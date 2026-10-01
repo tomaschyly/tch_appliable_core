@@ -1,3 +1,8 @@
+## [0.40.0] - 30.9.2026
+
+* **Warning:** Minimum Dart SDK version bumped to `>=3.13.0` and Flutter to `>=3.47.0`
+* Updated the example app's Android build tooling, Apple deployment targets, and iOS scene lifecycle for Flutter 3.47
+
 ## [0.39.2] - 25.9.2026
 
 * Added `String?.isNullOrEmpty` for nullable string checks

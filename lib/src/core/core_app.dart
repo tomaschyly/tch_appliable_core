@@ -15,7 +15,8 @@ class CoreApp extends AbstractStatefulWidget {
   final Route<dynamic> Function({
     required WidgetBuilder builder,
     RouteSettings? settings,
-  })? onGenerateInitialRoute;
+  })?
+  onGenerateInitialRoute;
   final RouteFactory? onGenerateRoute;
   final GoRouter? router;
   final AbstractAppDataStateSnapshot snapshot;
@@ -70,16 +71,17 @@ class CoreApp extends AbstractStatefulWidget {
     this.localeResolutionCallback,
     this.restorationScopeId,
   }) : assert(
-          (onGenerateRoute != null) != (router != null),
-          'Provide either onGenerateRoute (V1) or router (GoRouter V2), not both or neither.',
-        );
+         (onGenerateRoute != null) != (router != null),
+         'Provide either onGenerateRoute (V1) or router (GoRouter V2), not both or neither.',
+       );
 
   /// Create state for widget
   @override
   State<StatefulWidget> createState() => CoreAppState();
 }
 
-class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBindingObserver {
+class CoreAppState extends AbstractStatefulWidgetState<CoreApp>
+    with WidgetsBindingObserver {
   static CoreAppState get instance => _instance;
 
   static late CoreAppState _instance;
@@ -118,7 +120,8 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
     final theLocalizationsDelegates = widget.localizationsDelegates;
     final theRouter = widget.router;
 
-    if (theTranslatorOptions != null && theTranslatorOptions.onLanguageChange == null) {
+    if (theTranslatorOptions != null &&
+        theTranslatorOptions.onLanguageChange == null) {
       theTranslatorOptions.onLanguageChange = (Locale locale) {
         setStateNotDisposed(() {
           _selectedLocale = locale;
@@ -129,9 +132,13 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
     final theDarkThemePrefsKey = widget.darkThemePrefsKey;
     bool darkMode = _isOSDarkMode;
     if (theDarkThemePrefsKey != null) {
-      final darkModeType = prefsInt(theDarkThemePrefsKey) == null ? DarkMode.automatic : DarkMode.values[prefsInt(theDarkThemePrefsKey)!];
+      final darkModeType = prefsInt(theDarkThemePrefsKey) == null
+          ? DarkMode.automatic
+          : DarkMode.values[prefsInt(theDarkThemePrefsKey)!];
 
-      darkMode = darkModeType == DarkMode.automatic ? darkMode : darkModeType == DarkMode.enabled;
+      darkMode = darkModeType == DarkMode.automatic
+          ? darkMode
+          : darkModeType == DarkMode.enabled;
     }
 
     final snapshot = widget.snapshot
@@ -152,7 +159,8 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
           theme: darkMode ? (widget.darkTheme ?? widget.theme) : widget.theme,
           color: widget.color,
           scrollBehavior: widget.scrollBehavior,
-          themeAnimationDuration: widget.themeAnimationDuration ?? kThemeAnimationDuration,
+          themeAnimationDuration:
+              widget.themeAnimationDuration ?? kThemeAnimationDuration,
           themeAnimationCurve: widget.themeAnimationCurve ?? Curves.linear,
           shortcuts: widget.shortcuts,
           actions: widget.actions,
@@ -177,11 +185,13 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
                   return _V2InitializationWidget(
                     initializeOnce: _initializeOnce,
                     initializationUi: widget.initializationUi,
-                    initializationMinDurationInMilliseconds: widget.initializationMinDurationInMilliseconds,
+                    initializationMinDurationInMilliseconds:
+                        widget.initializationMinDurationInMilliseconds,
                     onAppInitStart: widget.onAppInitStart,
                     onAppInitEnd: widget.onAppInitEnd,
                     initialScreenRoute: widget.initialScreenRoute,
-                    initialScreenRouteArguments: widget.initialScreenRouteArguments,
+                    initialScreenRouteArguments:
+                        widget.initialScreenRouteArguments,
                     translatorOptions: theTranslatorOptions,
                     preferencesOptions: widget.preferencesOptions,
                     mainDataProviderOptions: widget.mainDataProviderOptions,
@@ -198,9 +208,11 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
           localeResolutionCallback: widget.localeResolutionCallback,
           localizationsDelegates: [
             ...GlobalMaterialLocalizations.delegates,
-            if (theLocalizationsDelegates != null) ...theLocalizationsDelegates,
+            ...?theLocalizationsDelegates,
           ],
-          supportedLocales: theTranslatorOptions?.supportedLocales ?? const <Locale>[Locale('en', 'US')],
+          supportedLocales:
+              theTranslatorOptions?.supportedLocales ??
+              const <Locale>[Locale('en', 'US')],
         ),
       );
     }
@@ -218,7 +230,8 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
             return _InitializationScreen(
               initializeOnce: _initializeOnce,
               initializationUi: widget.initializationUi,
-              initializationMinDurationInMilliseconds: widget.initializationMinDurationInMilliseconds,
+              initializationMinDurationInMilliseconds:
+                  widget.initializationMinDurationInMilliseconds,
               onAppInitStart: widget.onAppInitStart,
               onAppInitEnd: widget.onAppInitEnd,
               initialScreenRoute: widget.initialScreenRoute,
@@ -230,28 +243,18 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
           }
 
           if (generate != null) {
-            return [
-              generate(
-                builder: builder,
-              ),
-            ];
+            return [generate(builder: builder)];
           } else {
-            return [
-              MaterialPageRoute(
-                builder: builder,
-              ),
-            ];
+            return [MaterialPageRoute(builder: builder)];
           }
         },
         onGenerateRoute: widget.onGenerateRoute,
-        navigatorObservers: [
-          routeObserver,
-          if (theNavigatorObservers != null) ...theNavigatorObservers,
-        ],
+        navigatorObservers: [routeObserver, ...?theNavigatorObservers],
         theme: darkMode ? (widget.darkTheme ?? widget.theme) : widget.theme,
         color: widget.color,
         scrollBehavior: widget.scrollBehavior,
-        themeAnimationDuration: widget.themeAnimationDuration ?? kThemeAnimationDuration,
+        themeAnimationDuration:
+            widget.themeAnimationDuration ?? kThemeAnimationDuration,
         themeAnimationCurve: widget.themeAnimationCurve ?? Curves.linear,
         shortcuts: widget.shortcuts,
         actions: widget.actions,
@@ -273,9 +276,11 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
         localeResolutionCallback: widget.localeResolutionCallback,
         localizationsDelegates: [
           ...GlobalMaterialLocalizations.delegates,
-          if (theLocalizationsDelegates != null) ...theLocalizationsDelegates,
+          ...?theLocalizationsDelegates,
         ],
-        supportedLocales: theTranslatorOptions?.supportedLocales ?? const <Locale>[Locale('en', 'US')],
+        supportedLocales:
+            theTranslatorOptions?.supportedLocales ??
+            const <Locale>[Locale('en', 'US')],
       ),
     );
   }
@@ -307,7 +312,8 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
   /// Determine if is OS Dark mode enabled
   @protected
   void determineOSThemeMode(BuildContext context, [bool setState = true]) {
-    final isOSDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    final isOSDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
 
     if (isOSDarkMode != _isOSDarkMode) {
       _isOSDarkMode = isOSDarkMode;
@@ -343,11 +349,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp> with WidgetsBind
 
     setStateNotDisposed(() {
       _messages[screenName]!.add(
-        ScreenMessage(
-          message: message,
-          type: type,
-          duration: duration,
-        ),
+        ScreenMessage(message: message, type: type, duration: duration),
       );
     });
   }
@@ -440,7 +442,9 @@ class _InitializationScreen extends StatelessWidget {
       }
 
       if (!context.mounted) {
-        debugPrint('CoreApp - _appInit - Context is not mounted after preferences init');
+        debugPrint(
+          'CoreApp - _appInit - Context is not mounted after preferences init',
+        );
         return;
       }
 
@@ -452,7 +456,9 @@ class _InitializationScreen extends StatelessWidget {
       }
 
       if (!context.mounted) {
-        debugPrint('CoreApp - _appInit - Context is not mounted after translator init');
+        debugPrint(
+          'CoreApp - _appInit - Context is not mounted after translator init',
+        );
         return;
       }
 
@@ -466,7 +472,9 @@ class _InitializationScreen extends StatelessWidget {
       }
 
       if (!context.mounted) {
-        debugPrint('CoreApp - _appInit - Context is not mounted after app init end');
+        debugPrint(
+          'CoreApp - _appInit - Context is not mounted after app init end',
+        );
         return;
       }
 
@@ -476,15 +484,26 @@ class _InitializationScreen extends StatelessWidget {
 
       if (diff.inMilliseconds < initializationMinDurationInMilliseconds) {
         Future.delayed(
-          Duration(milliseconds: initializationMinDurationInMilliseconds - diff.inMilliseconds),
+          Duration(
+            milliseconds:
+                initializationMinDurationInMilliseconds - diff.inMilliseconds,
+          ),
           () {
             if (context.mounted) {
-              pushNamedNewStack(context, initialScreenRoute, arguments: initialScreenRouteArguments);
+              pushNamedNewStack(
+                context,
+                initialScreenRoute,
+                arguments: initialScreenRouteArguments,
+              );
             }
           },
         );
       } else {
-        pushNamedNewStack(context, initialScreenRoute, arguments: initialScreenRouteArguments);
+        pushNamedNewStack(
+          context,
+          initialScreenRoute,
+          arguments: initialScreenRouteArguments,
+        );
       }
     }
   }
@@ -554,7 +573,9 @@ class _V2InitializationWidget extends StatelessWidget {
       }
 
       if (!context.mounted) {
-        debugPrint('CoreApp - _appInit - Context is not mounted after preferences init');
+        debugPrint(
+          'CoreApp - _appInit - Context is not mounted after preferences init',
+        );
         return;
       }
 
@@ -566,7 +587,9 @@ class _V2InitializationWidget extends StatelessWidget {
       }
 
       if (!context.mounted) {
-        debugPrint('CoreApp - _appInit - Context is not mounted after translator init');
+        debugPrint(
+          'CoreApp - _appInit - Context is not mounted after translator init',
+        );
         return;
       }
 
@@ -580,7 +603,9 @@ class _V2InitializationWidget extends StatelessWidget {
       }
 
       if (!context.mounted) {
-        debugPrint('CoreApp - _appInit - Context is not mounted after app init end');
+        debugPrint(
+          'CoreApp - _appInit - Context is not mounted after app init end',
+        );
         return;
       }
 
@@ -600,7 +625,10 @@ class _V2InitializationWidget extends StatelessWidget {
 
       if (diff.inMilliseconds < initializationMinDurationInMilliseconds) {
         Future.delayed(
-          Duration(milliseconds: initializationMinDurationInMilliseconds - diff.inMilliseconds),
+          Duration(
+            milliseconds:
+                initializationMinDurationInMilliseconds - diff.inMilliseconds,
+          ),
           navigate,
         );
       } else {
@@ -614,15 +642,12 @@ class AppDataState extends InheritedWidget {
   final AbstractAppDataStateSnapshot snapshot;
 
   /// AppDataState
-  const AppDataState({
-    super.key,
-    required this.snapshot,
-    required super.child,
-  });
+  const AppDataState({super.key, required this.snapshot, required super.child});
 
   /// AbstractAppDataState access current snapshot anywhere from BuildContext
   static T? of<T extends AbstractAppDataStateSnapshot>(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<AppDataState>()?.snapshot as T?;
+    return context.dependOnInheritedWidgetOfExactType<AppDataState>()?.snapshot
+        as T?;
   }
 
   /// Notify dependents to rebuild when snapshot changes
@@ -631,14 +656,18 @@ class AppDataState extends InheritedWidget {
 }
 
 /// Shorthand to get AbstractAppDataStateSnapshot from context
-AbstractAppDataStateSnapshot getAbstractAppDataStateSnapshot(BuildContext context) => AppDataState.of<AbstractAppDataStateSnapshot>(context)!;
+AbstractAppDataStateSnapshot getAbstractAppDataStateSnapshot(
+  BuildContext context,
+) => AppDataState.of<AbstractAppDataStateSnapshot>(context)!;
 
 extension AppDataStateExtension on BuildContext {
   /// Shorthand to get AbstractAppDataStateSnapshot from context
-  AbstractAppDataStateSnapshot get appDataState => AppDataState.of<AbstractAppDataStateSnapshot>(this)!;
+  AbstractAppDataStateSnapshot get appDataState =>
+      AppDataState.of<AbstractAppDataStateSnapshot>(this)!;
 
   /// Shorthand to get nullable AbstractAppDataStateSnapshot from context
-  AbstractAppDataStateSnapshot? get appDataStateOrNull => AppDataState.of<AbstractAppDataStateSnapshot>(this);
+  AbstractAppDataStateSnapshot? get appDataStateOrNull =>
+      AppDataState.of<AbstractAppDataStateSnapshot>(this);
 }
 
 typedef AddScreenMessage = void Function(
@@ -678,8 +707,4 @@ abstract class AbstractAppDataStateSnapshot {
   }
 }
 
-enum DarkMode {
-  automatic,
-  enabled,
-  disabled,
-}
+enum DarkMode { automatic, enabled, disabled }
