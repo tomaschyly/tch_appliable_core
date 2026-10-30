@@ -2,6 +2,10 @@
 
 These instructions apply to the whole repository unless a deeper `AGENTS.md` overrides them.
 
+## Platform scope
+
+- This package serves mobile and desktop consumers; web support varies by feature. Preserve existing platform guards and verify the affected feature on its supported platforms rather than applying an app-only platform restriction.
+
 ## Branch safety rule
 
 - For implementation work (any non-planning/non-question-only task), if current branch is `main` or `master`, ask the user first whether to switch to a new `version/*` or `feature/*` branch before making edits.
@@ -24,10 +28,7 @@ All three files must stay in sync for each release.
 
 During every package version bump, check the `pubspec.yaml` `environment` constraints against the Flutter version used by the project. When Flutter is upgraded, update the Dart SDK and Flutter constraints together so they remain synchronized with the toolchain.
 
-Current baseline: Flutter `3.44.9` uses:
-
-- `sdk: ">=3.12.0 <4.0.0"`
-- `flutter: ">=3.44.0"`
+Determine the active toolchain from this project's configuration. Review package and example constraints together, preserve supported consumer minimums, and do not copy another project's baseline or raise minimums solely to match a local toolchain.
 
 ## General coding conventions
 
@@ -50,13 +51,30 @@ Current baseline: Flutter `3.44.9` uses:
 
 ### Pattern consistency
 
-- In every change, follow established patterns from related contexts in this project (similar layer, model, provider, utility, or widget type).
-- Prefer consistency with existing structure and naming over introducing a new approach.
-- If multiple patterns exist, choose the one used in the closest relevant files unless the user explicitly asks otherwise.
+- Following established project patterns is a requirement for every change. Before implementing, read concrete examples of the same kind of behavior; follow the reference-discovery workflow in **Context-first preparation** below.
+- Match by purpose and behavior, not just by file proximity or similar names. For example, use comparable public APIs, utilities, providers, widgets, styles, platform implementations, or example flows for their equivalents.
+- Follow the reference's structure, naming, layer boundaries, shared abstractions, and applicable behavior. This includes layout/composition, state and data flow, validation, loading/empty/error states, permissions, navigation, persistence, and subscriptions where relevant to the task.
+- Reuse established components, widgets, utilities, extensions, and service helpers when they fit. Read their implementation and representative call sites before using them; preserve their intended contracts instead of duplicating their behavior or bypassing them with custom code.
+- Prefer consistency with existing structure and naming over introducing a new approach. Do not introduce a parallel abstraction, dependency, or architecture merely because it is familiar or seems cleaner in isolation.
+- If multiple patterns exist, prefer the closest feature-equivalent implementation in the same project and layer unless the user explicitly selects another reference. Apply explicit repository rules over conflicting examples; do not copy known bugs or obsolete behavior. Explain material differences when adapting a reference.
 - When adding or moving methods, widget helpers, fields, constants, configuration values, provider functions, or utilities, place them with related code rather than at the end of the file or the first convenient location.
 - Before editing a file, scan nearby declarations for the existing grouping and order pattern (for example fields before lifecycle methods, lifecycle methods before build helpers, callbacks near related UI, domain workflow order, or alphabetical order), then preserve it.
 - In a new file centered on a primary class, mixin, extension, or other type, declare that primary type before supporting top-level declarations. Place helper data classes, enums, constants, typedefs, and similar supporting declarations after the primary type unless Dart, Flutter, or an established local pattern requires a different order.
 - For cross-file lists or registries that represent the same domain concept, keep their order consistent across the related files.
+
+### Readability and formatting
+
+- Write code for a human reader: use descriptive names, clear control flow, and functions with focused responsibilities. Avoid dense expressions, excessive nesting, and clever shortcuts when straightforward code is clearer.
+- Match surrounding indentation, line wrapping, spacing, braces, and declaration grouping. Use the project's configured formatter where available; avoid unrelated formatting changes.
+- Keep related steps together and use blank lines to separate logical stages. Add comments that explain intent or non-obvious constraints, following the code-commenting rules above.
+- Before finishing, review the diff for both readability and consistency with the chosen references. A successful build alone does not establish pattern consistency.
+
+### Package architecture and public API
+
+- Keep framework implementation under `lib/src/`, reusable utilities under `lib/utils/`, and curate public exports through `lib/tch_appliable_core.dart` and existing utility entry points
+- Read the public entry point and representative consumer or example call sites before changing a public contract; avoid breaking APIs or exports without explicit user approval
+- Preserve the separate Navigator V1 and go_router V2 contracts in `router_v1.dart` and `router_v2.dart`; verify argument propagation, replacement behavior, Back navigation, and current-route ownership when changing navigation helpers
+- Keep route arguments as strings by default and follow existing `supercharged` conversions where numeric parsing is needed
 
 ### Utilities architecture
 
@@ -99,10 +117,16 @@ Current baseline: Flutter `3.44.9` uses:
 - In mapping, prefer: `field: clearField == true ? null : (field ?? this.field)`.
 - Do not use sentinel placeholders (for example `_copyWithUndefined`) for this case unless explicitly requested.
 
+## Localization and text
+
+- Translator is optional. Preserve initialization and fallback behavior; do not require a configured Translator for general-purpose utilities. Use the existing `tt`/`parameters` API for translated text instead of duplicating placeholder replacement in callers.
+- Do not add or fill translation-file entries unless explicitly requested. In translated example flows, follow their existing key namespaces and use placeholder parameter APIs rather than chained replacements.
+
 ## Security
 
 ### Dependency updates
 
+- Exception to the 30-day waiting period: the user's own packages `tch_appliable_core` and `tch_common_widgets` are trusted and may be updated immediately after publication.
 - Because package ecosystems are exposed to supply-chain attacks, do not update a pub package, framework, library, or dependency to a version that has been publicly available for fewer than 30 days.
 - Before choosing the latest version, verify its release date from an official source such as the package registry, vendor release notes, or repository release page.
 - If the latest version is newer than 30 days, select the newest version that is at least 30 days old and explain the choice in the handoff.
@@ -119,9 +143,12 @@ Current baseline: Flutter `3.44.9` uses:
 
 ### Context-first preparation
 
-- Before proposing a plan or starting code changes, review related files in the same domain/context to identify established patterns and structure.
-- Use those nearby implementations as the primary reference for architecture, naming, state handling, and UI composition decisions.
-- If patterns conflict, prefer the closest feature-equivalent example and call out the choice in your summary.
+- Before proposing a plan or starting code changes, find and read at least one concrete implementation of the same kind of behavior, when one exists. For work spanning several layers or distinct behaviors, inspect the relevant examples for each part and trace their connected flow as needed.
+- Start with references supplied by the user and inspect the related code needed to understand them. If the user supplies no references, search for suitable examples yourself; reference discovery is the agent's responsibility. Do not ask the user to locate examples that can be found in the repository.
+- Search the same domain/context first, then comparable features elsewhere in the same project. Inspect shared components, utilities, and helpers used by those examples. For consumer references, first verify the other project's root and read only relevant files using absolute paths; adapt to this package's conventions.
+- Before editing, briefly name the main reference files in a progress update and state which patterns you will follow. Reading only filenames or declarations is insufficient; inspect the implementation and relevant call sites.
+- If examples conflict, use the selection rules in **Pattern consistency**. If no suitable example exists after searching, state that and use the nearest established conventions. Ask only when an unresolved choice materially affects behavior or architecture; do not invent a new pattern silently.
+- Before handoff, compare the changed code with the selected references and correct unexplained differences. Briefly identify the main references followed and explain any material deviations in the handoff.
 
 ### IDE tools and reviewability
 
@@ -144,6 +171,7 @@ Current baseline: Flutter `3.44.9` uses:
 
 ### Handoff summary format
 
+- Briefly name the reference implementations followed and explain material departures; keep this proportional to the change.
 - After code changes and validation, include a short summary of changed files in your final response.
 - Use plain text (non-clickable) project-relative file references only.
 - For each relevant change block, include the starting line number using the `path:line` format (for example `lib/ui/widgets/device/device_form_widget.dart:890`).
