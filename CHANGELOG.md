@@ -1,3 +1,7 @@
+## [0.40.1] - 6.11.2026
+
+* `CoreApp`: added optional `navigatorKey` for Router V1, so dialogs and routes can be shown from widgets above the `Navigator`
+
 ## [0.40.0] - 30.9.2026
 
 * **Warning:** Minimum Dart SDK version bumped to `>=3.13.0` and Flutter to `>=3.47.0`
