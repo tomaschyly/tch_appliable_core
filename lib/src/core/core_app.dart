@@ -20,6 +20,7 @@ class CoreApp extends AbstractStatefulWidget {
   final RouteFactory? onGenerateRoute;
   final GoRouter? router;
   final AbstractAppDataStateSnapshot snapshot;
+  final GlobalKey<NavigatorState>? navigatorKey;
   final List<NavigatorObserver>? navigatorObservers;
   final ThemeData? theme;
   final ThemeData? darkTheme;
@@ -53,6 +54,7 @@ class CoreApp extends AbstractStatefulWidget {
     this.onGenerateRoute,
     this.router,
     required this.snapshot,
+    this.navigatorKey,
     this.navigatorObservers,
     this.theme,
     this.darkTheme,
@@ -73,6 +75,11 @@ class CoreApp extends AbstractStatefulWidget {
   }) : assert(
          (onGenerateRoute != null) != (router != null),
          'Provide either onGenerateRoute (V1) or router (GoRouter V2), not both or neither.',
+       ),
+       // GoRouter owns its Navigator, provide navigatorKey to GoRouter instead
+       assert(
+         navigatorKey == null || router == null,
+         'navigatorKey is supported only with onGenerateRoute (V1), for V2 provide it to GoRouter.',
        );
 
   /// Create state for widget
@@ -249,6 +256,7 @@ class CoreAppState extends AbstractStatefulWidgetState<CoreApp>
           }
         },
         onGenerateRoute: widget.onGenerateRoute,
+        navigatorKey: widget.navigatorKey,
         navigatorObservers: [routeObserver, ...?theNavigatorObservers],
         theme: darkMode ? (widget.darkTheme ?? widget.theme) : widget.theme,
         color: widget.color,

@@ -30,7 +30,7 @@ If some instructions are not clear enough, then analyse usage inside the example
 In your project's `pubspec.yaml` add:
 ```yaml
 dependencies:
-  tch_appliable_core: ^0.40.0
+  tch_appliable_core: ^0.40.1
 ```
 
 ## App Create
@@ -84,6 +84,8 @@ Widget build(BuildContext context) {
 }
 ...
 ```
+
+Optionally pass a `navigatorKey` to `CoreApp` when you need to show dialogs or push routes from widgets placed above the `Navigator`, for example from `builder`. With V2 provide the key to your `GoRouter` instead.
 
 Create your route factory in `lib/core/app_router.dart`:
 
